@@ -1,12 +1,16 @@
 package entity;
 
 /**
- * A simple entity representing a user. Users have a username and password..
+ * An entity representing a user's account.
  */
 public class User {
 
-    private final String name;
-    private final String password;
+    private String name;
+    private String password;
+
+    private int score;
+    private  String bio;
+    private String fav_pokemon; // NAME of the pokemon
 
     /**
      * Creates a new user with the given non-empty name and non-empty password.
@@ -16,13 +20,18 @@ public class User {
      */
     public User(String name, String password) {
         if ("".equals(name)) {
-            throw new IllegalArgumentException("Username cannot be empty");
+            throw new IllegalArgumentException("Username cannot be empty.");
         }
+
         if ("".equals(password)) {
-            throw new IllegalArgumentException("Password cannot be empty");
+            throw new IllegalArgumentException("Password cannot be empty.");
         }
+
         this.name = name;
         this.password = password;
+        this.score = 0;
+        this.bio = "";
+        this.fav_pokemon = null;
     }
 
     public String getName() {
@@ -32,5 +41,11 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public int getScore() { return score; }
+
+    public String getBio() { return bio; }
+
+    public String getFavPokemon() { return fav_pokemon; }
 
 }
