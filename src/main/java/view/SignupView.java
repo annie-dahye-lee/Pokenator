@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
@@ -29,7 +30,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     private final JButton cancel;
     private final JButton toLogin;
 
-    public SignupView(SignupViewModel signupViewModel) {
+    public SignupView(SignupViewModel signupViewModel, ViewManagerModel viewManagerModel) {
         this.signupViewModel = signupViewModel;
         signupViewModel.addPropertyChangeListener(this);
 
