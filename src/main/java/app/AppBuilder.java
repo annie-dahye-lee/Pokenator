@@ -31,6 +31,14 @@ import view.GameDashboard;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import data_access.PokeApiGateway;
+import interface_adapter.akinator.AkinatorController;
+import interface_adapter.akinator.AkinatorPresenter;
+import interface_adapter.akinator.AkinatorViewModel;
+import use_case.akinator.AkinatorInputBoundary;
+import use_case.akinator.AkinatorInteractor;
+import use_case.akinator.AkinatorOutputBoundary;
+import view.AkinatorView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,6 +68,8 @@ public class AppBuilder {
     }
 
     // ========== Add Views ==========
+    private AkinatorViewModel akinatorViewModel;
+    private AkinatorView akinatorView;
 
     public AppBuilder addGameDashboard() {
         gameDashboard = new GameDashboard(viewManagerModel); // fixed: assign to field
@@ -85,6 +95,13 @@ public class AppBuilder {
         loggedInViewModel = new LoggedInViewModel();
         loggedInView = new LoggedInView(loggedInViewModel);
         cardPanel.add(loggedInView, loggedInView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addAkinatorView() {
+        akinatorViewModel = new AkinatorViewModel();
+        akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel);
+        cardPanel.add(akinatorView, akinatorView.getViewName());
         return this;
     }
 
@@ -123,6 +140,14 @@ public class AppBuilder {
         ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);
         loggedInView.setChangePasswordController(changePasswordController);
+        return this;
+    }
+
+    public AppBuilder addAkinatorUseCase() {
+        AkinatorOutputBoundary presenter = new AkinatorPresenter(akinatorViewModel);
+        AkinatorInputBoundary interactor = new AkinatorInteractor(presenter, new PokeApiGateway());
+        AkinatorController controller = new AkinatorController(interactor);
+        akinatorView.setController(controller);
         return this;
     }
 
