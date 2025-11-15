@@ -2,11 +2,11 @@ package use_case.leaderboard;
 
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
-    private final ProfilesDataAccessInterface profilesDAO;
+    private final UserListDataAccessInterface userListDAO;
     private final LeaderboardOutputBoundary leaderboardPresenter;
 
-    public LeaderboardInteractor(ProfilesDataAccessInterface profilesDAO, LeaderboardOutputBoundary leaderboardPresenter) {
-        this.profilesDAO = profilesDAO;
+    public LeaderboardInteractor(UserListDataAccessInterface profilesDAO, LeaderboardOutputBoundary leaderboardPresenter) {
+        this.userListDAO = profilesDAO;
         this.leaderboardPresenter = leaderboardPresenter;
     }
 
