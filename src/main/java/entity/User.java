@@ -34,6 +34,22 @@ public class User {
         this.fav_pokemon = null;
     }
 
+    public User(String name, String password, int score, String bio, String fav_pokemon) {
+        if ("".equals(name)) {
+            throw new IllegalArgumentException("Username cannot be empty.");
+        }
+
+        if ("".equals(password)) {
+            throw new IllegalArgumentException("Password cannot be empty.");
+        }
+
+        this.name = name;
+        this.password = password;
+        this.score = score;
+        this.bio =bio;
+        this.fav_pokemon = fav_pokemon;
+    }
+
     public String getName() {
         return name;
     }
