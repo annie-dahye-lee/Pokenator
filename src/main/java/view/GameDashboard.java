@@ -83,7 +83,24 @@ public class GameDashboard extends JPanel {
             viewManagerModel.firePropertyChange();
         });
 
-        playGameBtn.addActionListener(e -> showMessage("Opening game mode selection..."));
+        playGameBtn.addActionListener(e -> {
+            Object[] options = {"Mystery Pokémon", "Guess My Pokémon"};
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    "Pick a mode:",
+                    "Play Game",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+            if (choice == 0) {
+                showMessage("Mystery mode coming soon!");
+            } else if (choice == 1) {
+                viewManagerModel.setState("akinator");
+                viewManagerModel.firePropertyChange();
+            }
+        });
         leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
         profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
         settingsBtn.addActionListener(e -> showMessage("Opening settings..."));
