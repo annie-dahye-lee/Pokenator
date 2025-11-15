@@ -7,7 +7,7 @@ import java.util.ArrayList;
 // DAO for the leaderboard use case.
 public interface UserListDataAccessInterface {
 
-    // Get an arraylist of all user objects in the database.
-    ArrayList<User> getAllUsers();
+    // Get an arraylist of all user objects in the local file.
+    ArrayList<User> getUserList();
 
 }
