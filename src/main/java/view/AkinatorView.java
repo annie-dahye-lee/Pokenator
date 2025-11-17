@@ -5,6 +5,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.akinator.AkinatorController;
 import interface_adapter.akinator.AkinatorState;
 import interface_adapter.akinator.AkinatorViewModel;
+import use_case.akinator.AkinatorOutputData;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
     private final JLabel statusLabel = new JLabel("", SwingConstants.CENTER);
     private final JButton yesButton = new JButton("Yes");
     private final JButton noButton = new JButton("No");
-    private final JButton unknownButton = new JButton("I don’t know");
+    private final JButton unknownButton = new JButton("I don't know");
     private final JButton startButton = new JButton("Start");
     private final JButton resetButton = new JButton("Reset");
     private final JButton backButton = new JButton("Back to Dashboard");
@@ -34,6 +35,7 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
     private final JLabel spriteLabel = new JLabel("No artwork", SwingConstants.CENTER);
     private final JButton guessYes = new JButton("Yes!");
     private final JButton guessNo = new JButton("Nope");
+    private int lastRevealPromptId = -1;
 
     public AkinatorView(AkinatorViewModel viewModel, ViewManagerModel viewManagerModel) {
         this.viewModel = viewModel;
@@ -75,13 +77,13 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
     }
 
     private void wireActions() {
-        yesButton.addActionListener(e -> controller.answerYes());
-        noButton.addActionListener(e -> controller.answerNo());
-        unknownButton.addActionListener(e -> controller.answerUnknown());
-        guessYes.addActionListener(e -> controller.confirmGuess(true));
-        guessNo.addActionListener(e -> controller.confirmGuess(false));
-        startButton.addActionListener(e -> controller.start());
-        resetButton.addActionListener(e -> controller.reset());
+        yesButton.addActionListener(e -> withController(AkinatorController::answerYes));
+        noButton.addActionListener(e -> withController(AkinatorController::answerNo));
+        unknownButton.addActionListener(e -> withController(AkinatorController::answerUnknown));
+        guessYes.addActionListener(e -> withController(controller -> controller.confirmGuess(true)));
+        guessNo.addActionListener(e -> withController(controller -> controller.confirmGuess(false)));
+        startButton.addActionListener(e -> withController(AkinatorController::start));
+        resetButton.addActionListener(e -> withController(AkinatorController::reset));
         backButton.addActionListener(e -> {
             viewManagerModel.setState("dashboard");
             viewManagerModel.firePropertyChange();
@@ -106,14 +108,28 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
         }
         AkinatorState state = (AkinatorState) evt.getNewValue();
         promptLabel.setText(state.getPrompt());
-        statusLabel.setText(state.getStatus());
+        String status = state.getStatus();
+        if (state.getQuestionLimit() > 0 && state.getQuestionsAsked() > 0) {
+            String counter = String.format(" (Question %d of %d)",
+                    state.getQuestionsAsked(),
+                    state.getQuestionLimit());
+            status = (status == null || status.isBlank()) ? counter.trim() : status + counter;
+        }
+        statusLabel.setText(status == null ? "" : status);
         boolean guessing = state.isAwaitingGuess();
+        boolean awaitingReveal = state.isAwaitingReveal();
         guessPanel.setVisible(state.isGuessVisible());
-        guessYes.setEnabled(guessing);
-        guessNo.setEnabled(guessing);
-        yesButton.setEnabled(!guessing);
-        noButton.setEnabled(!guessing);
-        unknownButton.setEnabled(!guessing);
+        boolean controllerReady = controller != null;
+        guessYes.setEnabled(guessing && controllerReady);
+        guessNo.setEnabled(guessing && controllerReady);
+        boolean canAnswer = controllerReady
+                && !guessing && !awaitingReveal
+                && state.isRoundActive()
+                && state.getStep() == AkinatorOutputData.Step.QUESTION;
+        yesButton.setEnabled(canAnswer);
+        noButton.setEnabled(canAnswer);
+        unknownButton.setEnabled(canAnswer);
+        startButton.setEnabled(controllerReady && !state.isRoundActive());
 
         if (state.getGuessInfo() != null) {
             updateGuessInfo(state.getGuessInfo());
@@ -121,6 +137,22 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
             guessText.setText("");
             spriteLabel.setIcon(null);
             spriteLabel.setText("No artwork");
+        }
+
+        if (awaitingReveal && state.getRevealPromptId() != lastRevealPromptId) {
+            lastRevealPromptId = state.getRevealPromptId();
+            SwingUtilities.invokeLater(() -> {
+                String name = JOptionPane.showInputDialog(
+                        AkinatorView.this,
+                        "I couldn't guess it. What Pokémon were you thinking of?",
+                        "Help Pokénator learn",
+                        JOptionPane.QUESTION_MESSAGE);
+                if (name == null) {
+                    name = "";
+                }
+                final String trimmedName = name.trim();
+                withController(controller -> controller.revealPokemon(trimmedName));
+            });
         }
     }
 
@@ -149,5 +181,11 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
 
     public String getViewName() {
         return viewName;
+    }
+
+    private void withController(java.util.function.Consumer<AkinatorController> task) {
+        if (controller != null) {
+            task.accept(controller);
+        }
     }
 }

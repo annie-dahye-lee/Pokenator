@@ -103,7 +103,10 @@ public class GameDashboard extends JPanel {
         });
         leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
         profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
-        settingsBtn.addActionListener(e -> showMessage("Opening settings..."));
+        settingsBtn.addActionListener(e -> {
+            viewManagerModel.setState("settings");
+            viewManagerModel.firePropertyChange();
+        });
         aboutBtn.addActionListener(e -> showMessage("Pokénator by Pibble Nation!"));
         exitBtn.addActionListener(e -> System.exit(0));
     }

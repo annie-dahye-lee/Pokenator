@@ -11,12 +11,14 @@ import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.settings.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.customization.settings.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -26,11 +28,7 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.LoggedInView;
-import view.GameDashboard;
-import view.LoginView;
-import view.SignupView;
-import view.ViewManager;
+import view.*;
 import data_access.PokeApiGateway;
 import interface_adapter.akinator.AkinatorController;
 import interface_adapter.akinator.AkinatorPresenter;
@@ -38,7 +36,6 @@ import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
-import view.AkinatorView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,6 +59,8 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private SettingsViewModel settingsViewModel;
+    private SettingsView settingsView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -104,6 +103,15 @@ public class AppBuilder {
         cardPanel.add(akinatorView, akinatorView.getViewName());
         return this;
     }
+
+    public AppBuilder addSettingsView() {
+        settingsViewModel = new SettingsViewModel();
+        settingsView = new SettingsView(settingsViewModel, viewManagerModel);
+
+        cardPanel.add(settingsView, settingsView.getViewName());
+        return this;
+    }
+
 
     // ========== Add Use Cases ==========
 
@@ -150,6 +158,52 @@ public class AppBuilder {
         akinatorView.setController(controller);
         return this;
     }
+
+    public AppBuilder addResetSettingsUseCase() {
+
+        ResetSettingsOutputBoundary presenter =
+                new ResetSettingsPresenter(settingsViewModel);
+
+        ResetSettingsInputBoundary interactor =
+                new ResetSettingsInteractor(presenter);
+
+        ResetSettingsController controller =
+                new ResetSettingsController(interactor);
+
+        settingsView.setResetSettingsController(controller);
+        return this;
+    }
+
+    public AppBuilder addAccessSettingsUseCase() {
+
+        AccessSettingsOutputBoundary presenter =
+                new AccessSettingsPresenter(viewManagerModel, settingsViewModel, "dashboard");
+
+        AccessSettingsInputBoundary interactor =
+                new AccessSettingsInteractor(presenter);
+
+        AccessSettingsController controller =
+                new AccessSettingsController(interactor);
+
+        settingsView.setAccessSettingsController(controller);
+        return this;
+    }
+
+    public AppBuilder addSaveSettingsUseCase() {
+
+        SaveSettingsOutputBoundary presenter =
+                new SaveSettingsPresenter(settingsViewModel);
+
+        SaveSettingsInputBoundary interactor =
+                new SaveSettingsInteractor(presenter);
+
+        SaveSettingsController controller =
+                new SaveSettingsController(interactor);
+
+        settingsView.setSaveSettingsController(controller);
+        return this;
+    }
+
 
     // ========== Build Application ==========
 
