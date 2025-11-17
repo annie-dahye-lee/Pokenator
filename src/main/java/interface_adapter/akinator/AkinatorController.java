@@ -33,4 +33,8 @@ public class AkinatorController {
     public void confirmGuess(boolean correct) {
         interactor.confirmGuess(correct);
     }
+
+    public void revealPokemon(String pokemonName) {
+        interactor.revealPokemon(pokemonName);
+    }
 }

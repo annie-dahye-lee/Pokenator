@@ -14,11 +14,19 @@ public class AkinatorPresenter implements AkinatorOutputBoundary{
     @Override
     public void present(AkinatorOutputData outputData) {
         AkinatorState state = viewModel.getState();
+        state.setStep(outputData.getStep());
         state.setPrompt(outputData.getPrompt());
         state.setStatus(outputData.getStatus());
         state.setAwaitingGuess(outputData.isAwaitingGuess());
-        state.setGuessVisible(outputData.getStep() != AkinatorOutputData.Step.QUESTION
+        state.setAwaitingReveal(outputData.isAwaitingReveal());
+        state.setRoundActive(outputData.isRoundActive());
+        state.setQuestionsAsked(outputData.getQuestionsAsked());
+        state.setQuestionLimit(outputData.getQuestionLimit());
+        state.setRevealPromptId(outputData.getRevealPromptId());
+        boolean showGuess = outputData.getStep() == AkinatorOutputData.Step.GUESS
+                || (outputData.getStep() == AkinatorOutputData.Step.FINISHED
                 && outputData.getGuessInfo() != null);
+        state.setGuessVisible(showGuess);
         state.setGuessInfo(outputData.getGuessInfo());
         state.setErrorMessage(null);
         viewModel.setState(state);

@@ -7,4 +7,5 @@ public interface AkinatorInputBoundary {
     void answerNo();
     void answerUnknown();
     void confirmGuess(boolean correct);
+    void revealPokemon(String pokemonName);
 }

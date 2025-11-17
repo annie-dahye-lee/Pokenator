@@ -1,16 +1,21 @@
 package interface_adapter.akinator;
 
 import data_access.PokeApiGateway;
-
-import java.util.List;
+import use_case.akinator.AkinatorOutputData;
 
 public class AkinatorState {
     private String prompt = "Press Start to begin.";
     private String status = "";
     private boolean guessVisible;
     private boolean awaitingGuess;
+    private boolean awaitingReveal;
+    private boolean roundActive;
     private PokeApiGateway.PokemonApiInfo guessInfo;
     private String errorMessage;
+    private int questionsAsked;
+    private int questionLimit;
+    private int revealPromptId;
+    private AkinatorOutputData.Step step = AkinatorOutputData.Step.IDLE;
 
     public String getPrompt() {
         return prompt;
@@ -58,5 +63,53 @@ public class AkinatorState {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public int getQuestionsAsked() {
+        return questionsAsked;
+    }
+
+    public void setQuestionsAsked(int questionsAsked) {
+        this.questionsAsked = questionsAsked;
+    }
+
+    public int getQuestionLimit() {
+        return questionLimit;
+    }
+
+    public void setQuestionLimit(int questionLimit) {
+        this.questionLimit = questionLimit;
+    }
+
+    public boolean isAwaitingReveal() {
+        return awaitingReveal;
+    }
+
+    public void setAwaitingReveal(boolean awaitingReveal) {
+        this.awaitingReveal = awaitingReveal;
+    }
+
+    public int getRevealPromptId() {
+        return revealPromptId;
+    }
+
+    public void setRevealPromptId(int revealPromptId) {
+        this.revealPromptId = revealPromptId;
+    }
+
+    public boolean isRoundActive() {
+        return roundActive;
+    }
+
+    public void setRoundActive(boolean roundActive) {
+        this.roundActive = roundActive;
+    }
+
+    public AkinatorOutputData.Step getStep() {
+        return step;
+    }
+
+    public void setStep(AkinatorOutputData.Step step) {
+        this.step = step;
     }
 }
