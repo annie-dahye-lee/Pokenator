@@ -10,7 +10,7 @@ public class LeaderboardPresenter implements LeaderboardOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final GameDashboard gameDashboard;
 
-    public leaderboardPresenter(
+    public LeaderboardPresenter(
             LeaderboardViewModel leaderboardViewModel,
             ViewManagerModel viewManagerModel,
             GameDashboard gameDashboard
