@@ -16,19 +16,29 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     }
 
     @Override
-    public void execute(LeaderboardInputData leaderboardInputData) {
-
-        // If the event for opening the leaderboard page was not activated, terminate.
-        // I don't know how this method could be called when the event was not activated, but it's okay : )
-        if (!leaderboardInputData.getFired()) {
-            return;
-        }
+    public void changePage(LeaderboardInputData leaderboardInputData) {
 
         ArrayList<User> userList = userListDAO.getUserList();
 
         userList.sort(new UserComparator());
 
-        leaderboardPresenter.prepareSuccessView(new LeaderboardOutputData(userList));
+        ArrayList<User> currentUsers = getCurrentUsers(
+                userList, leaderboardInputData.getNewPage()
+        );
+
+        leaderboardPresenter.prepareSuccessView(
+                new LeaderboardOutputData(currentUsers)
+        );
+    }
+
+    static int PAGE_CAP = 5;
+    public ArrayList<User> getCurrentUsers(ArrayList<User> userList, int page) {
+        // Get the users to display for the current page.
+
+        return new ArrayList<>(userList.subList(
+                (page - 1) * PAGE_CAP,
+                page * PAGE_CAP)
+        );
     }
 
     // Comparator interface used to sort the user list.
