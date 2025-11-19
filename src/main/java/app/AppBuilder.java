@@ -3,14 +3,10 @@ package app;
 import data_access.FileUserDataAccessObject;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.ChangePasswordController;
-import interface_adapter.logged_in.ChangePasswordPresenter;
-import interface_adapter.logged_in.LoggedInViewModel;
+import interface_adapter.logged_in.*;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
-import interface_adapter.logout.LogoutController;
-import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.settings.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
@@ -19,12 +15,12 @@ import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.customization.settings.*;
+import use_case.edit_profile.EditProfileInputBoundary;
+import use_case.edit_profile.EditProfileInteractor;
+import use_case.edit_profile.EditProfileOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
-import use_case.logout.LogoutInputBoundary;
-import use_case.logout.LogoutInteractor;
-import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -61,6 +57,8 @@ public class AppBuilder {
     private LoginView loginView;
     private SettingsViewModel settingsViewModel;
     private SettingsView settingsView;
+    private EditProfileViewModel editProfileViewModel;
+    private EditProfileView editProfileView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -109,6 +107,14 @@ public class AppBuilder {
         settingsView = new SettingsView(settingsViewModel, viewManagerModel);
 
         cardPanel.add(settingsView, settingsView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addEditProfileView() {
+        editProfileViewModel = new EditProfileViewModel();
+        editProfileView = new EditProfileView(editProfileViewModel, viewManagerModel);
+
+        cardPanel.add(editProfileView, editProfileView.getViewName());
         return this;
     }
 
@@ -201,6 +207,20 @@ public class AppBuilder {
                 new SaveSettingsController(interactor);
 
         settingsView.setSaveSettingsController(controller);
+        return this;
+    }
+
+    public AppBuilder addEditProfileUseCase() {
+
+        EditProfileOutputBoundary presenter =
+                new EditProfilePresenter(editProfileViewModel, viewManagerModel);
+
+        EditProfileInputBoundary interactor =
+                new EditProfileInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
+
+        EditProfileController controller = new EditProfileController(interactor);
+
+        editProfileView.setEditProfileController(controller);
         return this;
     }
 

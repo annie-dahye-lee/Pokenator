@@ -102,7 +102,19 @@ public class GameDashboard extends JPanel {
             }
         });
         leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
-        profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
+
+        //TODO: change this back later
+        //profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
+
+        profileBtn.addActionListener(e -> {
+            if (currentUser == null) {
+                System.out.println("User is not logged in");
+            } else {
+                viewManagerModel.setState("Edit Profile");
+                viewManagerModel.firePropertyChange();
+            }
+        });
+
         settingsBtn.addActionListener(e -> {
             viewManagerModel.setState("settings");
             viewManagerModel.firePropertyChange();
@@ -115,6 +127,10 @@ public class GameDashboard extends JPanel {
     public void setUser(String username) {
         this.currentUser = username;
         refreshHeader();
+    }
+
+    public String getCurrentUser() {
+        return this.currentUser;
     }
 
     public void logout() {

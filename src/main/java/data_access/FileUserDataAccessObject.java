@@ -3,6 +3,7 @@ package data_access;
 import entity.User;
 import entity.UserFactory;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -21,7 +22,8 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         ChangePasswordUserDataAccessInterface,
         LogoutUserDataAccessInterface,
-        UserListDataAccessInterface {
+        UserListDataAccessInterface,
+        EditProfileUserDataAccessInterface {
 
     private static final String HEADER = "username,password,score,bio,fav_pokemon";
 
@@ -84,8 +86,8 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
             writer.newLine();
 
             for (User user : accounts.values()) {
-                final String line = String.format("%s,%s",
-                        user.getName(), user.getPassword());
+                final String line = String.format("%s,%s,%s,%s,%s",
+                        user.getName(), user.getPassword(), user.getScore(), user.getBio(), user.getFavPokemon());
                 writer.write(line);
                 writer.newLine();
             }
@@ -130,6 +132,12 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
     @Override
     public void changePassword(User user) {
         // Replace the User object in the map
+        accounts.put(user.getName(), user);
+        save();
+    }
+
+    @Override
+    public void editProfile(User user) {
         accounts.put(user.getName(), user);
         save();
     }

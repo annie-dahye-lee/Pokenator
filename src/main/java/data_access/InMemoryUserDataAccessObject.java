@@ -2,6 +2,7 @@ package data_access;
 
 import entity.User;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -16,7 +17,8 @@ import java.util.Map;
 public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterface,
                                                      LoginUserDataAccessInterface,
                                                      ChangePasswordUserDataAccessInterface,
-                                                     LogoutUserDataAccessInterface {
+                                                     LogoutUserDataAccessInterface,
+                                                     EditProfileUserDataAccessInterface {
 
     private final Map<String, User> users = new HashMap<>();
 
@@ -53,4 +55,8 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
         users.put(user.getName(), user);
     }
 
+    @Override
+    public void editProfile(User user) {
+        users.put(user.getName(), user);
+    }
 }
