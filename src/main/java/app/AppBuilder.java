@@ -36,6 +36,9 @@ import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
+// Leaderboard
+import interface_adapter.leaderboard.*;
+import use_case.leaderboard.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,19 +59,22 @@ public class AppBuilder {
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
+    private LoginView loginView;
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
-    private LoginView loginView;
     private SettingsViewModel settingsViewModel;
     private SettingsView settingsView;
+    private AkinatorViewModel akinatorViewModel;
+    private AkinatorView akinatorView;
+    private LeaderboardViewModel leaderboardViewModel;
+    private LeaderboardView leaderboardView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
 
+
     // ========== Add Views ==========
-    private AkinatorViewModel akinatorViewModel;
-    private AkinatorView akinatorView;
 
     public AppBuilder addGameDashboard() {
         gameDashboard = new GameDashboard(viewManagerModel); // fixed: assign to field
@@ -109,6 +115,13 @@ public class AppBuilder {
         settingsView = new SettingsView(settingsViewModel, viewManagerModel);
 
         cardPanel.add(settingsView, settingsView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addLeaderboardView() {
+        leaderboardViewModel = new LeaderboardViewModel();
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
+        cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
 
@@ -201,6 +214,21 @@ public class AppBuilder {
                 new SaveSettingsController(interactor);
 
         settingsView.setSaveSettingsController(controller);
+        return this;
+    }
+
+    public AppBuilder addLeaderboardUseCase() {
+
+        LeaderboardOutputBoundary presenter =
+                new LeaderboardPresenter(leaderboardViewModel);
+
+        LeaderboardInputBoundary interactor =
+                new LeaderboardInteractor(userDataAccessObject, presenter);
+
+        LeaderboardController controller =
+                new LeaderboardController(interactor);
+
+        leaderboardView.setLeaderboardController(controller);
         return this;
     }
 

@@ -6,9 +6,15 @@ import java.util.ArrayList;
 
 public class LeaderboardOutputData {
 
-    private final ArrayList<User> userList;
+    private final ArrayList<User> currentUsers;
+    private final int newPage;
 
-    public LeaderboardOutputData(ArrayList<User> userList) { this.userList = userList; }
+    public LeaderboardOutputData(ArrayList<User> currentUsers, int newPage) {
+        this.currentUsers = currentUsers;
+        this.newPage = newPage;
+    }
 
-    public ArrayList<User> getUserList() { return userList; }
+    public ArrayList<User> getCurrentUsers() { return currentUsers; }
+
+    public int getNewPage() { return newPage; }
 }

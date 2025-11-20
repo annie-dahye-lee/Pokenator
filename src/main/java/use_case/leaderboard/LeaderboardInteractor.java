@@ -7,6 +7,8 @@ import java.util.Comparator;
 
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
+    private static final int USERS_PER_PAGE = 5;
+
     private final UserListDataAccessInterface userListDAO;
     private final LeaderboardOutputBoundary leaderboardPresenter;
 
@@ -18,26 +20,53 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     @Override
     public void changePage(LeaderboardInputData leaderboardInputData) {
 
+        // Get the page # with 0-indexing.
+        int newPage = leaderboardInputData.getNewPage() - 1;
+
         ArrayList<User> userList = userListDAO.getUserList();
 
+        // If the new page is not within the user list range, throw error & terminate.
+        if (! verifyPage(userList, newPage)) {
+            leaderboardPresenter.prepareFailedView(
+                    "New page is not within the user list range:\n" +
+                    "New 0-indexed page:" + newPage + " → required lower bound: " +(newPage * USERS_PER_PAGE) + "\n" +
+                    "Current user list length: " + userList.size());
+            return;
+        }
+
+        // Sort the user list.
         userList.sort(new UserComparator());
 
+        // Get the sublist of users to be displayed.
         ArrayList<User> currentUsers = getCurrentUsers(
                 userList, leaderboardInputData.getNewPage()
         );
 
+        // Update the presenter.
         leaderboardPresenter.prepareSuccessView(
-                new LeaderboardOutputData(currentUsers)
+                new LeaderboardOutputData(currentUsers, newPage + 1)
         );
     }
 
-    static int PAGE_CAP = 5;
+    public boolean verifyPage(ArrayList<User> userList, int page) {
+        // Return whether the new page is within the user list range.
+
+        return 0 <= page && page * USERS_PER_PAGE <= userList.size();
+    }
+
     public ArrayList<User> getCurrentUsers(ArrayList<User> userList, int page) {
         // Get the users to display for the current page.
+        // Precondition: verifyPage(userList, page) == true
+
+        // Get the lower of either 5 entries after the current page or the upper bound the user list.
+        int upperBound = Math.min(
+                (page + 1) * USERS_PER_PAGE,
+                userList.size()
+        );
 
         return new ArrayList<>(userList.subList(
-                (page - 1) * PAGE_CAP,
-                page * PAGE_CAP)
+                page * USERS_PER_PAGE,
+                upperBound)
         );
     }
 
