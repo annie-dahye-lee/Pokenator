@@ -1,6 +1,7 @@
 package view;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.logged_in.EditProfileState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,8 @@ public class GameDashboard extends JPanel {
 
     private final JPanel headerButtons;
     private final JLabel userLabel;
+
+    private EditProfileView editProfileView = null;
 
     public GameDashboard(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
@@ -110,6 +113,7 @@ public class GameDashboard extends JPanel {
             if (currentUser == null) {
                 System.out.println("User is not logged in");
             } else {
+                editProfileView.setFields(currentUser);
                 viewManagerModel.setState("Edit Profile");
                 viewManagerModel.firePropertyChange();
             }
@@ -217,5 +221,9 @@ public class GameDashboard extends JPanel {
 
     public String getViewName() {
         return "dashboard";
+    }
+
+    public void setEPV(EditProfileView EPV) {
+        this.editProfileView = EPV;
     }
 }

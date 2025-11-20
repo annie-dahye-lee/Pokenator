@@ -111,8 +111,9 @@ public class AppBuilder {
     }
 
     public AppBuilder addEditProfileView() {
-        editProfileViewModel = new EditProfileViewModel();
-        editProfileView = new EditProfileView(editProfileViewModel, viewManagerModel);
+        editProfileViewModel = new EditProfileViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
+        editProfileView = new EditProfileView(editProfileViewModel, viewManagerModel, gameDashboard,
+                                              userDataAccessObject, new PokeApiGateway());
 
         cardPanel.add(editProfileView, editProfileView.getViewName());
         return this;

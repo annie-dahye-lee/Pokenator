@@ -35,7 +35,7 @@ public class EditProfileInteractor implements EditProfileInputBoundary {
 
             userDataAccessObject.editProfile(user);
 
-            final EditProfileOutputData editProfileOutputData = new EditProfileOutputData(user.getName());
+            final EditProfileOutputData editProfileOutputData = new EditProfileOutputData(user.getName(), user.getBio(), user.getFavPokemon());
             userPresenter.prepareSuccessView(editProfileOutputData);
         }
     }

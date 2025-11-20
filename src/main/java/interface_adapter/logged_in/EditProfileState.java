@@ -1,7 +1,6 @@
 package interface_adapter.logged_in;
 
-import interface_adapter.ViewModel;
-import interface_adapter.login.LoginState;
+import entity.User;
 
 public class EditProfileState {
 
@@ -19,7 +18,15 @@ public class EditProfileState {
         profileError = copy.profileError;
     }
 
-    public EditProfileState() { }
+    public EditProfileState(User u) {
+        if (u != null) {
+            username = u.getName();
+            password = u.getPassword();
+            score = u.getScore();
+            bio = u.getBio();
+            fav_pokemon = u.getFavPokemon();
+        }
+    }
 
     public String getUsername() { return username; }
 
@@ -46,4 +53,6 @@ public class EditProfileState {
     public void setProfileError(String error) {
         this.profileError = error;
     }
+
+    public String getProfileError() { return profileError; }
 }
