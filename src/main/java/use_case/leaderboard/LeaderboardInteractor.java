@@ -39,7 +39,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
         // Get the sublist of users to be displayed.
         ArrayList<User> currentUsers = getCurrentUsers(
-                userList, leaderboardInputData.getNewPage()
+                userList, newPage
         );
 
         // Update the presenter.
@@ -71,7 +71,8 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     }
 
     // Comparator interface used to sort the user list.
-    // Sorts by score first, then by name.
+    // First, sort by score from most to least.
+    // If users have the same score, sort by name alphabetically.
     // Order will be absolute since names are unique.
     private static class UserComparator implements Comparator<User> {
         public int compare(User u1, User u2) {
@@ -79,10 +80,10 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
             int score1 = u1.getScore();
             int score2 = u2.getScore();
 
-            if ( score1 > score2 ) {
+            if ( score1 < score2 ) {
                 return 1;
             }
-            if ( score1 < score2 ) {
+            if ( score1 > score2 ) {
                 return -1;
             }
 
