@@ -4,15 +4,15 @@ import use_case.customization.settings.SaveSettingsInputBoundary;
 import use_case.customization.settings.SaveSettingsInputData;
 
 public class SaveSettingsController {
-    private final SaveSettingsInputBoundary saveSettingsUseCase;
+    private final SaveSettingsInputBoundary saveSettingsInteractor;
 
-    public SaveSettingsController(SaveSettingsInputBoundary saveSettingsUseCase) {
-        this.saveSettingsUseCase = saveSettingsUseCase;
+    public SaveSettingsController(SaveSettingsInputBoundary saveSettingsInteractor) {
+        this.saveSettingsInteractor = saveSettingsInteractor;
     }
 
     public void execute(SettingsState state) {
         SaveSettingsInputData data =
                 new SaveSettingsInputData(state.getTheme());
-        saveSettingsUseCase.save(data);
+        saveSettingsInteractor.execute(data);
     }
 }
