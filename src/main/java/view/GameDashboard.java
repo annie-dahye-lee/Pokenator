@@ -15,6 +15,7 @@ public class GameDashboard extends JPanel {
     private final JLabel userLabel;
 
     private EditProfileView editProfileView = null;
+    private ChooseFavPokemonView chooseFavPokemonView = null;
 
     public GameDashboard(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
@@ -114,6 +115,7 @@ public class GameDashboard extends JPanel {
                 System.out.println("User is not logged in");
             } else {
                 editProfileView.setFields(currentUser);
+                chooseFavPokemonView.setFields(currentUser);
                 viewManagerModel.setState("Edit Profile");
                 viewManagerModel.firePropertyChange();
             }
@@ -225,5 +227,9 @@ public class GameDashboard extends JPanel {
 
     public void setEPV(EditProfileView EPV) {
         this.editProfileView = EPV;
+    }
+
+    public void setCFPV(ChooseFavPokemonView CFPV) {
+        this.chooseFavPokemonView = CFPV;
     }
 }

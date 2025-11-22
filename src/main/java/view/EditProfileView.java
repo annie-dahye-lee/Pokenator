@@ -17,6 +17,9 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 
+/**
+ * The View for when the user is customizing their profile bio.
+ */
 public class EditProfileView extends JPanel implements ActionListener, PropertyChangeListener {
 
     private final String viewName = "Edit Profile";
@@ -138,7 +141,6 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         pokemonDisplay.add(favPokemonDesc);
         pokemonDisplay.add(pokeImage);
         try {
-            System.out.println(favPokemon);
             if (!favPokemon.equals("None")) {
                 image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(favPokemon).getSpriteUrl()));
                 pokeImage.setIcon(new ImageIcon(image.getScaledInstance(
@@ -152,6 +154,7 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         pokemonDisplay.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         editFavPokemon = new JButton("Choose Favourite Pokemon");
+        //TODO: link to fav pokemon page
         editFavPokemon.addActionListener(this);
         buttons.add(editFavPokemon);
 
