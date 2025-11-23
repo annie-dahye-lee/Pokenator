@@ -229,6 +229,10 @@ public class AppBuilder {
                 new LeaderboardController(interactor);
 
         leaderboardView.setLeaderboardController(controller);
+
+        // Preemptively set up page 1.
+        controller.changePage(1);
+
         return this;
     }
 

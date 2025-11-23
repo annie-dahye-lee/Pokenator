@@ -14,11 +14,9 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
     private static final String VIEW_NAME = "leaderboard";
 
     private final LeaderboardViewModel leaderboardViewModel;
-    private final ViewManagerModel viewManagerModel;
     private LeaderboardController leaderboardController = null;
 
-    private final JPanel leaderboardPanel = new JPanel();
-    private final JPanel colHeaders = new JPanel();
+    private final JPanel leaderboardTable = new JPanel();
     private final JLabel pageLabel = new JLabel();
 
     public LeaderboardView(
@@ -26,55 +24,74 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
             ViewManagerModel viewManagerModel
     ) {
         this.leaderboardViewModel = leaderboardViewModel;
-        this.viewManagerModel = viewManagerModel;
-
         leaderboardViewModel.addPropertyChangeListener(this);
+
+        setLayout(new BorderLayout());
 
 
         // Components:
 
         // Back button:
+        JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backButton = new JButton("Back");
+        backButtonPanel.add(backButton);
+
+        add(backButtonPanel, BorderLayout.NORTH);
 
         // Leaderboard list:
-        leaderboardPanel.setLayout(
-                new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS)
-        );
+        JPanel leaderboardPanel = new JPanel();
+        leaderboardPanel.setLayout(new GridBagLayout());
+        add(leaderboardPanel, BorderLayout.CENTER);
 
-        colHeaders.add(new JLabel("Rank"));
-        colHeaders.add(new JLabel("User"));
-        colHeaders.add(new JLabel("Score"));
+        leaderboardTable.setLayout(
+                new BoxLayout(leaderboardTable, BoxLayout.Y_AXIS)
+        );
+        leaderboardTable.setBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1)
+        );
+        leaderboardTable.setBackground(Color.WHITE);
+
+        leaderboardPanel.add(leaderboardTable);
 
         // Bottom row — page navigations:
-        JPanel navs = new JPanel(new FlowLayout());
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         JButton previousButton = new JButton("<");
-        pageLabel.setText(Integer.toString(
+        pageLabel.setText(
+                Integer.toString(
                 leaderboardViewModel.getState().getPage()
         ));
         JButton nextButton = new JButton(">");
 
-        navs.add(previousButton);
-        navs.add(pageLabel);
-        navs.add(nextButton);
+        navBar.add(previousButton);
+        navBar.add(pageLabel);
+        navBar.add(nextButton);
 
-        // Main panel:
-        this.add(backButton);
-        this.add(leaderboardPanel);
-        this.add(navs);
+        add(navBar, BorderLayout.SOUTH);
+
 
         // Event connections:
+
+        // Back Button:
         backButton.addActionListener(e -> {
+
+            // If currently not on page 1, preemptively reset to page 1.
+            if (leaderboardViewModel.getState().getPage() != 1) {
+                leaderboardController.changePage(1);
+            }
+
             viewManagerModel.setState("dashboard");
             viewManagerModel.firePropertyChange();
         });
 
+        // Previous Button:
         previousButton.addActionListener(e -> {
             leaderboardController.changePage(
                     leaderboardViewModel.getState().getPage() - 1
             );
         });
 
+        // Next Button:
         nextButton.addActionListener(e -> {
             leaderboardController.changePage(
                     leaderboardViewModel.getState().getPage() + 1
@@ -93,7 +110,7 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
         LeaderboardState state = leaderboardViewModel.getState();
 
         // Update the leaderboard.
-        updateLeaderboard(state.getCurrentUsers());
+        updateLeaderboard(state.getUserRankPairs());
 
         // Update the page label.
         pageLabel.setText(Integer.toString(
@@ -101,43 +118,67 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
         ));
     }
 
-    public void updateLeaderboard(ArrayList<User> userList) {
+    private void updateLeaderboard(ArrayList<Object[]> userList) {
         // Repopulate the leaderboard panel with a new user list.
 
         // Clear the leaderboard panel to be populated with new entries.
-        leaderboardPanel.removeAll();
-        leaderboardPanel.add(colHeaders);
+        leaderboardTable.removeAll();
 
-        // New leaderboard entries panel:
-        JPanel leaderboardEntries = new JPanel();
-        leaderboardEntries.setLayout(
-                new BoxLayout(leaderboardEntries, BoxLayout.Y_AXIS)
+        // Column headers:
+        JPanel header = new JPanel(
+                new GridLayout(1, 3)
         );
-        leaderboardPanel.add(leaderboardEntries);
+        header.setBorder(BorderFactory.createMatteBorder(
+                0, 0, 1, 0, Color.GRAY
+        ));
 
-        // Populate with given user list.
-        for (User user : userList) {
-            leaderboardEntries.add(new LeaderboardEntry(user, 1)); // TODO implement index.
+        header.add(new JLabel("Rank", SwingConstants.CENTER));
+        header.add(new JLabel("User", SwingConstants.CENTER));
+        header.add(new JLabel("Score", SwingConstants.CENTER));
+
+        leaderboardTable.add(header);
+
+        // Populate with given user-rank pairs.
+        for (Object[] pair : userList) {
+            User user = (User) pair[0];
+            int rank = (int) pair[1];
+
+            // Construct and add the row with the given user and rank.
+            leaderboardTable.add(constructRow(rank, user));
         }
+
+        leaderboardTable.revalidate();
+        leaderboardTable.repaint();
+
+        System.out.println("Successfully updated the leaderboard to page " +
+                leaderboardViewModel.getState().getPage());
     }
 
-    private class LeaderboardEntry extends JPanel {
+    private JPanel constructRow(int rank, User user) {
+        // Construct a leaderboard (row) with the given rank and user object.
+        // Uses table format.
 
-        private final User user;
+        // Setup:
+        JPanel row = new JPanel(
+                new GridLayout(1, 3)
+        );
+        row.setBorder(BorderFactory.createMatteBorder(
+                0, 0, 1, 0, Color.LIGHT_GRAY)
+        );
+        row.setBackground(Color.WHITE);
 
-        public LeaderboardEntry(User user, int i) {
-            this.user = user;
+        // Add info.
+        row.add(new JLabel(
+                Integer.toString(rank),
+                SwingConstants.CENTER)
+        );
+        row.add(new JLabel(user.getName()));
+        row.add(new JLabel(
+                Integer.toString(user.getScore()),
+                SwingConstants.CENTER
+        ));
 
-            JLabel index = new JLabel(Integer.toString(i));
-            JButton username = new JButton(user.getName());
-            JLabel score = new JLabel(Integer.toString(
-                    user.getScore()
-            ));
-
-            this.add(index);
-            this.add(username);
-            this.add(score);
-        }
+        return row;
     }
 
 }

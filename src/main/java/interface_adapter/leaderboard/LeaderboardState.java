@@ -1,21 +1,19 @@
 package interface_adapter.leaderboard;
 
-import entity.User;
-
 import java.util.ArrayList;
 
 public class LeaderboardState {
 
-    private ArrayList<User> currentUsers;
+    private ArrayList<Object[]> userRankPairs;
     private int page;
 
     public LeaderboardState() {
-        currentUsers = null;
+        userRankPairs = null;
         this.page = 1;
     }
 
-    public ArrayList<User> getCurrentUsers() { return currentUsers; }
-    public void setCurrentUsers(ArrayList<User> currentUsers) { this.currentUsers = currentUsers; }
+    public ArrayList<Object[]> getUserRankPairs() { return userRankPairs; }
+    public void setUserRankPairs(ArrayList<Object[]> userRankPairs) { this.userRankPairs = userRankPairs; }
 
     public int getPage() { return page; }
     public void setPage(int page) { this.page = page; }

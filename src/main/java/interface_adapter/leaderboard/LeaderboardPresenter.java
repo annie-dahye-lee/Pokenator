@@ -15,7 +15,7 @@ public class LeaderboardPresenter implements LeaderboardOutputBoundary {
 
         LeaderboardState state = leaderboardViewModel.getState();
 
-        state.setCurrentUsers(results.getCurrentUsers());
+        state.setUserRankPairs(results.getUserRankPairs());
         state.setPage(results.getNewPage());
 
         leaderboardViewModel.firePropertyChange();
