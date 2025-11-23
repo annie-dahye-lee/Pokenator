@@ -26,6 +26,8 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
     private final EditProfileViewModel editProfileViewModel;
     private final ViewManagerModel viewManagerModel;
 
+    private final GameDashboard gameDashboard;
+
     private final JLabel usernameInfo;
     private final JTextArea bioInputField;
     private JLabel errorLabel;
@@ -54,6 +56,7 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         final JLabel title = new JLabel("Edit Profile");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        this.gameDashboard = gameDashboard;
         gameDashboard.setEPV(this); //TODO: this is probably illegal fml
 
         // Box for inputting new bio; saves as user types
@@ -154,8 +157,17 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         pokemonDisplay.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         editFavPokemon = new JButton("Choose Favourite Pokemon");
-        //TODO: link to fav pokemon page
-        editFavPokemon.addActionListener(this);
+        editFavPokemon.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if (evt.getSource().equals(editFavPokemon)) {
+                            errorLabel.setText(" ");
+                            viewManagerModel.setState("Choose Favourite Pokemon");
+                            viewManagerModel.firePropertyChange();
+                        }
+                    }
+                }
+        );
         buttons.add(editFavPokemon);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -177,6 +189,7 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final EditProfileState state = (EditProfileState) evt.getNewValue();
+        state.setFav_pokemon(DAO.get(gameDashboard.getCurrentUser()).getFavPokemon());
         setFields(state);
 
         if (state.getProfileError() != null) {
@@ -186,14 +199,18 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
 
     public void setFields(EditProfileState state) {
         favPokemon = state.getFav_pokemon();
-        if (favPokemon == null) {
+        if (favPokemon == null || favPokemon.equals("None") || favPokemon.equals("null")) {
             favPokemon = "None";
         }
         bioInputField.setText(state.getBio());
         usernameInfo.setText("Currently logged in: " + state.getUsername());
-        favPokemonDesc.setText("\nCurrent Favourite Pokemon: " + state.getFav_pokemon());
+        favPokemonDesc.setText("\nCurrent Favourite Pokemon: " + favPokemon);
         try {
-            image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(state.getFav_pokemon()).getSpriteUrl()));
+            if (!favPokemon.equals("None")) {
+                image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(favPokemon).getSpriteUrl()));
+            } else {
+                image =  ImageIO.read(new File("nonepokemon.jpg"));
+            }
             pokeImage.setIcon(new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         } catch (Exception e) { }
     }
@@ -202,10 +219,19 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         usernameInfo.setText("Currently logged in: " + name);
         usernameInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
         bioInputField.setText(this.DAO.get(name).getBio());
-        favPokemonDesc.setText("\nCurrent Favourite Pokemon: " + this.DAO.get(name).getFavPokemon());
+        favPokemon = this.DAO.get(name).getFavPokemon();
+
+        if (favPokemon == null || favPokemon.equals("None") || favPokemon.equals("null")) {
+            favPokemon = "None";
+        }
+
+        favPokemonDesc.setText("\nCurrent Favourite Pokemon: " + favPokemon);
         try {
-            image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(
-                    this.DAO.get(name).getFavPokemon()).getSpriteUrl()));
+            if (!favPokemon.equals("None")) {
+                image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(favPokemon).getSpriteUrl()));
+            } else {
+                image =  ImageIO.read(new File("nonepokemon.jpg"));
+            }
             pokeImage.setIcon(new ImageIcon(image.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         } catch (Exception e) { }
     }

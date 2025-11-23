@@ -14,6 +14,7 @@ public class Main {
                 .addAkinatorView()
                 .addSettingsView()
                 .addEditProfileView()
+                .addChooseFavPokemonView()
 
                 // use cases
                 .addSignupUseCase()
@@ -24,6 +25,7 @@ public class Main {
                 .addSaveSettingsUseCase()
                 .addResetSettingsUseCase()
                 .addEditProfileUseCase()
+                .addChooseFavPokemonUseCase()
                 .build();
 
 

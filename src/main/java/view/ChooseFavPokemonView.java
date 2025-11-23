@@ -3,7 +3,7 @@ package view;
 import data_access.FileUserDataAccessObject;
 import data_access.PokeApiGateway;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.EditProfileState;
+import interface_adapter.logged_in.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,6 +21,11 @@ import java.util.ArrayList;
  */
 public class ChooseFavPokemonView extends JPanel implements ActionListener, PropertyChangeListener {
 
+    private final String viewName = "Choose Favourite Pokemon";
+    private ChooseFavPokemonController chooseFavPokemonController;
+    private ChooseFavPokemonState chooseFavPokemonState;
+
+    private final ChooseFavPokemonViewModel chooseFavPokemonViewModel;
     private final ViewManagerModel viewManagerModel;
     private final GameDashboard gameDashboard;
     private final FileUserDataAccessObject DAO;
@@ -29,6 +34,9 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
     private final int NUM_ROWS = 5;
     private int page = 0;
     private final ArrayList<String> pokemonList;
+    private final ArrayList<JPanel> listDisplay;
+
+    private JLabel chosenLabel;
 
     private JButton nextPage;
     private JButton previousPage;
@@ -38,13 +46,16 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
     private String currentUser;
     private String chosenPokemon;
 
-    ChooseFavPokemonView(ViewManagerModel viewManagerModel, GameDashboard gameDashboard,
-                         FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway) {
+    public ChooseFavPokemonView(ChooseFavPokemonViewModel chooseFavPokemonViewModel, ViewManagerModel viewManagerModel,
+                                GameDashboard gameDashboard, FileUserDataAccessObject DAO,
+                                PokeApiGateway pokeApiGateway) {
 
+        this.chooseFavPokemonViewModel = chooseFavPokemonViewModel;
         this.viewManagerModel = viewManagerModel;
         this.gameDashboard = gameDashboard;
         this.DAO = DAO;
         this.pokeApiGateway = pokeApiGateway;
+        this.chooseFavPokemonState = new ChooseFavPokemonState(DAO.get(gameDashboard.getCurrentUser()));
 
         gameDashboard.setCFPV(this);
 
@@ -54,7 +65,11 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         JPanel rows = new JPanel();
         rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
 
-        for (int i = 0; i < NUM_ROWS; i++) {
+        chosenLabel = new JLabel("Selected Pokemon: " + this.chosenPokemon);
+        chosenLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        listDisplay = new ArrayList<JPanel>();
+        for (int i = 0; i < pokemonList.size(); i++) {
             if (page * NUM_ROWS + i < pokemonList.size()) {
                 String pokemonName = pokemonList.get(page * NUM_ROWS + i);
                 JPanel row = new JPanel();
@@ -66,18 +81,23 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                             public void actionPerformed(ActionEvent evt) {
                                 if (evt.getSource().equals(label)) {
                                     setChosenPokemon(pokemonName);
+                                    chooseFavPokemonViewModel.getState().setFav_pokemon(pokemonName);
+                                    chosenLabel.setText("Selected Pokemon: " + pokemonName);
                                 }
                             }
                         }
                 );
 
                 row.add(label);
-                JLabel pokeImage = new JLabel("");
+                row.add(new JLabel(" "));
+                JLabel pokeImage = new JLabel("      ");
                 getPokeImage(pokeImage, pokemonName);
                 row.add(pokeImage);
-                rows.add(row);
+                listDisplay.add(row);
             }
         }
+
+        rowHelper(rows);
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
@@ -88,7 +108,10 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if (evt.getSource().equals(previousPage)) {
-                            if (page != 0) { page -= 1; }
+                            if (page != 0) {
+                                page -= 1;
+                                rowHelper(rows);
+                            }
                         }
                     }
                 }
@@ -98,7 +121,10 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if (evt.getSource().equals(nextPage)) {
-                            if ((1 + page) * NUM_ROWS <  pokemonList.size()) { page += 1; }
+                            if ((1 + page) * NUM_ROWS < pokemonList.size()) {
+                                page += 1;
+                                rowHelper(rows);
+                            }
                         }
                     }
                 }
@@ -120,8 +146,25 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if (evt.getSource().equals(save)) {
-                            //TODO: execute use case
-                            viewManagerModel.setState("Edit Profile");
+                            final ChooseFavPokemonState currentState = chooseFavPokemonViewModel.getState();
+
+                            if (currentState.getFav_pokemon().equals("None")) {
+                                currentState.setFav_pokemon(null);
+                            }
+
+                            chooseFavPokemonController.execute(
+                                    currentState.getUsername(),
+                                    currentState.getPassword(),
+                                    currentState.getScore(),
+                                    currentState.getBio(),
+                                    currentState.getFav_pokemon()
+                            );
+//                            if (currentState.getProfileError() != null) {
+//                                errorLabel.setText(currentState.getProfileError());
+//                            } else {
+//                                errorLabel.setText(" ");
+//                            }
+                            viewManagerModel.setState("dashboard");
                             viewManagerModel.firePropertyChange();
                         }
                     }
@@ -134,6 +177,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         buttons.add(save);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.add(chosenLabel);
         this.add(rows);
         this.add(buttons);
     }
@@ -148,6 +192,17 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         //final EditProfileState state = (EditProfileState) evt.getNewValue();
         //setFields(state);
         //TODO: wtv this is
+    }
+
+    public void rowHelper(JPanel rows) {
+        rows.removeAll();
+        for (int i = 0; i < NUM_ROWS; i++) {
+            if (page * NUM_ROWS + i < pokemonList.size()) {
+                rows.add(listDisplay.get(NUM_ROWS * page + i));
+            }
+        }
+        rows.revalidate();
+        rows.repaint();
     }
 
     public ArrayList<String> getPokemonList() {
@@ -197,5 +252,14 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
     public void reset() {
         this.page = 0;
         this.chosenPokemon = "None";
+    }
+
+
+    public String getViewName() {
+        return viewName;
+    }
+
+    public void setChooseFavPokemonController(ChooseFavPokemonController chooseFavPokemonController) {
+        this.chooseFavPokemonController = chooseFavPokemonController;
     }
 }

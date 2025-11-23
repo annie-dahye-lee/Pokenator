@@ -15,9 +15,7 @@ import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.customization.settings.*;
-import use_case.edit_profile.EditProfileInputBoundary;
-import use_case.edit_profile.EditProfileInteractor;
-import use_case.edit_profile.EditProfileOutputBoundary;
+import use_case.edit_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -59,6 +57,8 @@ public class AppBuilder {
     private SettingsView settingsView;
     private EditProfileViewModel editProfileViewModel;
     private EditProfileView editProfileView;
+    private ChooseFavPokemonViewModel chooseFavPokemonViewModel;
+    private ChooseFavPokemonView chooseFavPokemonView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -116,6 +116,15 @@ public class AppBuilder {
                                               userDataAccessObject, new PokeApiGateway());
 
         cardPanel.add(editProfileView, editProfileView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addChooseFavPokemonView() {
+        chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
+        chooseFavPokemonView = new ChooseFavPokemonView(chooseFavPokemonViewModel, viewManagerModel, gameDashboard,
+                userDataAccessObject, new PokeApiGateway());
+
+        cardPanel.add(chooseFavPokemonView, chooseFavPokemonView.getViewName());
         return this;
     }
 
@@ -222,6 +231,20 @@ public class AppBuilder {
         EditProfileController controller = new EditProfileController(interactor);
 
         editProfileView.setEditProfileController(controller);
+        return this;
+    }
+
+    public AppBuilder addChooseFavPokemonUseCase() {
+
+        ChooseFavPokemonOutputBoundary presenter =
+                new ChooseFavPokemonPresenter(chooseFavPokemonViewModel, viewManagerModel);
+
+        ChooseFavPokemonInputBoundary interactor =
+                new ChooseFavPokemonInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
+
+        ChooseFavPokemonController controller = new ChooseFavPokemonController(interactor);
+
+        chooseFavPokemonView.setChooseFavPokemonController(controller);
         return this;
     }
 
