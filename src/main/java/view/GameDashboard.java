@@ -106,19 +106,19 @@ public class GameDashboard extends JPanel {
         });
         leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
 
-        //TODO: change this back later
-        //profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
+        profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
 
-        profileBtn.addActionListener(e -> {
-            if (currentUser == null) {
-                System.out.println("User is not logged in");
-            } else {
-                editProfileView.setFields(currentUser);
-                chooseFavPokemonView.setFields(currentUser);
-                viewManagerModel.setState("Edit Profile");
-                viewManagerModel.firePropertyChange();
-            }
-        });
+        //TODO: link to profile page
+//        profileBtn.addActionListener(e -> {
+//            if (currentUser == null) {
+//                System.out.println("User is not logged in");
+//            } else {
+//                editProfileView.setFields(currentUser);
+//                chooseFavPokemonView.setFields(currentUser);
+//                viewManagerModel.setState("Edit Profile");
+//                viewManagerModel.firePropertyChange();
+//            }
+//        });
 
         settingsBtn.addActionListener(e -> {
             viewManagerModel.setState("settings");

@@ -59,7 +59,7 @@ public class EditProfileView extends JPanel implements ActionListener, PropertyC
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         this.gameDashboard = gameDashboard;
-        gameDashboard.setEPV(this); //TODO: this is probably illegal fml
+        gameDashboard.setEPV(this); //TODO: see if this is allowed under CA
 
         // Box for inputting new bio; saves as user types
         bioInputField = new JTextArea(5, 15);

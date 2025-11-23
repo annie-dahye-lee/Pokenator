@@ -196,7 +196,6 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
     public void propertyChange(PropertyChangeEvent evt) {
         //final EditProfileState state = (EditProfileState) evt.getNewValue();
         //setFields(state);
-        //TODO: wtv this is
     }
 
     public void rowHelper(JPanel rows) {

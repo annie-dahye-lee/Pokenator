@@ -36,8 +36,6 @@ public class ChooseFavPokemonState {
 
     public void setPassword(String password) {}
 
-    //TODO: see if i need this later
-
     public void setScore(int score) { this.score = score; }
 
     public int getScore() { return score; }

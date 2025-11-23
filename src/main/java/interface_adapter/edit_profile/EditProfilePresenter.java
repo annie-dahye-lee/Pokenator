@@ -33,10 +33,4 @@ public class EditProfilePresenter implements EditProfileOutputBoundary {
         // editProfileViewModel.firePropertyChange("profile");
         // idk what this is
     }
-
-    //TODO: idek what this is for
-    public void updateUserLogin(User user) {
-        editProfileViewModel.getState().setBio(user.getBio());
-        viewManagerModel.firePropertyChange();
-    }
 }
