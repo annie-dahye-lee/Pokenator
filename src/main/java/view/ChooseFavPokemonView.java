@@ -6,6 +6,8 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonState;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 /**
@@ -207,27 +210,45 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         rows.repaint();
     }
 
-    public ArrayList<String> getPokemonList() {
+    //TODO: read and write adjustments for CA
+
+    public ArrayList<String> getPokemonList1() {
         ArrayList<String> pokemonList = new ArrayList<>();
 
+        //just for testing out
         pokemonList.add("None");
-        pokemonList.add("pikachu");
-        pokemonList.add("charizard");
-        pokemonList.add("greninja");
-        pokemonList.add("snorlax");
-        pokemonList.add("mewtwo");
-        pokemonList.add("gengar");
-        pokemonList.add("lucario");
-        pokemonList.add("gardevoir");
-        pokemonList.add("lugia");
-        pokemonList.add("bulbasaur");
-        pokemonList.add("squirtle");
-        pokemonList.add("rowlet");
-        pokemonList.add("togekiss");
-        pokemonList.add("metagross");
-        pokemonList.add("darkrai");
+        pokemonList.add("Pikachu");
+        pokemonList.add("Charizard");
+        pokemonList.add("Greninja");
+        pokemonList.add("Snorlax");
+        pokemonList.add("Mewtwo");
+        pokemonList.add("Gengar");
+        pokemonList.add("Lucario");
+        pokemonList.add("Gardevoir");
+        pokemonList.add("Lugia");
+        pokemonList.add("Bulbasaur");
+        pokemonList.add("Squirtle");
+        pokemonList.add("Rowlet");
+        pokemonList.add("Togekiss");
+        pokemonList.add("Metagross");
+        pokemonList.add("Darkrai");
 
         return pokemonList;
+    }
+
+    public ArrayList<String> getPokemonList() {
+        ArrayList<String> pokemonList = new ArrayList<>();
+        pokemonList.add("None");
+        try {
+            File jsonFile = new File("gen1Pokemon.json");
+            JSONArray json = new JSONArray(new String(Files.readAllBytes(jsonFile.toPath())));
+            for (int i = 0; i < json.length(); i++) {
+                String name = json.getJSONObject(i).getString("name");
+                name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+                pokemonList.add(name);
+            }
+        } catch (Exception e) {}
+        return  pokemonList;
     }
 
     public void getPokeImage(JLabel pokeImage, String pokemonName) {
