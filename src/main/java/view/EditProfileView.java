@@ -3,7 +3,9 @@ package view;
 import data_access.FileUserDataAccessObject;
 import data_access.PokeApiGateway;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.*;
+import interface_adapter.edit_profile.EditProfileController;
+import interface_adapter.edit_profile.EditProfileState;
+import interface_adapter.edit_profile.EditProfileViewModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

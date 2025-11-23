@@ -1,7 +1,6 @@
 package view;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.EditProfileState;
 
 import javax.swing.*;
 import java.awt.*;

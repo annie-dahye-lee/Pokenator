@@ -1,4 +1,4 @@
-package use_case.edit_profile;
+package use_case.choose_fav_pokemon;
 
 /**
  * The input data for the Choose Favourite Pokemon Use Case.

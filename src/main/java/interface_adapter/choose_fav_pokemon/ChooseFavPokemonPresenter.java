@@ -1,9 +1,9 @@
-package interface_adapter.logged_in;
+package interface_adapter.choose_fav_pokemon;
 
 import entity.User;
 import interface_adapter.ViewManagerModel;
-import use_case.edit_profile.ChooseFavPokemonOutputBoundary;
-import use_case.edit_profile.ChooseFavPokemonOutputData;
+import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
+import use_case.choose_fav_pokemon.ChooseFavPokemonOutputData;
 
 public class ChooseFavPokemonPresenter implements ChooseFavPokemonOutputBoundary {
     private final ChooseFavPokemonViewModel chooseFavPokemonViewModel;

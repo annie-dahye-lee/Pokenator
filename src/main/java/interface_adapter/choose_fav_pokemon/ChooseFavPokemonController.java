@@ -1,8 +1,7 @@
-package interface_adapter.logged_in;
+package interface_adapter.choose_fav_pokemon;
 
-import use_case.edit_profile.ChooseFavPokemonInputBoundary;
-import use_case.edit_profile.ChooseFavPokemonInputData;
-import use_case.edit_profile.EditProfileInputData;
+import use_case.choose_fav_pokemon.ChooseFavPokemonInputBoundary;
+import use_case.choose_fav_pokemon.ChooseFavPokemonInputData;
 
 public class ChooseFavPokemonController {
     private final ChooseFavPokemonInputBoundary chooseFavPokemonInteractor;

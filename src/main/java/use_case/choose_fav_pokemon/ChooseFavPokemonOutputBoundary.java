@@ -1,4 +1,4 @@
-package use_case.edit_profile;
+package use_case.choose_fav_pokemon;
 
 public interface ChooseFavPokemonOutputBoundary {
     /**

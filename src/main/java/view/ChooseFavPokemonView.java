@@ -3,7 +3,9 @@ package view;
 import data_access.FileUserDataAccessObject;
 import data_access.PokeApiGateway;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.*;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonState;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package use_case.edit_profile;
+package use_case.choose_fav_pokemon;
 
 import data_access.FileUserDataAccessObject;
 import entity.User;

@@ -1,8 +1,7 @@
-package interface_adapter.logged_in;
+package interface_adapter.edit_profile;
 
 import entity.User;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.ViewModel;
 import use_case.edit_profile.EditProfileOutputBoundary;
 import use_case.edit_profile.EditProfileOutputData;
 
