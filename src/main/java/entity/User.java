@@ -9,12 +9,13 @@ public class User {
     private String password;
 
     private int score;
-    private  String bio;
+    private String bio;
     private String fav_pokemon; // NAME of the pokemon
 
     /**
      * Creates a new user with the given non-empty name and non-empty password.
-     * @param name the username
+     * 
+     * @param name     the username
      * @param password the password
      * @throws IllegalArgumentException if the password or name are empty
      */
@@ -58,10 +59,16 @@ public class User {
         return password;
     }
 
-    public int getScore() { return score; }
+    public int getScore() {
+        return score;
+    }
 
-    public String getBio() { return bio; }
+    public String getBio() {
+        return bio;
+    }
 
-    public String getFavPokemon() { return fav_pokemon; }
+    public String getFavPokemon() {
+        return fav_pokemon;
+    }
 
 }
