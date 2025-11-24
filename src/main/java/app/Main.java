@@ -15,6 +15,7 @@ public class Main {
                 .addSettingsView()
                 .addEditProfileView()
                 .addChooseFavPokemonView()
+                .addLeaderboardView()
 
                 // use cases
                 .addSignupUseCase()
@@ -26,6 +27,7 @@ public class Main {
                 .addResetSettingsUseCase()
                 .addEditProfileUseCase()
                 .addChooseFavPokemonUseCase()
+                .addLeaderboardUseCase()
                 .build();
 
 

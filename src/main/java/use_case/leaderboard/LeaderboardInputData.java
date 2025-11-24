@@ -2,10 +2,10 @@ package use_case.leaderboard;
 
 public class LeaderboardInputData {
 
-    private final boolean fired; // If the event for opening the leaderboard page was activated (e.g. button click).
+    private final int newPage;
 
-    public LeaderboardInputData(boolean fired) { this.fired = fired; }
+    public LeaderboardInputData(int newPage) { this.newPage = newPage; }
 
-    boolean getFired() { return fired; }
+    int getNewPage() { return newPage; }
 
 }

@@ -1,7 +1,7 @@
 package interface_adapter.settings;
 
 public class SettingsState {
-    private String theme = "Light";  // or "Dark"
+    private String theme = "light";  // or "dark"
     private String errorMessage = null;
 
     public SettingsState() {}

@@ -1,11 +1,15 @@
 package view;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class GameDashboard extends JPanel {
+public class GameDashboard extends JPanel implements ThemedView {
 
     private final ViewManagerModel viewManagerModel;
     private String currentUser = null; // null = not logged in
@@ -15,11 +19,15 @@ public class GameDashboard extends JPanel {
 
     private EditProfileView editProfileView = null;
     private ChooseFavPokemonView chooseFavPokemonView = null;
+    public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
 
-    public GameDashboard(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 255));
+
+        // ===== COLOUR THEME CHANGE =====
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         // ===== HEADER =====
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -106,6 +114,10 @@ public class GameDashboard extends JPanel {
         });
         leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
 
+        leaderboardBtn.addActionListener(e -> {
+            viewManagerModel.setState("leaderboard");
+            viewManagerModel.firePropertyChange();
+        });
         profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
 
         //TODO: link to profile page
@@ -218,6 +230,10 @@ public class GameDashboard extends JPanel {
 
     private void showMessage(String msg) {
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
     }
 
     public String getViewName() {

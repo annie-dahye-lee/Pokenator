@@ -17,6 +17,7 @@ import interface_adapter.settings.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.themes.ThemeManager;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
@@ -39,6 +40,9 @@ import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
+// Leaderboard
+import interface_adapter.leaderboard.*;
+import use_case.leaderboard.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,27 +63,36 @@ public class AppBuilder {
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
+    private LoginView loginView;
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
-    private LoginView loginView;
     private SettingsViewModel settingsViewModel;
     private SettingsView settingsView;
     private EditProfileViewModel editProfileViewModel;
     private EditProfileView editProfileView;
     private ChooseFavPokemonViewModel chooseFavPokemonViewModel;
     private ChooseFavPokemonView chooseFavPokemonView;
+    private AkinatorViewModel akinatorViewModel;
+    private AkinatorView akinatorView;
+    private LeaderboardViewModel leaderboardViewModel;
+    private LeaderboardView leaderboardView;
+    private final ThemeManager themeManager = new ThemeManager();
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
 
+
     // ========== Add Views ==========
-    private AkinatorViewModel akinatorViewModel;
-    private AkinatorView akinatorView;
 
     public AppBuilder addGameDashboard() {
-        gameDashboard = new GameDashboard(viewManagerModel); // fixed: assign to field
+        gameDashboard = new GameDashboard(viewManagerModel, themeManager); // fixed: assign to field
         cardPanel.add(gameDashboard, gameDashboard.getViewName());
+
+        // To change themes
+        themeManager.registerView(gameDashboard);
+        cardPanel.add(gameDashboard, gameDashboard.getViewName());
+
         return this;
     }
 
@@ -92,7 +105,7 @@ public class AppBuilder {
 
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
-        loginView = new LoginView(loginViewModel, viewManagerModel);
+        loginView = new LoginView(loginViewModel);
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
@@ -106,16 +119,25 @@ public class AppBuilder {
 
     public AppBuilder addAkinatorView() {
         akinatorViewModel = new AkinatorViewModel();
-        akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel);
+        akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel, themeManager);
         cardPanel.add(akinatorView, akinatorView.getViewName());
+        themeManager.registerView(akinatorView);
+
         return this;
     }
 
     public AppBuilder addSettingsView() {
         settingsViewModel = new SettingsViewModel();
-        settingsView = new SettingsView(settingsViewModel, viewManagerModel);
-
+        settingsView = new SettingsView(settingsViewModel, themeManager);
         cardPanel.add(settingsView, settingsView.getViewName());
+        themeManager.registerView(settingsView);
+        return this;
+    }
+
+    public AppBuilder addLeaderboardView() {
+        leaderboardViewModel = new LeaderboardViewModel();
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
+        cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
 
@@ -187,7 +209,7 @@ public class AppBuilder {
     public AppBuilder addResetSettingsUseCase() {
 
         ResetSettingsOutputBoundary presenter =
-                new ResetSettingsPresenter(settingsViewModel);
+                new ResetSettingsPresenter(settingsViewModel, themeManager);
 
         ResetSettingsInputBoundary interactor =
                 new ResetSettingsInteractor(presenter);
@@ -217,7 +239,7 @@ public class AppBuilder {
     public AppBuilder addSaveSettingsUseCase() {
 
         SaveSettingsOutputBoundary presenter =
-                new SaveSettingsPresenter(settingsViewModel);
+                new SaveSettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
 
         SaveSettingsInputBoundary interactor =
                 new SaveSettingsInteractor(presenter);
@@ -254,6 +276,22 @@ public class AppBuilder {
         ChooseFavPokemonController controller = new ChooseFavPokemonController(interactor);
 
         chooseFavPokemonView.setChooseFavPokemonController(controller);
+    public AppBuilder addLeaderboardUseCase() {
+
+        LeaderboardOutputBoundary presenter =
+                new LeaderboardPresenter(leaderboardViewModel);
+
+        LeaderboardInputBoundary interactor =
+                new LeaderboardInteractor(userDataAccessObject, presenter);
+
+        LeaderboardController controller =
+                new LeaderboardController(interactor);
+
+        leaderboardView.setLeaderboardController(controller);
+
+        // Preemptively set up page 1.
+        controller.changePage(1);
+
         return this;
     }
 
@@ -274,4 +312,5 @@ public class AppBuilder {
 
         return application;
     }
+
 }
