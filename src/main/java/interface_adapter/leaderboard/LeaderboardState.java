@@ -1,11 +1,21 @@
 package interface_adapter.leaderboard;
 
+import java.util.ArrayList;
+
 public class LeaderboardState {
 
-    private int page = 1;
+    private ArrayList<Object[]> userRankPairs;
+    private int page;
+
+    public LeaderboardState() {
+        userRankPairs = null;
+        this.page = 1;
+    }
+
+    public ArrayList<Object[]> getUserRankPairs() { return userRankPairs; }
+    public void setUserRankPairs(ArrayList<Object[]> userRankPairs) { this.userRankPairs = userRankPairs; }
 
     public int getPage() { return page; }
-
     public void setPage(int page) { this.page = page; }
 
 }

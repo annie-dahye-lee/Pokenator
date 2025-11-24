@@ -13,6 +13,7 @@ public class Main {
                 .addLoggedInView()
                 .addAkinatorView()
                 .addSettingsView()
+                .addLeaderboardView()
 
                 // use cases
                 .addSignupUseCase()
@@ -22,6 +23,7 @@ public class Main {
                 .addAccessSettingsUseCase()
                 .addSaveSettingsUseCase()
                 .addResetSettingsUseCase()
+                .addLeaderboardUseCase()
                 .build();
 
 
