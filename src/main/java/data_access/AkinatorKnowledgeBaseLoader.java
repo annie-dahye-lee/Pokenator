@@ -119,6 +119,9 @@ public class AkinatorKnowledgeBaseLoader {
         if (hasType(types, "water")) {
             traits.add(PokemonTrait.AQUATIC);
         }
+        if (hasType(types, "psychic")) {
+            traits.add(PokemonTrait.PSYCHIC_TYPE);
+        }
         if (hasType(types, "ghost") || hasType(types, "dark")) {
             traits.add(PokemonTrait.SPOOKY);
         }
