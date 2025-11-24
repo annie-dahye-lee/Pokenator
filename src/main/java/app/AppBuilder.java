@@ -9,12 +9,11 @@ import interface_adapter.logged_in.LoggedInViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
-import interface_adapter.logout.LogoutController;
-import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.settings.*;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.themes.ThemeManager;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
@@ -22,9 +21,6 @@ import use_case.customization.settings.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
-import use_case.logout.LogoutInputBoundary;
-import use_case.logout.LogoutInteractor;
-import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -68,6 +64,7 @@ public class AppBuilder {
     private AkinatorView akinatorView;
     private LeaderboardViewModel leaderboardViewModel;
     private LeaderboardView leaderboardView;
+    private final ThemeManager themeManager = new ThemeManager();
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -77,8 +74,13 @@ public class AppBuilder {
     // ========== Add Views ==========
 
     public AppBuilder addGameDashboard() {
-        gameDashboard = new GameDashboard(viewManagerModel); // fixed: assign to field
+        gameDashboard = new GameDashboard(viewManagerModel, themeManager); // fixed: assign to field
         cardPanel.add(gameDashboard, gameDashboard.getViewName());
+
+        // To change themes
+        themeManager.registerView(gameDashboard);
+        cardPanel.add(gameDashboard, gameDashboard.getViewName());
+
         return this;
     }
 
@@ -105,16 +107,18 @@ public class AppBuilder {
 
     public AppBuilder addAkinatorView() {
         akinatorViewModel = new AkinatorViewModel();
-        akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel);
+        akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel, themeManager);
         cardPanel.add(akinatorView, akinatorView.getViewName());
+        themeManager.registerView(akinatorView);
+
         return this;
     }
 
     public AppBuilder addSettingsView() {
         settingsViewModel = new SettingsViewModel();
-        settingsView = new SettingsView(settingsViewModel, viewManagerModel);
-
+        settingsView = new SettingsView(settingsViewModel, themeManager);
         cardPanel.add(settingsView, settingsView.getViewName());
+        themeManager.registerView(settingsView);
         return this;
     }
 
@@ -175,7 +179,7 @@ public class AppBuilder {
     public AppBuilder addResetSettingsUseCase() {
 
         ResetSettingsOutputBoundary presenter =
-                new ResetSettingsPresenter(settingsViewModel);
+                new ResetSettingsPresenter(settingsViewModel, themeManager);
 
         ResetSettingsInputBoundary interactor =
                 new ResetSettingsInteractor(presenter);
@@ -205,7 +209,7 @@ public class AppBuilder {
     public AppBuilder addSaveSettingsUseCase() {
 
         SaveSettingsOutputBoundary presenter =
-                new SaveSettingsPresenter(settingsViewModel);
+                new SaveSettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
 
         SaveSettingsInputBoundary interactor =
                 new SaveSettingsInteractor(presenter);
@@ -253,4 +257,5 @@ public class AppBuilder {
 
         return application;
     }
+
 }

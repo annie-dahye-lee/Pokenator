@@ -5,6 +5,10 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.akinator.AkinatorController;
 import interface_adapter.akinator.AkinatorState;
 import interface_adapter.akinator.AkinatorViewModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 import use_case.akinator.AkinatorOutputData;
 
 import javax.imageio.ImageIO;
@@ -15,7 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URL;
 
-public class AkinatorView extends JPanel implements PropertyChangeListener {
+public class AkinatorView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private final String viewName = "akinator";
     private final AkinatorViewModel viewModel;
@@ -37,10 +41,14 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
     private final JButton guessNo = new JButton("Nope");
     private int lastRevealPromptId = -1;
 
-    public AkinatorView(AkinatorViewModel viewModel, ViewManagerModel viewManagerModel) {
+    public AkinatorView(AkinatorViewModel viewModel, ViewManagerModel viewManagerModel, ThemeManager themeManager) {
         this.viewModel = viewModel;
         this.viewManagerModel = viewManagerModel;
         this.viewModel.addPropertyChangeListener(this);
+
+        // Colour Theme Changer
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(245, 245, 255));
@@ -187,5 +195,9 @@ public class AkinatorView extends JPanel implements PropertyChangeListener {
         if (controller != null) {
             task.accept(controller);
         }
+    }
+
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
     }
 }

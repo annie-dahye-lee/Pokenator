@@ -8,17 +8,10 @@ public class SaveSettingsInteractor implements SaveSettingsInputBoundary {
     }
 
     @Override
-    public void save(SaveSettingsInputData inputData) {
+    public void execute(SaveSettingsInputData inputData) {
 
         String theme = inputData.getTheme();
-
-        // Simple validation
-        if (!theme.equals("Light") && !theme.equals("Dark")) {
-            presenter.prepareFailView("Invalid theme selection.");
-            return;
-        }
-
-        // If valid → tell presenter to update view model
+        // removed validation because it was hardcoded earlier
         presenter.prepareSuccessView(theme);
     }
 }
