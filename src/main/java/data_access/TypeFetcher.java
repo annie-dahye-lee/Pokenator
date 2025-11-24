@@ -13,14 +13,14 @@ import java.util.*;
 public class TypeFetcher {
     private final OkHttpClient client = new OkHttpClient();
 
-    public HashMap<String, ArrayList<String>> getTypeMult(String type) throws Exception{
-        final OkHttpClient client = new OkHttpClient().newBuilder().build();
-        String request_url = "https://pokeapi.co/api/v2/type/" + type.toLowerCase() + "/";
-        final Request request = new Request.Builder().url(request_url).build();
-
-        try {
-            final Response respoonse = client.new
-        }
-    }
+//    public HashMap<String, ArrayList<String>> getTypeMult(String type) throws Exception{
+//        final OkHttpClient client = new OkHttpClient().newBuilder().build();
+//        String request_url = "https://pokeapi.co/api/v2/type/" + type.toLowerCase() + "/";
+//        final Request request = new Request.Builder().url(request_url).build();
+//
+//        try {
+//            final Response respoonse = client.new
+//        }
+//    }
 
 }
