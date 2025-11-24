@@ -46,7 +46,7 @@ public class User {
         this.name = name;
         this.password = password;
         this.score = score;
-        this.bio =bio;
+        this.bio = bio;
         this.fav_pokemon = fav_pokemon;
     }
 

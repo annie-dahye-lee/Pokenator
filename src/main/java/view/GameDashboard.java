@@ -109,7 +109,10 @@ public class GameDashboard extends JPanel implements ThemedView {
                 viewManagerModel.firePropertyChange();
             }
         });
-        leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
+        leaderboardBtn.addActionListener(e -> {
+            viewManagerModel.setState("leaderboard");
+            viewManagerModel.firePropertyChange();
+        });
         profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
         settingsBtn.addActionListener(e -> {
             viewManagerModel.setState("settings");
