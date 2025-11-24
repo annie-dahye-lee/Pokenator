@@ -17,7 +17,10 @@ public class GameDashboard extends JPanel implements ThemedView {
     private final JPanel headerButtons;
     private final JLabel userLabel;
 
+    private EditProfileView editProfileView = null;
+    private ChooseFavPokemonView chooseFavPokemonView = null;
     public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
+
         this.viewManagerModel = viewManagerModel;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 255));
@@ -109,11 +112,26 @@ public class GameDashboard extends JPanel implements ThemedView {
                 viewManagerModel.firePropertyChange();
             }
         });
+        leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
+
         leaderboardBtn.addActionListener(e -> {
             viewManagerModel.setState("leaderboard");
             viewManagerModel.firePropertyChange();
         });
         profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
+
+        //TODO: link to profile page
+//        profileBtn.addActionListener(e -> {
+//            if (currentUser == null) {
+//                System.out.println("User is not logged in");
+//            } else {
+//                editProfileView.setFields(currentUser);
+//                chooseFavPokemonView.setFields(currentUser);
+//                viewManagerModel.setState("Edit Profile");
+//                viewManagerModel.firePropertyChange();
+//            }
+//        });
+
         settingsBtn.addActionListener(e -> {
             viewManagerModel.setState("settings");
             viewManagerModel.firePropertyChange();
@@ -126,6 +144,10 @@ public class GameDashboard extends JPanel implements ThemedView {
     public void setUser(String username) {
         this.currentUser = username;
         refreshHeader();
+    }
+
+    public String getCurrentUser() {
+        return this.currentUser;
     }
 
     public void logout() {
@@ -216,5 +238,13 @@ public class GameDashboard extends JPanel implements ThemedView {
 
     public String getViewName() {
         return "dashboard";
+    }
+
+    public void setEPV(EditProfileView EPV) {
+        this.editProfileView = EPV;
+    }
+
+    public void setCFPV(ChooseFavPokemonView CFPV) {
+        this.chooseFavPokemonView = CFPV;
     }
 }

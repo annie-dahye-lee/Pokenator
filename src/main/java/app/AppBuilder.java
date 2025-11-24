@@ -3,9 +3,13 @@ package app;
 import data_access.FileUserDataAccessObject;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.ChangePasswordController;
-import interface_adapter.logged_in.ChangePasswordPresenter;
-import interface_adapter.logged_in.LoggedInViewModel;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonPresenter;
+import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
+import interface_adapter.edit_profile.EditProfileController;
+import interface_adapter.edit_profile.EditProfilePresenter;
+import interface_adapter.edit_profile.EditProfileViewModel;
+import interface_adapter.logged_in.*;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -17,7 +21,11 @@ import interface_adapter.themes.ThemeManager;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.choose_fav_pokemon.ChooseFavPokemonInputBoundary;
+import use_case.choose_fav_pokemon.ChooseFavPokemonInteractor;
+import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
 import use_case.customization.settings.*;
+import use_case.edit_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -60,6 +68,10 @@ public class AppBuilder {
     private LoggedInView loggedInView;
     private SettingsViewModel settingsViewModel;
     private SettingsView settingsView;
+    private EditProfileViewModel editProfileViewModel;
+    private EditProfileView editProfileView;
+    private ChooseFavPokemonViewModel chooseFavPokemonViewModel;
+    private ChooseFavPokemonView chooseFavPokemonView;
     private AkinatorViewModel akinatorViewModel;
     private AkinatorView akinatorView;
     private LeaderboardViewModel leaderboardViewModel;
@@ -126,6 +138,24 @@ public class AppBuilder {
         leaderboardViewModel = new LeaderboardViewModel();
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addEditProfileView() {
+        editProfileViewModel = new EditProfileViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
+        editProfileView = new EditProfileView(editProfileViewModel, viewManagerModel, gameDashboard,
+                                              userDataAccessObject, new PokeApiGateway());
+
+        cardPanel.add(editProfileView, editProfileView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addChooseFavPokemonView() {
+        chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
+        chooseFavPokemonView = new ChooseFavPokemonView(chooseFavPokemonViewModel, viewManagerModel, gameDashboard,
+                userDataAccessObject, new PokeApiGateway());
+
+        cardPanel.add(chooseFavPokemonView, chooseFavPokemonView.getViewName());
         return this;
     }
 
@@ -221,6 +251,33 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addEditProfileUseCase() {
+
+        EditProfileOutputBoundary presenter =
+                new EditProfilePresenter(editProfileViewModel, viewManagerModel);
+
+        EditProfileInputBoundary interactor =
+                new EditProfileInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
+
+        EditProfileController controller = new EditProfileController(interactor);
+
+        editProfileView.setEditProfileController(controller);
+        return this;
+    }
+
+    public AppBuilder addChooseFavPokemonUseCase() {
+
+        ChooseFavPokemonOutputBoundary presenter =
+                new ChooseFavPokemonPresenter(chooseFavPokemonViewModel, viewManagerModel);
+
+        ChooseFavPokemonInputBoundary interactor =
+                new ChooseFavPokemonInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
+
+        ChooseFavPokemonController controller = new ChooseFavPokemonController(interactor);
+
+        chooseFavPokemonView.setChooseFavPokemonController(controller);
+        return this;
+    }
     public AppBuilder addLeaderboardUseCase() {
 
         LeaderboardOutputBoundary presenter =

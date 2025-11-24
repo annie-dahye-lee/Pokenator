@@ -13,6 +13,8 @@ public class Main {
                 .addLoggedInView()
                 .addAkinatorView()
                 .addSettingsView()
+                .addEditProfileView()
+                .addChooseFavPokemonView()
                 .addLeaderboardView()
 
                 // use cases
@@ -23,6 +25,8 @@ public class Main {
                 .addAccessSettingsUseCase()
                 .addSaveSettingsUseCase()
                 .addResetSettingsUseCase()
+                .addEditProfileUseCase()
+                .addChooseFavPokemonUseCase()
                 .addLeaderboardUseCase()
                 .build();
 

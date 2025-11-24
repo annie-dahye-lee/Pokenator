@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -18,7 +19,8 @@ import java.io.IOException;
 public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                                                LoginUserDataAccessInterface,
                                                ChangePasswordUserDataAccessInterface,
-                                               LogoutUserDataAccessInterface {
+                                               LogoutUserDataAccessInterface,
+                                               EditProfileUserDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
@@ -26,6 +28,9 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
+    private static final int SCORE = 0;
+    private static final String BIO = "bio";
+    private static final String FAV_POKEMON = "fav_pokemon";
     private final UserFactory userFactory;
 
     private String currentUsername;
@@ -143,6 +148,41 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                                     .method("PUT", body)
                                     .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                                     .build();
+        try {
+            final Response response = client.newCall(request).execute();
+
+            final JSONObject responseBody = new JSONObject(response.body().string());
+
+            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
+                // success!
+            }
+            else {
+                throw new RuntimeException(responseBody.getString(MESSAGE));
+            }
+        }
+        catch (IOException | JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void editProfile(User user) {
+        final OkHttpClient client = new OkHttpClient().newBuilder()
+                                        .build();
+
+        // POST METHOD
+        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
+        final JSONObject requestBody = new JSONObject();
+        requestBody.put(USERNAME, user.getName());
+        requestBody.put(PASSWORD, user.getPassword());
+        requestBody.put(String.valueOf(SCORE), String.valueOf(user.getScore()));
+        requestBody.put(BIO, user.getBio());
+        requestBody.put(FAV_POKEMON, user.getFavPokemon());
+        final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
+        final Request request = new Request.Builder()
+                .url("http://vm003.teach.cs.toronto.edu:20112/user")
+                .method("PUT", body)
+                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
+                .build();
         try {
             final Response response = client.newCall(request).execute();
 
