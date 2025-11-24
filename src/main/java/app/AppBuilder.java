@@ -276,6 +276,8 @@ public class AppBuilder {
         ChooseFavPokemonController controller = new ChooseFavPokemonController(interactor);
 
         chooseFavPokemonView.setChooseFavPokemonController(controller);
+        return this;
+    }
     public AppBuilder addLeaderboardUseCase() {
 
         LeaderboardOutputBoundary presenter =
