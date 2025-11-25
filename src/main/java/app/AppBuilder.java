@@ -9,6 +9,9 @@ import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
 import interface_adapter.edit_profile.EditProfileController;
 import interface_adapter.edit_profile.EditProfilePresenter;
 import interface_adapter.edit_profile.EditProfileViewModel;
+import interface_adapter.user_profile.UserProfileController;
+import interface_adapter.user_profile.UserProfilePresenter;
+import interface_adapter.user_profile.UserProfileViewModel;
 import interface_adapter.logged_in.*;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -26,6 +29,7 @@ import use_case.choose_fav_pokemon.ChooseFavPokemonInteractor;
 import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
 import use_case.customization.settings.*;
 import use_case.edit_profile.*;
+import use_case.user_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -76,6 +80,8 @@ public class AppBuilder {
     private AkinatorView akinatorView;
     private LeaderboardViewModel leaderboardViewModel;
     private LeaderboardView leaderboardView;
+    private UserProfileViewModel userProfileViewModel;
+    private UserProfileView userProfileView;
     private final ThemeManager themeManager = new ThemeManager();
 
     public AppBuilder() {
@@ -156,6 +162,16 @@ public class AppBuilder {
                 userDataAccessObject, new PokeApiGateway());
 
         cardPanel.add(chooseFavPokemonView, chooseFavPokemonView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addUserProfileView() {
+        // Initialize with a default user or null - will be updated when view is shown
+        userProfileViewModel = new UserProfileViewModel();
+        userProfileView = new UserProfileView(userProfileViewModel, viewManagerModel, gameDashboard,
+                userDataAccessObject, new PokeApiGateway());
+
+        cardPanel.add(userProfileView, userProfileView.getViewName());
         return this;
     }
 
@@ -294,6 +310,20 @@ public class AppBuilder {
         // Preemptively set up page 1.
         controller.changePage(1);
 
+        return this;
+    }
+
+    public AppBuilder addUserProfileUseCase() {
+
+        UserProfileOutputBoundary presenter =
+                new UserProfilePresenter(userProfileViewModel, viewManagerModel);
+
+        UserProfileInputBoundary interactor =
+                new UserProfileInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
+
+        UserProfileController controller = new UserProfileController(interactor);
+
+        userProfileView.setUserProfileController(controller);
         return this;
     }
 

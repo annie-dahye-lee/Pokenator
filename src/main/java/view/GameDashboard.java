@@ -117,19 +117,14 @@ public class GameDashboard extends JPanel implements ThemedView {
             viewManagerModel.setState("leaderboard");
             viewManagerModel.firePropertyChange();
         });
-        profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
-
-        //TODO: link to profile page
-//        profileBtn.addActionListener(e -> {
-//            if (currentUser == null) {
-//                System.out.println("User is not logged in");
-//            } else {
-//                editProfileView.setFields(currentUser);
-//                chooseFavPokemonView.setFields(currentUser);
-//                viewManagerModel.setState("Edit Profile");
-//                viewManagerModel.firePropertyChange();
-//            }
-//        });
+        profileBtn.addActionListener(e -> {
+            if (currentUser == null) {
+                showMessage("Please log in to view your profile.");
+            } else {
+                viewManagerModel.setState("User Profile");
+                viewManagerModel.firePropertyChange();
+            }
+        });
 
         settingsBtn.addActionListener(e -> {
             viewManagerModel.setState("settings");
