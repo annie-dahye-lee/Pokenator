@@ -1,5 +1,8 @@
-package use_case.customization.settings;
+package use_case.settings;
 
+/**
+ * Output data for reset settings.
+ */
 public class ResetSettingsOutputData {
     private final String defaultTheme;
 
@@ -7,6 +10,10 @@ public class ResetSettingsOutputData {
         this.defaultTheme = defaultTheme;
     }
 
+    /**
+     * Returns the default theme name to be restored.
+     * @return the default theme
+     */
     public String getDefaultTheme() {
         return defaultTheme;
     }

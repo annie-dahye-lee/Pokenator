@@ -1,4 +1,4 @@
-package use_case.customization.settings;
+package use_case.settings;
 import interface_adapter.settings.SettingsState;
 
 /**
@@ -7,7 +7,17 @@ import interface_adapter.settings.SettingsState;
  */
 public interface SettingsDataAccessInterface {
 
+    /**
+     * Loads the user settings.
+     *
+     * @return the SettingsState currently stored
+     */
     SettingsState loadSettings();
 
+    /**
+     * Applies the settings to the view.
+     *
+     * @param settingsState the settings data to store
+     */
     void saveSettings(SettingsState settingsState);
 }

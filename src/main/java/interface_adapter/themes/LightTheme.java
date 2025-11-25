@@ -1,9 +1,8 @@
 package interface_adapter.themes;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class LightTheme extends Theme{
-    public LightTheme() {
+public class LightTheme extends Theme { public LightTheme() {
         super("light", Color.WHITE, Color.BLACK);
     }
 }

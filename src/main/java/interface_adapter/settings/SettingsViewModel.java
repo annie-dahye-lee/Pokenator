@@ -21,5 +21,4 @@ public class SettingsViewModel extends ViewModel<SettingsState> {
         super.setState(state);
     }
 
-
 }

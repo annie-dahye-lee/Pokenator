@@ -1,7 +1,11 @@
 package interface_adapter.settings;
 
-import use_case.customization.settings.AccessSettingsInputBoundary;
+import use_case.settings.AccessSettingsInputBoundary;
 
+/**
+ * Controller responsible for navigating back to the dashboard
+ * from the settings screen.
+ */
 public class AccessSettingsController {
     private final AccessSettingsInputBoundary interactor;
 
@@ -9,6 +13,9 @@ public class AccessSettingsController {
         this.interactor = interactor;
     }
 
+    /**
+     * Executes the use case to return to the dashboard.
+     */
     public void execute() {
         interactor.execute();
     }

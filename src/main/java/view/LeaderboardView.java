@@ -3,13 +3,17 @@ package view;
 import entity.User;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.*;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
 
-public class LeaderboardView extends JPanel implements PropertyChangeListener {
+public class LeaderboardView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private static final String VIEW_NAME = "leaderboard";
 
@@ -21,10 +25,14 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
 
     public LeaderboardView(
             LeaderboardViewModel leaderboardViewModel,
-            ViewManagerModel viewManagerModel
+            ViewManagerModel viewManagerModel, ThemeManager themeManager
     ) {
         this.leaderboardViewModel = leaderboardViewModel;
         leaderboardViewModel.addPropertyChangeListener(this);
+
+        // Colour Theme Changer
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         setLayout(new BorderLayout());
 
@@ -180,5 +188,11 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener {
 
         return row;
     }
+
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
+    }
+
+
 
 }
