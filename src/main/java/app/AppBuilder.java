@@ -1,6 +1,9 @@
 package app;
 
+import data_access.AkinatorKnowledgeBaseLoader;
 import data_access.FileUserDataAccessObject;
+import data_access.PokeApiGateway;
+import entity.SimplePokemonProfile;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
@@ -21,6 +24,7 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import interface_adapter.themes.ThemeManager;
+import interface_adapter.leaderboard.*;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
@@ -36,20 +40,21 @@ import use_case.settings.*;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.*;
-import data_access.PokeApiGateway;
+import use_case.leaderboard.*;
 import interface_adapter.akinator.AkinatorController;
 import interface_adapter.akinator.AkinatorPresenter;
 import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
-// Leaderboard
-import interface_adapter.leaderboard.*;
-import use_case.leaderboard.*;
+import view.*;
+
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -216,7 +221,15 @@ public class AppBuilder {
 
     public AppBuilder addAkinatorUseCase() {
         AkinatorOutputBoundary presenter = new AkinatorPresenter(akinatorViewModel);
-        AkinatorInputBoundary interactor = new AkinatorInteractor(presenter, new PokeApiGateway());
+        List<SimplePokemonProfile> dynamicProfiles = Collections.emptyList();
+        try {
+            dynamicProfiles = new AkinatorKnowledgeBaseLoader().load(151);
+            System.out.println("Pokénator: loaded " + dynamicProfiles.size() + " Pokémon from PokéAPI.");
+        } catch (IOException e) {
+            System.err.println("Pokénator: falling back to default roster (" + e.getMessage() + ")");
+        }
+        AkinatorInputBoundary interactor =
+                new AkinatorInteractor(presenter, new PokeApiGateway(), dynamicProfiles);
         AkinatorController controller = new AkinatorController(interactor);
         akinatorView.setController(controller);
         return this;
