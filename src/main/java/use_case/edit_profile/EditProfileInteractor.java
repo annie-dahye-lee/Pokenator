@@ -13,8 +13,8 @@ public class EditProfileInteractor implements EditProfileInputBoundary {
     private GameDashboard dashboard;
 
     public EditProfileInteractor(EditProfileUserDataAccessInterface userDataAccessObject,
-                                 EditProfileOutputBoundary userPresenter,
-                                 UserFactory userFactory, GameDashboard dashboard) {
+            EditProfileOutputBoundary userPresenter,
+            UserFactory userFactory, GameDashboard dashboard) {
         this.userDataAccessObject = userDataAccessObject;
         this.userPresenter = userPresenter;
         this.userFactory = userFactory;
@@ -26,7 +26,7 @@ public class EditProfileInteractor implements EditProfileInputBoundary {
         if (editProfileInputData.getBio().length() > 500) {
             userPresenter.prepareFailView("Bio must be <= 500 characters long.");
         } else {
-            User u = ((FileUserDataAccessObject)userDataAccessObject).get(dashboard.getCurrentUser());
+            User u = ((FileUserDataAccessObject) userDataAccessObject).get(dashboard.getCurrentUser());
             final User user = userFactory.create(u.getName(),
                     u.getPassword(),
                     u.getScore(),
@@ -35,7 +35,8 @@ public class EditProfileInteractor implements EditProfileInputBoundary {
 
             userDataAccessObject.editProfile(user);
 
-            final EditProfileOutputData editProfileOutputData = new EditProfileOutputData(user.getName(), user.getBio(), user.getFavPokemon());
+            final EditProfileOutputData editProfileOutputData = new EditProfileOutputData(user.getName(), user.getBio(),
+                    user.getFavPokemon());
             userPresenter.prepareSuccessView(editProfileOutputData);
         }
     }
