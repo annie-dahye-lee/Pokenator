@@ -1,4 +1,4 @@
-package use_case.settings;
+package use_case.settings.reset;
 
 /**
  * Output data for reset settings.

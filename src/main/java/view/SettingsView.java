@@ -19,9 +19,9 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 // project imports
-import interface_adapter.settings.AccessSettingsController;
-import interface_adapter.settings.ResetSettingsController;
-import interface_adapter.settings.SaveSettingsController;
+import interface_adapter.settings.back.BackSettingsController;
+import interface_adapter.settings.reset.ResetSettingsController;
+import interface_adapter.settings.apply.ApplySettingsController;
 import interface_adapter.settings.SettingsState;
 import interface_adapter.settings.SettingsViewModel;
 import interface_adapter.themes.Theme;
@@ -41,9 +41,9 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
 
     private final SettingsViewModel settingsViewModel;
 
-    private AccessSettingsController accessController;
+    private BackSettingsController backSettingsController;
     private ResetSettingsController resetController;
-    private SaveSettingsController saveController;
+    private ApplySettingsController applySettingsController;
 
     private final JToggleButton lightModeButton;
     private final JToggleButton darkModeButton;
@@ -131,8 +131,8 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
      *
      * @param accessController controller to access another view
      */
-    public void setAccessSettingsController(AccessSettingsController accessController) {
-        this.accessController = accessController;
+    public void setAccessSettingsController(BackSettingsController accessController) {
+        this.backSettingsController = accessController;
     }
 
     /**
@@ -149,8 +149,8 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
      *
      * @param saveController the save and apply settings controller
      */
-    public void setSaveSettingsController(SaveSettingsController saveController) {
-        this.saveController = saveController;
+    public void setSaveSettingsController(ApplySettingsController saveController) {
+        this.applySettingsController = saveController;
     }
 
     @Override
@@ -168,12 +168,12 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
             settingsViewModel.setState(state);
             settingsViewModel.firePropertyChange();
 
-            if (saveController != null) saveController.execute(state);
+            if (applySettingsController != null) applySettingsController.execute(state);
 
         } else if (src == resetButton) {
             if (resetController != null) resetController.execute();
         } else if (src == backButton) {
-            if (accessController != null) accessController.execute();
+            if (backSettingsController != null) backSettingsController.execute();
         } else if (src == lightModeButton || src == darkModeButton) {
             // update selector to match toggle
             if (lightModeButton.isSelected()) themeSelector.setSelectedItem("light");

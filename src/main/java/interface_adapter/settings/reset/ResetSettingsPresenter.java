@@ -1,8 +1,10 @@
-package interface_adapter.settings;
+package interface_adapter.settings.reset;
 
+import interface_adapter.settings.SettingsState;
+import interface_adapter.settings.SettingsViewModel;
 import interface_adapter.themes.ThemeManager;
-import use_case.settings.ResetSettingsOutputBoundary;
-import use_case.settings.ResetSettingsOutputData;
+import use_case.settings.reset.ResetSettingsOutputBoundary;
+import use_case.settings.reset.ResetSettingsOutputData;
 
 
 /**

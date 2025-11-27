@@ -1,14 +1,16 @@
-package interface_adapter.settings;
+package interface_adapter.settings.apply;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.settings.SettingsState;
+import interface_adapter.settings.SettingsViewModel;
 import interface_adapter.themes.ThemeManager;
-import use_case.settings.SaveSettingsOutputBoundary;
+import use_case.settings.apply.ApplySettingsOutputBoundary;
 
 /**
  * Presenter for saving settings. Updates the settings view model and applies
  * the selected theme globally.
  */
-public class SaveSettingsPresenter implements SaveSettingsOutputBoundary {
+public class ApplySettingsPresenter implements ApplySettingsOutputBoundary {
     private final SettingsViewModel settingsViewModel;
     private final ViewManagerModel viewManagerModel;
     private final ThemeManager themeManager;
@@ -21,9 +23,9 @@ public class SaveSettingsPresenter implements SaveSettingsOutputBoundary {
      * @param themeManager the theme manager
      */
 
-    public SaveSettingsPresenter(ViewManagerModel viewManagerModel,
-                                 SettingsViewModel settingsViewModel,
-                                 ThemeManager themeManager) {
+    public ApplySettingsPresenter(ViewManagerModel viewManagerModel,
+                                  SettingsViewModel settingsViewModel,
+                                  ThemeManager themeManager) {
         this.viewManagerModel = viewManagerModel;
         this.settingsViewModel = settingsViewModel;
         this.themeManager = themeManager;

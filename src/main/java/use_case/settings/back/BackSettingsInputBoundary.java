@@ -1,6 +1,6 @@
-package use_case.settings;
+package use_case.settings.back;
 
-public interface AccessSettingsInputBoundary {
+public interface BackSettingsInputBoundary {
     /**
      * Executes the access setting use case.
      */

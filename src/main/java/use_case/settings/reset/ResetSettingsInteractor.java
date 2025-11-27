@@ -1,9 +1,10 @@
-package use_case.settings;
+package use_case.settings.reset;
 
 public class ResetSettingsInteractor implements ResetSettingsInputBoundary {
     private final ResetSettingsOutputBoundary presenter;
 
     public ResetSettingsInteractor(ResetSettingsOutputBoundary presenter) {
+
         this.presenter = presenter;
     }
 

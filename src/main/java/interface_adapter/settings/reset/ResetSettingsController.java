@@ -1,6 +1,6 @@
-package interface_adapter.settings;
+package interface_adapter.settings.reset;
 
-import use_case.settings.ResetSettingsInputBoundary;
+import use_case.settings.reset.ResetSettingsInputBoundary;
 
 /**
  * Controller for reset application settings.

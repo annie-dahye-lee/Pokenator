@@ -20,6 +20,12 @@ import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.settings.*;
+import interface_adapter.settings.apply.ApplySettingsController;
+import interface_adapter.settings.apply.ApplySettingsPresenter;
+import interface_adapter.settings.back.BackSettingsController;
+import interface_adapter.settings.back.BackSettingsPresenter;
+import interface_adapter.settings.reset.ResetSettingsController;
+import interface_adapter.settings.reset.ResetSettingsPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -36,7 +42,15 @@ import use_case.user_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
-import use_case.settings.*;
+import use_case.settings.apply.ApplySettingsInputBoundary;
+import use_case.settings.apply.ApplySettingsInteractor;
+import use_case.settings.apply.ApplySettingsOutputBoundary;
+import use_case.settings.back.BackSettingsInputBoundary;
+import use_case.settings.back.BackSettingsInteractor;
+import use_case.settings.back.BackSettingsOutputBoundary;
+import use_case.settings.reset.ResetSettingsInputBoundary;
+import use_case.settings.reset.ResetSettingsInteractor;
+import use_case.settings.reset.ResetSettingsOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -252,14 +266,14 @@ public class AppBuilder {
 
     public AppBuilder addAccessSettingsUseCase() {
 
-        AccessSettingsOutputBoundary presenter =
-                new AccessSettingsPresenter(viewManagerModel, settingsViewModel, "dashboard");
+        BackSettingsOutputBoundary presenter =
+                new BackSettingsPresenter(viewManagerModel, settingsViewModel, "dashboard");
 
-        AccessSettingsInputBoundary interactor =
-                new AccessSettingsInteractor(presenter);
+        BackSettingsInputBoundary interactor =
+                new BackSettingsInteractor(presenter);
 
-        AccessSettingsController controller =
-                new AccessSettingsController(interactor);
+        BackSettingsController controller =
+                new BackSettingsController(interactor);
 
         settingsView.setAccessSettingsController(controller);
         return this;
@@ -267,14 +281,14 @@ public class AppBuilder {
 
     public AppBuilder addSaveSettingsUseCase() {
 
-        SaveSettingsOutputBoundary presenter =
-                new SaveSettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
+        ApplySettingsOutputBoundary presenter =
+                new ApplySettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
 
-        SaveSettingsInputBoundary interactor =
-                new SaveSettingsInteractor(presenter);
+        ApplySettingsInputBoundary interactor =
+                new ApplySettingsInteractor(presenter);
 
-        SaveSettingsController controller =
-                new SaveSettingsController(interactor);
+        ApplySettingsController controller =
+                new ApplySettingsController(interactor);
 
         settingsView.setSaveSettingsController(controller);
         return this;
