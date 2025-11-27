@@ -24,11 +24,11 @@ import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInteractor;
 import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
-import use_case.customization.settings.*;
 import use_case.edit_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
+import use_case.settings.*;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -136,7 +136,7 @@ public class AppBuilder {
 
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
-        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel);
+        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, themeManager);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }

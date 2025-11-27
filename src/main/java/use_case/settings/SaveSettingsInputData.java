@@ -1,5 +1,8 @@
-package use_case.customization.settings;
+package use_case.settings;
 
+/**
+ * The DAO for the save settings use case
+ */
 public class SaveSettingsInputData {
     private final String theme;
 
@@ -7,6 +10,11 @@ public class SaveSettingsInputData {
         this.theme = theme;
     }
 
+    /**
+     * Returns the theme selected by the user.
+     *
+     * @return the name of the selected theme
+     */
     public String getTheme() {
         return theme;
     }

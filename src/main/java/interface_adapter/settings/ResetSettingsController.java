@@ -1,7 +1,10 @@
 package interface_adapter.settings;
 
-import use_case.customization.settings.ResetSettingsInputBoundary;
+import use_case.settings.ResetSettingsInputBoundary;
 
+/**
+ * Controller for reset application settings.
+ */
 public class ResetSettingsController {
     private final ResetSettingsInputBoundary resetSettingsInteractor;
 
@@ -9,6 +12,9 @@ public class ResetSettingsController {
         this.resetSettingsInteractor = resetSettingsInteractor;
     }
 
+    /**
+     * Executes the reset settings use case.
+     */
     public void execute() {
         resetSettingsInteractor.execute();
     }

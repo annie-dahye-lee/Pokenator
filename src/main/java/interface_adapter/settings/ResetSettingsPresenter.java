@@ -1,9 +1,13 @@
 package interface_adapter.settings;
 
 import interface_adapter.themes.ThemeManager;
-import use_case.customization.settings.ResetSettingsOutputBoundary;
-import use_case.customization.settings.ResetSettingsOutputData;
+import use_case.settings.ResetSettingsOutputBoundary;
+import use_case.settings.ResetSettingsOutputData;
 
+
+/**
+ * Presenter for resetting settings to default values.
+ */
 public class ResetSettingsPresenter implements ResetSettingsOutputBoundary {
     private final SettingsViewModel settingsViewModel;
     private final ThemeManager themeManager;
@@ -32,19 +36,5 @@ public class ResetSettingsPresenter implements ResetSettingsOutputBoundary {
 
         // Update global ThemeManager — it will apply theme to all registered views
         themeManager.setTheme(outputData.getDefaultTheme());
-    }
-
-    @Override
-    public void prepareFailView(String errorMessage) {
-
-        SettingsState state = settingsViewModel.getState();
-
-        // Set error message so UI can display it
-        state.setErrorMessage(errorMessage);
-
-        settingsViewModel.setState(state);
-
-        // Notify SettingsView
-        settingsViewModel.firePropertyChange();
     }
 }
