@@ -1,6 +1,5 @@
 package use_case.user_profile;
 
-import data_access.FileUserDataAccessObject;
 import entity.User;
 import entity.UserFactory;
 import view.GameDashboard;
@@ -66,10 +65,11 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
         }
 
         // Determine final username and password
+        // After validation, if newPassword is not null, it must be non-empty (otherwise we would have returned)
         String finalUsername = (newUsername != null && !newUsername.trim().isEmpty() && !newUsername.equals(currentUsername)) 
             ? newUsername 
             : currentUsername;
-        String finalPassword = (newPassword != null && !newPassword.trim().isEmpty()) 
+        String finalPassword = (newPassword != null) 
             ? newPassword 
             : u.getPassword();
 
