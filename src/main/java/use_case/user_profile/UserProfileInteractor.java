@@ -26,7 +26,7 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
     @Override
     public void execute(UserProfileInputData userProfileInputData) {
         String currentUsername = dashboard.getCurrentUser();
-        User u = ((FileUserDataAccessObject)userDataAccessObject).get(currentUsername);
+        User u = userDataAccessObject.get(currentUsername);
         
         // Validate display name
         if (userProfileInputData.getName() == null || userProfileInputData.getName().trim().isEmpty()) {
