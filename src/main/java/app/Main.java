@@ -8,11 +8,11 @@ public class Main {
         JFrame application = appBuilder
                 // views
                 .addGameDashboard()
+                .addSettingsView()
                 .addLoginView()
                 .addSignupView()
                 .addLoggedInView()
                 .addAkinatorView()
-                .addSettingsView()
                 .addEditProfileView()
                 .addChooseFavPokemonView()
                 .addLeaderboardView()
