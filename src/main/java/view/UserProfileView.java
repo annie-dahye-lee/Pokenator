@@ -39,6 +39,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JLabel bannerLabel;
     private JLabel profilePhotoLabel;
     private JTextField nameInputField;
+    private JTextField usernameInputField;
+    private JPasswordField passwordInputField;
     private JTextArea bioInputField;
     private JComboBox<String> favPokemonComboBox;
     private JLabel pokemonImageLabel;
@@ -46,6 +48,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JLabel successLabel;
     private JLabel bioCharacterCountLabel;
     private JLabel profileCompletionLabel;
+    private JLabel currentUsernameLabel;
+    private JLabel currentDisplayNameLabel;
     private JButton saveButton;
     private JButton returnToDashboardButton;
     private JButton changeBannerButton;
@@ -81,6 +85,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                     if (user != null) {
                         UserProfileState state = new UserProfileState(user);
                         userProfileViewModel.setState(state);
+                        updateDisplayNameLabel(user.getName());
                     }
                 }
             }
@@ -199,6 +204,26 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         profileInfoPanel.add(photoPanel);
         profileInfoPanel.add(Box.createVerticalStrut(20));
 
+        // User info display section (read-only)
+        JPanel userInfoDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        userInfoDisplayPanel.setBackground(new Color(54, 57, 63));
+        userInfoDisplayPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        currentUsernameLabel = new JLabel();
+        currentUsernameLabel.setForeground(new Color(185, 187, 190));
+        currentUsernameLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        currentDisplayNameLabel = new JLabel();
+        currentDisplayNameLabel.setForeground(new Color(185, 187, 190));
+        currentDisplayNameLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        userInfoDisplayPanel.add(currentUsernameLabel);
+        userInfoDisplayPanel.add(Box.createHorizontalStrut(20));
+        userInfoDisplayPanel.add(currentDisplayNameLabel);
+
+        profileInfoPanel.add(userInfoDisplayPanel);
+        profileInfoPanel.add(Box.createVerticalStrut(10));
+
         // Main content panel with bio on left and other fields on right
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
@@ -265,12 +290,68 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         bioPanel.add(Box.createVerticalStrut(3));
         bioPanel.add(bioCharacterCountLabel);
 
-        // Right side - Name and Favorite Pokemon
+        // Right side - Username, Password, Display Name and Favorite Pokemon
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setBackground(new Color(54, 57, 63));
-        rightPanel.setPreferredSize(new Dimension(450, 250));
-        rightPanel.setMaximumSize(new Dimension(450, 250));
+        rightPanel.setPreferredSize(new Dimension(450, 400));
+        rightPanel.setMaximumSize(new Dimension(450, 400));
+
+        // Username input section
+        JPanel usernamePanel = new JPanel();
+        usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.Y_AXIS));
+        usernamePanel.setBackground(new Color(54, 57, 63));
+        usernamePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setForeground(new Color(185, 187, 190));
+        usernameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        usernameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        usernameInputField = new JTextField(35);
+        usernameInputField.setBackground(new Color(48, 51, 57));
+        usernameInputField.setForeground(new Color(219, 222, 225));
+        usernameInputField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        usernameInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        usernameInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        usernamePanel.add(usernameLabel);
+        usernamePanel.add(Box.createVerticalStrut(5));
+        usernamePanel.add(usernameInputField);
+
+        rightPanel.add(usernamePanel);
+        rightPanel.add(Box.createVerticalStrut(15));
+
+        // Password input section
+        JPanel passwordPanel = new JPanel();
+        passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.Y_AXIS));
+        passwordPanel.setBackground(new Color(54, 57, 63));
+        passwordPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel passwordLabel = new JLabel("New Password (leave empty to keep current):");
+        passwordLabel.setForeground(new Color(185, 187, 190));
+        passwordLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        passwordLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        passwordInputField = new JPasswordField(35);
+        passwordInputField.setBackground(new Color(48, 51, 57));
+        passwordInputField.setForeground(new Color(219, 222, 225));
+        passwordInputField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        passwordInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        passwordInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        passwordPanel.add(passwordLabel);
+        passwordPanel.add(Box.createVerticalStrut(5));
+        passwordPanel.add(passwordInputField);
+
+        rightPanel.add(passwordPanel);
+        rightPanel.add(Box.createVerticalStrut(15));
 
         // Name input section
         JPanel namePanel = new JPanel();
@@ -320,7 +401,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         namePanel.add(nameInputField);
 
         rightPanel.add(namePanel);
-        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(Box.createVerticalStrut(15));
 
         // Favorite Pokemon dropdown
         JPanel pokemonPanel = new JPanel();
@@ -432,9 +513,23 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         saveButton.addActionListener(e -> {
             if (e.getSource().equals(saveButton)) {
                 final UserProfileState currentState = userProfileViewModel.getState();
+                String newUsername = usernameInputField.getText().trim();
+                String newPassword = new String(passwordInputField.getPassword()).trim();
+                
+                // If username is same as current, set to null (no change)
+                if (newUsername.equals(currentState.getUsername())) {
+                    newUsername = null;
+                }
+                // If password is empty, set to null (no change)
+                if (newPassword.isEmpty()) {
+                    newPassword = null;
+                }
+                
                 userProfileController.execute(
                         currentState.getUsername(),
                         currentState.getPassword(),
+                        newUsername,
+                        newPassword,
                         currentState.getScore(),
                         currentState.getBio(),
                         currentState.getFav_pokemon(),
@@ -673,6 +768,16 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    private void updateDisplayNameLabel(String displayName) {
+        if (currentDisplayNameLabel != null) {
+            currentDisplayNameLabel.setText("Display Name: " + (displayName != null ? displayName : ""));
+        }
+        if (currentUsernameLabel != null) {
+            String currentUser = gameDashboard.getCurrentUser();
+            currentUsernameLabel.setText("Username: " + (currentUser != null ? currentUser : ""));
+        }
+    }
+
     private java.util.ArrayList<String> getPokemonList() {
         java.util.ArrayList<String> pokemonList = new java.util.ArrayList<>();
         pokemonList.add("None");
@@ -697,10 +802,13 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     }
 
     public void setFields(UserProfileState state) {
+        usernameInputField.setText(state.getUsername() != null ? state.getUsername() : "");
+        passwordInputField.setText(""); // Clear password field for security
         nameInputField.setText(state.getName() != null ? state.getName() : "");
         bioInputField.setText(state.getBio() != null ? state.getBio() : "");
         updateBioCharacterCount(state.getBioCharacterCount());
         updateProfileCompletion(state.getProfileCompletionPercentage());
+        updateDisplayNameLabel(state.getName());
         
         // Set favorite pokemon in combo box
         if (state.getFav_pokemon() != null && !state.getFav_pokemon().isEmpty()) {

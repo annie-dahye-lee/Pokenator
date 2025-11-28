@@ -174,4 +174,17 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         accounts.put(user.getName(), user);
         save();
     }
+
+    @Override
+    public void updateUsername(String oldUsername, String newUsername, User user) {
+        // Remove old entry
+        accounts.remove(oldUsername);
+        // Add new entry with new username
+        accounts.put(newUsername, user);
+        // Update current username if it matches
+        if (currentUsername != null && currentUsername.equals(oldUsername)) {
+            currentUsername = newUsername;
+        }
+        save();
+    }
 }
