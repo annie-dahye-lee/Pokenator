@@ -12,8 +12,6 @@ import interface_adapter.user_profile.UserProfileState;
 import interface_adapter.user_profile.UserProfileViewModel;
 import org.json.JSONArray;
 
-import java.nio.file.Files;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -46,11 +44,14 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JLabel pokemonImageLabel;
     private JLabel errorLabel;
     private JLabel successLabel;
+    private JLabel bioCharacterCountLabel;
+    private JLabel profileCompletionLabel;
     private JButton saveButton;
     private JButton returnToDashboardButton;
     private JButton changeBannerButton;
     private JButton changeProfilePhotoButton;
     private PokeApiGateway pokeApiGateway;
+    private static final int MAX_BIO_LENGTH = 500;
 
     private Image bannerImage = null;
     private Image profilePhotoImage = null;
@@ -230,8 +231,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         bioInputField.getDocument().addDocumentListener(new DocumentListener() {
             private void documentListenerHelper() {
                 final UserProfileState currentState = userProfileViewModel.getState();
-                currentState.setBio(bioInputField.getText());
+                String bioText = bioInputField.getText();
+                currentState.setBio(bioText);
                 userProfileViewModel.setState(currentState);
+                updateBioCharacterCount(bioText.length());
             }
 
             @Override
@@ -250,9 +253,17 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             }
         });
 
+        // Bio character counter
+        bioCharacterCountLabel = new JLabel("0/" + MAX_BIO_LENGTH + " characters");
+        bioCharacterCountLabel.setForeground(new Color(185, 187, 190));
+        bioCharacterCountLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        bioCharacterCountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         bioPanel.add(bioLabel);
         bioPanel.add(Box.createVerticalStrut(5));
         bioPanel.add(bioInputField);
+        bioPanel.add(Box.createVerticalStrut(3));
+        bioPanel.add(bioCharacterCountLabel);
 
         // Right side - Name and Favorite Pokemon
         JPanel rightPanel = new JPanel();
@@ -368,6 +379,19 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
         profileInfoPanel.add(contentPanel);
         profileInfoPanel.add(Box.createVerticalStrut(10));
+
+        // Profile completion indicator
+        JPanel completionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        completionPanel.setBackground(new Color(54, 57, 63));
+        completionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        profileCompletionLabel = new JLabel("Profile Completion: 0%");
+        profileCompletionLabel.setForeground(new Color(88, 101, 242)); // Discord blurple
+        profileCompletionLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+        completionPanel.add(profileCompletionLabel);
+
+        profileInfoPanel.add(completionPanel);
+        profileInfoPanel.add(Box.createVerticalStrut(5));
 
         // Error and success labels
         JPanel messagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
@@ -609,12 +633,43 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     public void propertyChange(PropertyChangeEvent evt) {
         final UserProfileState state = (UserProfileState) evt.getNewValue();
         setFields(state);
+        updateBioCharacterCount(state.getBioCharacterCount());
+        updateProfileCompletion(state.getProfileCompletionPercentage());
 
         if (state.getProfileError() != null) {
             errorLabel.setText(state.getProfileError());
             successLabel.setText(" ");
         } else {
             errorLabel.setText(" ");
+        }
+    }
+
+    private void updateBioCharacterCount(int count) {
+        if (bioCharacterCountLabel != null) {
+            String text = count + "/" + MAX_BIO_LENGTH + " characters";
+            bioCharacterCountLabel.setText(text);
+            // Change color if approaching or exceeding limit
+            if (count > MAX_BIO_LENGTH) {
+                bioCharacterCountLabel.setForeground(new Color(237, 66, 69)); // Red for over limit
+            } else if (count > MAX_BIO_LENGTH * 0.9) {
+                bioCharacterCountLabel.setForeground(new Color(250, 166, 26)); // Orange for warning
+            } else {
+                bioCharacterCountLabel.setForeground(new Color(185, 187, 190)); // Default gray
+            }
+        }
+    }
+
+    private void updateProfileCompletion(int percentage) {
+        if (profileCompletionLabel != null) {
+            profileCompletionLabel.setText("Profile Completion: " + percentage + "%");
+            // Change color based on completion
+            if (percentage >= 80) {
+                profileCompletionLabel.setForeground(new Color(67, 181, 129)); // Green for high completion
+            } else if (percentage >= 50) {
+                profileCompletionLabel.setForeground(new Color(88, 101, 242)); // Blue for medium
+            } else {
+                profileCompletionLabel.setForeground(new Color(250, 166, 26)); // Orange for low
+            }
         }
     }
 
@@ -644,6 +699,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     public void setFields(UserProfileState state) {
         nameInputField.setText(state.getName() != null ? state.getName() : "");
         bioInputField.setText(state.getBio() != null ? state.getBio() : "");
+        updateBioCharacterCount(state.getBioCharacterCount());
+        updateProfileCompletion(state.getProfileCompletionPercentage());
         
         // Set favorite pokemon in combo box
         if (state.getFav_pokemon() != null && !state.getFav_pokemon().isEmpty()) {

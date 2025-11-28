@@ -21,6 +21,8 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
         this.dashboard = dashboard;
     }
 
+    private static final int MAX_BIO_LENGTH = 500;
+
     @Override
     public void execute(UserProfileInputData userProfileInputData) {
         // Validate name
@@ -31,6 +33,12 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
 
         if (userProfileInputData.getName().length() > 32) {
             userPresenter.prepareFailView("Name must be <= 32 characters long.");
+            return;
+        }
+
+        // Validate bio length
+        if (userProfileInputData.getBio() != null && userProfileInputData.getBio().length() > MAX_BIO_LENGTH) {
+            userPresenter.prepareFailView("Bio must be <= " + MAX_BIO_LENGTH + " characters long.");
             return;
         }
 
