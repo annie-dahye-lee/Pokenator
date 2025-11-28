@@ -364,6 +364,32 @@ class UserProfileInteractorTest {
     }
 
     @Test
+    void failureTest_NewPasswordIsWhitespace() {
+        // Test when newPassword is not null but contains only whitespace
+        UserProfileInputData inputData = new UserProfileInputData(
+            "testuser", "password", null, "   ", 100,
+            "Bio", "Pikachu", "Display Name",
+            null, null
+        );
+
+        UserProfileOutputBoundary failurePresenter = new UserProfileOutputBoundary() {
+            @Override
+            public void prepareSuccessView(UserProfileOutputData outputData) {
+                fail("Use case success is unexpected.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("Password cannot be empty.", error);
+            }
+        };
+
+        UserProfileInputBoundary interactor = new UserProfileInteractor(
+            userRepository, failurePresenter, userFactory, dashboard);
+        interactor.execute(inputData);
+    }
+
+    @Test
     void successTest_NewUsernameSameAsCurrent() {
         // When new username is same as current, it should not trigger username update
         UserProfileInputData inputData = new UserProfileInputData(
@@ -527,6 +553,7 @@ class UserProfileInteractorTest {
             userRepository, successPresenter, userFactory, dashboard);
         interactor.execute(inputData);
     }
+
 
     // Test implementation classes
     private static class TestUserProfileDataAccessObject implements UserProfileUserDataAccessInterface {
