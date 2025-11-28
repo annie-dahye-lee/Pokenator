@@ -2,6 +2,9 @@ package interface_adapter.leaderboard;
 
 import use_case.leaderboard.*;
 
+/**
+ * Leaderboard presenter.
+ */
 public class LeaderboardPresenter implements LeaderboardOutputBoundary {
 
     private final LeaderboardViewModel leaderboardViewModel;
@@ -11,7 +14,7 @@ public class LeaderboardPresenter implements LeaderboardOutputBoundary {
     }
 
     @Override
-    public void prepareSuccessView(LeaderboardOutputData results) {
+    public void changePagePrepareSuccessView(ChangePageOutputData results) {
 
         LeaderboardState state = leaderboardViewModel.getState();
 
@@ -22,7 +25,7 @@ public class LeaderboardPresenter implements LeaderboardOutputBoundary {
     }
 
     @Override
-    public void prepareFailedView(String error) {
+    public void changePagePrepareFailedView(String error) {
         System.out.println(error);
     }
 

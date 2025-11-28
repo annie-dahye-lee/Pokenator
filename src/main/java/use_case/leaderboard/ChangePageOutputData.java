@@ -2,12 +2,18 @@ package use_case.leaderboard;
 
 import java.util.ArrayList;
 
-public class LeaderboardOutputData {
+/**
+ * Change page function output data.
+ * Attributes:
+ * - userRankPairs: sublist of user-rank pairs to display.
+ * - newPage: page number (pragmatic) to change to.
+ */
+public class ChangePageOutputData {
 
     private final ArrayList<Object[]> userRankPairs;
     private final int newPage;
 
-    public LeaderboardOutputData(ArrayList<Object[]> userRankPairs, int newPage) {
+    public ChangePageOutputData(ArrayList<Object[]> userRankPairs, int newPage) {
         this.userRankPairs = userRankPairs;
         this.newPage = newPage;
     }

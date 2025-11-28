@@ -5,6 +5,9 @@ import entity.User;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * Leaderboard use case interactor.
+ */
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
     private static final int USERS_PER_PAGE = 5;
@@ -18,19 +21,19 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     }
 
     @Override
-    public void changePage(LeaderboardInputData leaderboardInputData) {
+    public void changePage(ChangePageInputData changePageInputData) {
 
         // Fetch the list of user objects.
         ArrayList<User> userList = userListDAO.getUserList();
 
         // Get the new page number with 0-indexing.
-        int newPage = leaderboardInputData.getNewPage() - 1;
+        int newPageIndex = changePageInputData.getNewPage() - 1;
 
         // If the new page is not within the user list range, throw error & terminate.
-        if (! verifyPage(userList, newPage)) {
-            leaderboardPresenter.prepareFailedView(
+        if (! verifyPage(userList, newPageIndex)) {
+            leaderboardPresenter.changePagePrepareFailedView(
                     "New page is not within the user list range:\n" +
-                    "New 0-indexed page:" + newPage + " → required lower bound: " +(newPage * USERS_PER_PAGE) + "\n" +
+                    "New 0-indexed page:" + newPageIndex + " → required lower bound: " +(newPageIndex * USERS_PER_PAGE) + "\n" +
                     "Current user list length: " + userList.size());
             return;
         }
@@ -40,38 +43,48 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
         // Get the sublist of user-rank pairs to display.
         ArrayList<Object[]> userRankPairs = getUserRankPairs(
-                userList, newPage
+                userList, newPageIndex
         );
 
         // Update the presenter.
-        leaderboardPresenter.prepareSuccessView(
-                new LeaderboardOutputData(userRankPairs, newPage + 1)
+        leaderboardPresenter.changePagePrepareSuccessView(
+                new ChangePageOutputData(userRankPairs, newPageIndex + 1)
         );
     }
 
-    public boolean verifyPage(ArrayList<User> userList, int page) {
-        // Return whether the new page is within the user list range.
-
-        return 0 <= page && page * USERS_PER_PAGE <= userList.size();
+    /**
+     * Return whether the new page is within the user list range.
+     * @param userList full list of user objects.
+     * @param newPageIndex new page number with 0-indexing.
+     * @return T if the new page is within the user list range, F otherwise.
+     */
+    public boolean verifyPage(ArrayList<User> userList, int newPageIndex) {
+        return
+                0 <= newPageIndex &&
+                        newPageIndex * USERS_PER_PAGE <= userList.size();
     }
 
-    public ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int page) {
-        // Get the sublist of users to display for the current page paired with their ranks.
-        // Precondition: verifyPage(userList, page) == true
-
-        // Get the lower of either 5 entries after the current page or the upper bound of the user list.
+    /**
+     * Get the sublist of users to display for the current page paired with their ranks.
+     * Precondition: verifyPage(userList, page) == true
+     * @param userList full list of user objects.
+     * @param newPageIndex new page number with 0-indexing.
+     * @return sublist of user-rank pairs to display.
+     */
+    public ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int newPageIndex) {
+        // Get the lower of either <USERS_PER_PAGE> entries after the current page or the upper bound of the user list.
         int upperBound = Math.min(
-                (page + 1) * USERS_PER_PAGE,
+                (newPageIndex + 1) * USERS_PER_PAGE,
                 userList.size()
         );
 
         // Initialise the list of user-rank pairs.
         ArrayList<Object[]> userRankPairs = new ArrayList<>();
-        int currRank = page * USERS_PER_PAGE + 1;
+        int currRank = newPageIndex * USERS_PER_PAGE + 1;
 
         // Loop through the sublist of users to display.
         // Add the user-rank pair to the list.
-        for (User currUser : userList.subList(page * USERS_PER_PAGE, upperBound) ) {
+        for (User currUser : userList.subList(newPageIndex * USERS_PER_PAGE, upperBound) ) {
             userRankPairs.add(
                     new Object[]{ currUser, currRank }
             );
@@ -82,23 +95,30 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         return userRankPairs;
     }
 
-    // Comparator interface used to sort the user list.
-    // First, sort by score from MOST TO LEAST.
-    // If users have the same score, sort by name alphabetically.
-    // Order will be absolute since names are unique.
+    /**
+     * Comparator interface used to sort the user list.
+     * First, sort by score from MOST TO LEAST.
+     * If users have the same score, sort by name alphabetically.
+     * Order will be absolute since names are unique.
+     */
     private static class UserRankingComparator implements Comparator<User> {
         public int compare(User u1, User u2) {
 
+            // Sort by score:
             int score1 = u1.getScore();
             int score2 = u2.getScore();
 
+            // If u1 has LESS score than u2, then u2 appears first.
             if ( score1 < score2 ) {
                 return 1;
             }
+
+            // If u1 has MORE score than u2, then u1 appears first.
             if ( score1 > score2 ) {
                 return -1;
             }
 
+            // Otherwise, they have the same score, so sort by name.
             return u1.getName().compareTo(u2.getName());
         }
     }

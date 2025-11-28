@@ -3,16 +3,16 @@ package view;
 import entity.User;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.*;
-import interface_adapter.themes.Theme;
-import interface_adapter.themes.ThemeManager;
-import interface_adapter.themes.ThemeUtil;
-import interface_adapter.themes.ThemedView;
+import interface_adapter.themes.*;
 
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
 
+/**
+ * Leaderboard view.
+ */
 public class LeaderboardView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private static final String VIEW_NAME = "leaderboard";
@@ -107,6 +107,10 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         });
     }
 
+    /**
+     * Set the controller for this view.
+     * @param leaderboardController controller.
+     */
     public void setLeaderboardController(LeaderboardController leaderboardController) {
         this.leaderboardController = leaderboardController;
     }
@@ -115,9 +119,10 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
+
         LeaderboardState state = leaderboardViewModel.getState();
 
-        // Update the leaderboard.
+        // Update the leaderboard table.
         updateLeaderboard(state.getUserRankPairs());
 
         // Update the page label.
@@ -126,8 +131,11 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         ));
     }
 
-    private void updateLeaderboard(ArrayList<Object[]> userList) {
-        // Repopulate the leaderboard panel with a new user list.
+    /**
+     * Repopulate the leaderboard panel with a new sublist of user-rank pairs.
+     * @param userRankPairs sublist of user-rank pairs to display.
+     */
+    private void updateLeaderboard(ArrayList<Object[]> userRankPairs) {
 
         // Clear the leaderboard panel to be populated with new entries.
         leaderboardTable.removeAll();
@@ -147,7 +155,7 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         leaderboardTable.add(header);
 
         // Populate with given user-rank pairs.
-        for (Object[] pair : userList) {
+        for (Object[] pair : userRankPairs) {
             User user = (User) pair[0];
             int rank = (int) pair[1];
 
@@ -162,9 +170,14 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
                 leaderboardViewModel.getState().getPage());
     }
 
+    /**
+     * Construct a leaderboard row with the given rank and user object.
+     * Uses table format.
+     * @param rank rank of the user.
+     * @param user user object.
+     * @return constructed leaderboard row to add to the table.
+     */
     private JPanel constructRow(int rank, User user) {
-        // Construct a leaderboard (row) with the given rank and user object.
-        // Uses table format.
 
         // Setup:
         JPanel row = new JPanel(
@@ -192,7 +205,5 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }
-
-
 
 }
