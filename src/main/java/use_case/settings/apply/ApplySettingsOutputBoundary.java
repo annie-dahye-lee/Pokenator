@@ -1,9 +1,9 @@
-package use_case.settings;
+package use_case.settings.apply;
 
 /**
  * Output boundary for the "Save Settings" use case.
  */
-public interface SaveSettingsOutputBoundary {
+public interface ApplySettingsOutputBoundary {
     /**
      * Prepares the view to display a successful save.
      *
