@@ -1,4 +1,4 @@
-package use_case.settings.back;
+package use_case.back;
 
 
 /**
@@ -7,10 +7,10 @@ package use_case.settings.back;
  * It contains no business logic because simply opening the SettingsView does not
  * require computation — it only notifies the presenter to switch the view.
  */
-public class BackSettingsInteractor implements BackSettingsInputBoundary {
-    private final BackSettingsOutputBoundary presenter;
+public class BackInteractor implements BackInputBoundary {
+    private final BackOutputBoundary presenter;
 
-    public BackSettingsInteractor(BackSettingsOutputBoundary presenter) {
+    public BackInteractor(BackOutputBoundary presenter) {
         this.presenter = presenter;
     }
 

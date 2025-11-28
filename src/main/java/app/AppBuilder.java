@@ -22,8 +22,8 @@ import interface_adapter.login.LoginViewModel;
 import interface_adapter.settings.*;
 import interface_adapter.settings.apply.ApplySettingsController;
 import interface_adapter.settings.apply.ApplySettingsPresenter;
-import interface_adapter.settings.back.BackSettingsController;
-import interface_adapter.settings.back.BackSettingsPresenter;
+import interface_adapter.back.BackController;
+import interface_adapter.back.BackPresenter;
 import interface_adapter.settings.reset.ResetSettingsController;
 import interface_adapter.settings.reset.ResetSettingsPresenter;
 import interface_adapter.signup.SignupController;
@@ -45,9 +45,9 @@ import use_case.login.LoginOutputBoundary;
 import use_case.settings.apply.ApplySettingsInputBoundary;
 import use_case.settings.apply.ApplySettingsInteractor;
 import use_case.settings.apply.ApplySettingsOutputBoundary;
-import use_case.settings.back.BackSettingsInputBoundary;
-import use_case.settings.back.BackSettingsInteractor;
-import use_case.settings.back.BackSettingsOutputBoundary;
+import use_case.back.BackInputBoundary;
+import use_case.back.BackInteractor;
+import use_case.back.BackOutputBoundary;
 import use_case.settings.reset.ResetSettingsInputBoundary;
 import use_case.settings.reset.ResetSettingsInteractor;
 import use_case.settings.reset.ResetSettingsOutputBoundary;
@@ -188,7 +188,7 @@ public class AppBuilder {
         // Initialize with a default user or null - will be updated when view is shown
         userProfileViewModel = new UserProfileViewModel();
         userProfileView = new UserProfileView(userProfileViewModel, viewManagerModel, gameDashboard,
-                userDataAccessObject, new PokeApiGateway());
+                userDataAccessObject, new PokeApiGateway(), themeManager);
 
         cardPanel.add(userProfileView, userProfileView.getViewName());
         return this;
@@ -266,14 +266,14 @@ public class AppBuilder {
 
     public AppBuilder addAccessSettingsUseCase() {
 
-        BackSettingsOutputBoundary presenter =
-                new BackSettingsPresenter(viewManagerModel, settingsViewModel, "dashboard");
+        BackOutputBoundary presenter =
+                new BackPresenter(viewManagerModel, settingsViewModel, "dashboard");
 
-        BackSettingsInputBoundary interactor =
-                new BackSettingsInteractor(presenter);
+        BackInputBoundary interactor =
+                new BackInteractor(presenter);
 
-        BackSettingsController controller =
-                new BackSettingsController(interactor);
+        BackController controller =
+                new BackController(interactor);
 
         settingsView.setAccessSettingsController(controller);
         return this;

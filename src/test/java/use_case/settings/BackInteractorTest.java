@@ -1,26 +1,26 @@
 package use_case.settings;
 
 import org.junit.jupiter.api.Test;
-import use_case.settings.back.BackSettingsInteractor;
-import use_case.settings.back.BackSettingsOutputBoundary;
+import use_case.back.BackInteractor;
+import use_case.back.BackOutputBoundary;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BackSettingsInteractorTest {
+class BackInteractorTest {
 
     @Test
     void testAccessSettingsCallsPresenter() {
         // Arrange
         final boolean[] wasCalled = {false};
 
-        BackSettingsOutputBoundary presenter = new BackSettingsOutputBoundary() {
+        BackOutputBoundary presenter = new BackOutputBoundary() {
             @Override
             public void prepareSuccessView() {
                 wasCalled[0] = true;
             }
         };
 
-        BackSettingsInteractor interactor = new BackSettingsInteractor(presenter);
+        BackInteractor interactor = new BackInteractor(presenter);
 
         // Act
         interactor.execute();
