@@ -123,14 +123,15 @@ public class AppBuilder {
 
     public AppBuilder addSignupView() {
         signupViewModel = new SignupViewModel();
-        signupView = new SignupView(signupViewModel, viewManagerModel);
+        signupView = new SignupView(signupViewModel, viewManagerModel, themeManager);
         cardPanel.add(signupView, signupView.getViewName());
+        addAccessSettingsUseCase();
         return this;
     }
 
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
-        loginView = new LoginView(loginViewModel);
+        loginView = new LoginView(loginViewModel, themeManager);
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
@@ -205,6 +206,7 @@ public class AppBuilder {
 
         SignupController controller = new SignupController(userSignupInteractor);
         signupView.setSignupController(controller);
+
         return this;
     }
 
@@ -217,6 +219,7 @@ public class AppBuilder {
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
+        addAccessSettingsUseCase();
         return this;
     }
 
@@ -276,6 +279,8 @@ public class AppBuilder {
                 new BackController(interactor);
 
         settingsView.setAccessSettingsController(controller);
+        loginView.setBackController(controller);
+        signupView.setAccessSettingsController(controller);
         return this;
     }
 
