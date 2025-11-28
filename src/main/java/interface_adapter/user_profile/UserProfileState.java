@@ -47,14 +47,13 @@ public class UserProfileState {
 
     private int calculateCompletionPercentage(User u) {
         int completedFields = 0;
-        int totalFields = 6; // name, bio, fav_pokemon, profilePhotoPath, bannerPath, score
+        int totalFields = 5; // name, bio, fav_pokemon, profilePhotoPath, bannerPath
         
         if (u.getName() != null && !u.getName().trim().isEmpty()) completedFields++;
         if (u.getBio() != null && !u.getBio().trim().isEmpty()) completedFields++;
         if (u.getFavPokemon() != null && !u.getFavPokemon().isEmpty() && !u.getFavPokemon().equals("None")) completedFields++;
         if (u.getProfilePhotoPath() != null && !u.getProfilePhotoPath().isEmpty()) completedFields++;
         if (u.getBannerPath() != null && !u.getBannerPath().isEmpty()) completedFields++;
-        if (u.getScore() > 0) completedFields++;
         
         return (int) Math.round((completedFields * 100.0) / totalFields);
     }
@@ -72,7 +71,6 @@ public class UserProfileState {
 
     public void setScore(int score) { 
         this.score = score;
-        updateCompletionPercentage();
     }
 
     public int getScore() { return score; }
@@ -95,14 +93,13 @@ public class UserProfileState {
 
     private void updateCompletionPercentage() {
         int completedFields = 0;
-        int totalFields = 6;
+        int totalFields = 5; // name, bio, fav_pokemon, profilePhotoPath, bannerPath
         
         if (name != null && !name.trim().isEmpty()) completedFields++;
         if (bio != null && !bio.trim().isEmpty()) completedFields++;
         if (fav_pokemon != null && !fav_pokemon.isEmpty() && !fav_pokemon.equals("None")) completedFields++;
         if (profilePhotoPath != null && !profilePhotoPath.isEmpty()) completedFields++;
         if (bannerPath != null && !bannerPath.isEmpty()) completedFields++;
-        if (score > 0) completedFields++;
         
         profileCompletionPercentage = (int) Math.round((completedFields * 100.0) / totalFields);
     }
