@@ -19,7 +19,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 // project imports
-import interface_adapter.settings.back.BackSettingsController;
+import interface_adapter.back.BackController;
 import interface_adapter.settings.reset.ResetSettingsController;
 import interface_adapter.settings.apply.ApplySettingsController;
 import interface_adapter.settings.SettingsState;
@@ -41,7 +41,7 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
 
     private final SettingsViewModel settingsViewModel;
 
-    private BackSettingsController backSettingsController;
+    private BackController backController;
     private ResetSettingsController resetController;
     private ApplySettingsController applySettingsController;
 
@@ -131,8 +131,8 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
      *
      * @param accessController controller to access another view
      */
-    public void setAccessSettingsController(BackSettingsController accessController) {
-        this.backSettingsController = accessController;
+    public void setAccessSettingsController(BackController accessController) {
+        this.backController = accessController;
     }
 
     /**
@@ -173,7 +173,7 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
         } else if (src == resetButton) {
             if (resetController != null) resetController.execute();
         } else if (src == backButton) {
-            if (backSettingsController != null) backSettingsController.execute();
+            if (backController != null) backController.execute();
         } else if (src == lightModeButton || src == darkModeButton) {
             // update selector to match toggle
             if (lightModeButton.isSelected()) themeSelector.setSelectedItem("light");

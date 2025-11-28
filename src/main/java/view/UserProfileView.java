@@ -3,6 +3,10 @@ package view;
 import data_access.FileUserDataAccessObject;
 import data_access.PokeApiGateway;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 import interface_adapter.user_profile.UserProfileController;
 import interface_adapter.user_profile.UserProfileState;
 import interface_adapter.user_profile.UserProfileViewModel;
@@ -26,7 +30,7 @@ import java.nio.file.Files;
 /**
  * The View for the user profile page with Discord-style design.
  */
-public class UserProfileView extends JPanel implements ActionListener, PropertyChangeListener {
+public class UserProfileView extends JPanel implements ActionListener, PropertyChangeListener, ThemedView {
 
     private final String viewName = "User Profile";
     private final UserProfileViewModel userProfileViewModel;
@@ -56,10 +60,15 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private UserProfileController userProfileController = null;
 
     public UserProfileView(UserProfileViewModel userProfileViewModel, ViewManagerModel viewManagerModel,
-                          GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway) {
+                          GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
         this.userProfileViewModel = userProfileViewModel;
         this.userProfileViewModel.addPropertyChangeListener(this);
         this.viewManagerModel = viewManagerModel;
+
+        // Colour Theme Changer
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
+
         this.viewManagerModel.addPropertyChangeListener(evt -> {
             if ("state".equals(evt.getPropertyName()) && "User Profile".equals(evt.getNewValue())) {
                 // Load user data when view is shown
@@ -689,6 +698,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
+    }
+
     public String getViewName() {
         return viewName;
     }
@@ -696,5 +709,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     public void setUserProfileController(UserProfileController userProfileController) {
         this.userProfileController = userProfileController;
     }
+
+
 }
 
