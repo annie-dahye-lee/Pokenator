@@ -9,9 +9,10 @@ public interface UserProfileUserDataAccessInterface {
 
     /**
      * Update the user profile.
+     * @param username the username (key) for the user to update
      * @param user the user with updated profile information
      */
-    void updateUserProfile(User user);
+    void updateUserProfile(String username, User user);
 
     /**
      * Get a user by username.

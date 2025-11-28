@@ -92,7 +92,8 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
             // Update dashboard's current user
             dashboard.setUser(finalUsername);
         } else {
-            userDataAccessObject.updateUserProfile(user);
+            // Use the current username as the key when updating profile
+            userDataAccessObject.updateUserProfile(finalUsername, user);
         }
 
         final UserProfileOutputData userProfileOutputData = new UserProfileOutputData(
