@@ -1,8 +1,6 @@
-package use_case.settings;
+package use_case.back;
 
 import org.junit.jupiter.api.Test;
-import use_case.back.BackInteractor;
-import use_case.back.BackOutputBoundary;
 
 import static org.junit.jupiter.api.Assertions.*;
 
