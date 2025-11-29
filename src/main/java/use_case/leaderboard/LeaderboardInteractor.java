@@ -31,10 +31,11 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
         // If the new page is not within the user list range, throw error & terminate.
         if (! verifyPage(userList, newPageIndex)) {
-            leaderboardPresenter.changePagePrepareFailedView(
-                    "New page is not within the user list range:\n" +
+            String error = "New page is not within the user list range:\n" +
                     "New 0-indexed page:" + newPageIndex + " → required lower bound: " +(newPageIndex * USERS_PER_PAGE) + "\n" +
-                    "Current user list length: " + userList.size());
+                    "Current user list length: " + userList.size();
+
+            leaderboardPresenter.changePagePrepareFailedView(error);
             return;
         }
 
@@ -52,16 +53,23 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         );
     }
 
+    // Secondary helpers:
+
+    public static int getUSERS_PER_PAGE() { return USERS_PER_PAGE; }
+
     /**
      * Return whether the new page is within the user list range.
+     * Page 1 always counts, even if the list is empty.
      * @param userList full list of user objects.
      * @param newPageIndex new page number with 0-indexing.
      * @return T if the new page is within the user list range, F otherwise.
      */
-    public boolean verifyPage(ArrayList<User> userList, int newPageIndex) {
+    private boolean verifyPage(ArrayList<User> userList, int newPageIndex) {
         return
-                0 <= newPageIndex &&
-                        newPageIndex * USERS_PER_PAGE <= userList.size();
+                newPageIndex == 0 ||
+
+                0 < newPageIndex &&
+                        newPageIndex * USERS_PER_PAGE < userList.size();
     }
 
     /**
@@ -71,7 +79,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
      * @param newPageIndex new page number with 0-indexing.
      * @return sublist of user-rank pairs to display.
      */
-    public ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int newPageIndex) {
+    private ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int newPageIndex) {
         // Get the lower of either <USERS_PER_PAGE> entries after the current page or the upper bound of the user list.
         int upperBound = Math.min(
                 (newPageIndex + 1) * USERS_PER_PAGE,

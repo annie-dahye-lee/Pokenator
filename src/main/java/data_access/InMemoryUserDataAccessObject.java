@@ -6,7 +6,9 @@ import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
+import use_case.leaderboard.UserListDataAccessInterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
                                                      LoginUserDataAccessInterface,
                                                      ChangePasswordUserDataAccessInterface,
                                                      LogoutUserDataAccessInterface,
+                                                     UserListDataAccessInterface,
                                                      EditProfileUserDataAccessInterface {
 
     private final Map<String, User> users = new HashMap<>();
@@ -32,6 +35,11 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
     @Override
     public void save(User user) {
         users.put(user.getName(), user);
+    }
+
+    @Override
+    public ArrayList<User> getUserList() {
+        return new ArrayList<>(users.values());
     }
 
     @Override
