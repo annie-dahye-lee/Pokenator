@@ -140,7 +140,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                     public void actionPerformed(ActionEvent evt) {
                         if (evt.getSource().equals(cancel)) {
                             reset();
-                            viewManagerModel.setState("Edit Profile");
+                            viewManagerModel.setState("User Profile");
                             viewManagerModel.firePropertyChange();
                         }
                     }
@@ -169,7 +169,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
 //                            } else {
 //                                errorLabel.setText(" ");
 //                            }
-                            viewManagerModel.setState("dashboard");
+                            viewManagerModel.setState("User Profile");
                             viewManagerModel.firePropertyChange();
                         }
                     }

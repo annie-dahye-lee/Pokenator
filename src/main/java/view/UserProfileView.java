@@ -63,6 +63,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private String currentProfilePhotoPath = null;
 
     private UserProfileController userProfileController = null;
+    private JButton editFavPokemon;
 
     public UserProfileView(UserProfileViewModel userProfileViewModel, ViewManagerModel viewManagerModel,
                           GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
@@ -415,6 +416,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         pokemonLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Load pokemon list from gen1Pokemon.json
+        /**
         java.util.ArrayList<String> pokemonList = getPokemonList();
         favPokemonComboBox = new JComboBox<>(pokemonList.toArray(new String[0]));
         favPokemonComboBox.setBackground(new Color(48, 51, 57));
@@ -433,10 +435,25 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             userProfileViewModel.setState(currentState);
             updatePokemonImage(selectedPokemon);
         });
+         ***/
+
+        editFavPokemon = new JButton("Choose Favourite Pokemon");
+        editFavPokemon.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if (evt.getSource().equals(editFavPokemon)) {
+                            errorLabel.setText(" ");
+                            viewManagerModel.setState("Choose Favourite Pokemon");
+                            viewManagerModel.firePropertyChange();
+                        }
+                    }
+                }
+        );
 
         pokemonPanel.add(pokemonLabel);
         pokemonPanel.add(Box.createVerticalStrut(5));
-        pokemonPanel.add(favPokemonComboBox);
+        // pokemonPanel.add(favPokemonComboBox);
+        pokemonPanel.add(editFavPokemon);
         pokemonPanel.add(Box.createVerticalStrut(10));
 
         // Pokemon image display
@@ -817,10 +834,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             if (!favPokemon.equals("None")) {
                 favPokemon = Character.toUpperCase(favPokemon.charAt(0)) + favPokemon.substring(1).toLowerCase();
             }
-            favPokemonComboBox.setSelectedItem(favPokemon);
+            //favPokemonComboBox.setSelectedItem(favPokemon);
             updatePokemonImage(favPokemon);
         } else {
-            favPokemonComboBox.setSelectedItem("None");
+            //favPokemonComboBox.setSelectedItem("None");
             pokemonImageLabel.setIcon(null);
         }
         
