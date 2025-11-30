@@ -66,9 +66,8 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
                 0 < newPageIndex &&
                         newPageIndex * USERS_PER_PAGE < userList.size()
-        ) {
-            return null;
-        }
+        )
+        { return null; }
         // Otherwise, return an error message.
 
         String newPageStr = "New page index: " + newPageIndex;
