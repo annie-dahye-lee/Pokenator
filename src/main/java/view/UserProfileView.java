@@ -44,6 +44,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JTextArea bioInputField;
     private JComboBox<String> favPokemonComboBox;
     private JLabel pokemonImageLabel;
+    private JButton editFavPokemon;
     private JLabel errorLabel;
     private JLabel successLabel;
     private JLabel bioCharacterCountLabel;
@@ -63,7 +64,6 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private String currentProfilePhotoPath = null;
 
     private UserProfileController userProfileController = null;
-    private JButton editFavPokemon;
 
     public UserProfileView(UserProfileViewModel userProfileViewModel, ViewManagerModel viewManagerModel,
                           GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
@@ -438,6 +438,14 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
          ***/
 
         editFavPokemon = new JButton("Choose Favourite Pokemon");
+        editFavPokemon.setBackground(new Color(88, 101, 242)); // Discord blurple
+        editFavPokemon.setForeground(Color.WHITE);
+        editFavPokemon.setFocusPainted(false);
+        editFavPokemon.setBorderPainted(false);
+        editFavPokemon.setPreferredSize(new Dimension(150, 40));
+        editFavPokemon.setMinimumSize(new Dimension(150, 40));
+        editFavPokemon.setFont(new Font("SansSerif", Font.BOLD, 14));
+        editFavPokemon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         editFavPokemon.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {

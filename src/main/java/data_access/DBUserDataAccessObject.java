@@ -6,7 +6,6 @@ import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
-import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -19,8 +18,7 @@ import java.io.IOException;
 public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                                                LoginUserDataAccessInterface,
                                                ChangePasswordUserDataAccessInterface,
-                                               LogoutUserDataAccessInterface,
-                                               EditProfileUserDataAccessInterface {
+                                               LogoutUserDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
