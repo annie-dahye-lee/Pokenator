@@ -4,6 +4,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.settings.apply.ApplySettingsPresenter;
 import interface_adapter.themes.ThemeManager;
 import org.junit.jupiter.api.Test;
+import use_case.settings.apply.ApplySettingsOutputData;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +35,7 @@ class ApplySettingsPresenterTest {
         assertNotEquals("settings", viewManager.getState());
 
         // Act
-        presenter.prepareSuccessView("dark");
+        presenter.prepareSuccessView(new ApplySettingsOutputData("dark"));
 
         // Assert - SettingsViewModel updated
         SettingsState state = settingsVm.getState();

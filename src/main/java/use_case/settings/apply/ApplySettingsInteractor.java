@@ -26,7 +26,8 @@ public class ApplySettingsInteractor implements ApplySettingsInputBoundary {
         }
 
         else {
-            presenter.prepareSuccessView(theme);
+            ApplySettingsOutputData outputData = new ApplySettingsOutputData(theme);
+            presenter.prepareSuccessView(outputData);
         }
     }
 }

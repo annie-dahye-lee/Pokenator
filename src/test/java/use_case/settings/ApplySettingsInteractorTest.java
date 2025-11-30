@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import use_case.settings.apply.ApplySettingsInputData;
 import use_case.settings.apply.ApplySettingsInteractor;
 import use_case.settings.apply.ApplySettingsOutputBoundary;
+import use_case.settings.apply.ApplySettingsOutputData;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,11 +12,11 @@ class ApplySettingsInteractorTest {
 
     @Test
     void successCase() {
-        // Mock presenter
         ApplySettingsOutputBoundary presenter = new ApplySettingsOutputBoundary() {
+
             @Override
-            public void prepareSuccessView(String theme) {
-                assertEquals("Dark", theme);
+            public void prepareSuccessView(ApplySettingsOutputData outputData) {
+                assertEquals("Dark", outputData.getTheme());
             }
 
             @Override
@@ -31,8 +32,9 @@ class ApplySettingsInteractorTest {
     @Test
     void failCase_noTheme() {
         ApplySettingsOutputBoundary presenter = new ApplySettingsOutputBoundary() {
+
             @Override
-            public void prepareSuccessView(String theme) {
+            public void prepareSuccessView(ApplySettingsOutputData outputData) {
                 fail("Should not hit success for invalid theme");
             }
 
@@ -43,28 +45,25 @@ class ApplySettingsInteractorTest {
         };
 
         ApplySettingsInteractor interactor = new ApplySettingsInteractor(presenter);
-        interactor.execute(new ApplySettingsInputData(""));  // invalid
+        interactor.execute(new ApplySettingsInputData("")); // invalid input
     }
 
     @Test
     void failCase_nullTheme() {
         ApplySettingsOutputBoundary presenter = new ApplySettingsOutputBoundary() {
+
             @Override
-            public void prepareSuccessView(String theme) {
+            public void prepareSuccessView(ApplySettingsOutputData outputData) {
                 fail("Should not hit success for null theme");
             }
 
             @Override
             public void prepareFailView(String error) {
-                // Assert the expected error message
                 assertEquals("No theme was selected.", error);
             }
         };
 
         ApplySettingsInteractor interactor = new ApplySettingsInteractor(presenter);
-        // *** This is the change: Pass null into the InputData ***
-        interactor.execute(new ApplySettingsInputData(null));
+        interactor.execute(new ApplySettingsInputData(null)); // null input
     }
-
 }
-

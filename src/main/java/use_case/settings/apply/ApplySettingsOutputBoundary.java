@@ -1,15 +1,15 @@
 package use_case.settings.apply;
 
 /**
- * Output boundary for the "Save Settings" use case.
+ * Output data for reset settings.
  */
 public interface ApplySettingsOutputBoundary {
     /**
      * Prepares the view to display a successful save.
      *
-     * @param theme the theme that was successfully saved
+     * @param outputData the theme that was successfully saved
      */
-    void prepareSuccessView(String theme);
+    void prepareSuccessView(ApplySettingsOutputData outputData);
 
     /**
      * Prepares the view to display an error that occurred while attempting
