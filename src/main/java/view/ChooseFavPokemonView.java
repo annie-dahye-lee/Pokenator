@@ -6,6 +6,10 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonState;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 
@@ -24,7 +28,8 @@ import java.util.ArrayList;
 /**
  * The View for when the user is choosing their favourite Pokémon to display on profile.
  */
-public class ChooseFavPokemonView extends JPanel implements ActionListener, PropertyChangeListener {
+public class ChooseFavPokemonView extends JPanel implements ActionListener, PropertyChangeListener,
+                                                            ThemedView {
 
     private ChooseFavPokemonController chooseFavPokemonController;
 
@@ -46,7 +51,10 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
 
     public ChooseFavPokemonView(ChooseFavPokemonViewModel chooseFavPokemonViewModel, ViewManagerModel viewManagerModel,
                                 GameDashboard gameDashboard, FileUserDataAccessObject DAO,
-                                PokeApiGateway pokeApiGateway) {
+                                PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
+
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         this.pokeApiGateway = pokeApiGateway;
         new ChooseFavPokemonState(DAO.get(gameDashboard.getCurrentUser()));
@@ -195,7 +203,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
     @Override
     public void propertyChange(PropertyChangeEvent evt) { }
 
-    public void rowHelper(JPanel rows) {
+    private void rowHelper(JPanel rows) {
         rows.removeAll();
         JPanel column1 = new JPanel();
         column1.setLayout(new BoxLayout(column1, BoxLayout.Y_AXIS));
@@ -221,7 +229,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         rows.repaint();
     }
 
-    public void buttonBGHelper(JButton button) {
+    private void buttonBGHelper(JButton button) {
         button.setBackground(new Color(79, 84, 92)); // Discord blurple
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
@@ -230,7 +238,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-    public ArrayList<String> getPokemonList() {
+    private ArrayList<String> getPokemonList() {
         ArrayList<String> pokemonList = new ArrayList<>();
         pokemonList.add("None");
         try {
@@ -245,7 +253,7 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         return  pokemonList;
     }
 
-    public void getPokeImage(JLabel pokeImage, String pokemonName) {
+    private void getPokeImage(JLabel pokeImage, String pokemonName) {
         try {
             if (pokemonName.equals("None")) {
                 pokeImage.setIcon(new ImageIcon(ImageIO.read(new File("nonepokemon.jpg")).
@@ -258,15 +266,17 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         } catch (Exception e) { System.out.println(e); }
     }
 
-    public void setChosenPokemon(String chosenPokemon) {
-        this.chosenPokemon = chosenPokemon;
-    }
-
+    /**
+     * Resets the screen to navigate back to the first page.
+     */
     public void reset() {
         this.page = 0;
         this.chosenPokemon = "None";
     }
 
+    public void setChosenPokemon(String chosenPokemon) {
+        this.chosenPokemon = chosenPokemon;
+    }
 
     public String getViewName() {
         return "Choose Favourite Pokemon";
@@ -274,5 +284,14 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
 
     public void setChooseFavPokemonController(ChooseFavPokemonController chooseFavPokemonController) {
         this.chooseFavPokemonController = chooseFavPokemonController;
+    }
+
+    /**
+     * Applies the chosen theme to the choose Pokémon view.
+     *
+     * @param theme the theme to apply
+     */
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
     }
 }

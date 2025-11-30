@@ -5,6 +5,9 @@ import entity.User;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * The interactor for the Leaderboard use case.
+ */
 public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
     private static final int USERS_PER_PAGE = 5;
@@ -17,6 +20,11 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         this.leaderboardPresenter = leaderboardPresenter;
     }
 
+    /**
+     * Navigates to a different page of users on the leaderboard.
+     *
+     * @param leaderboardInputData input data from the leaderboard
+     */
     @Override
     public void changePage(LeaderboardInputData leaderboardInputData) {
 
@@ -49,12 +57,20 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         );
     }
 
+    /**
+     * Returns whether the new page is within the user list range.
+     */
     public boolean verifyPage(ArrayList<User> userList, int page) {
-        // Return whether the new page is within the user list range.
-
         return 0 <= page && page * USERS_PER_PAGE <= userList.size();
     }
 
+    /**
+     * Gets the sublist of users to display for the current page paired with their ranks.
+     *
+     * @param userList the list of users
+     * @param page the current page
+     * @return the sublist of users to display
+     */
     public ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int page) {
         // Get the sublist of users to display for the current page paired with their ranks.
         // Precondition: verifyPage(userList, page) == true

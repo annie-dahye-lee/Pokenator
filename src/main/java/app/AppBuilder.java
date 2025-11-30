@@ -66,6 +66,24 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A builder responsible for constructing and assembling all components of the
+ * application, including controllers, use cases, data access objects, and views.
+ * <p>
+ * The AppBuilder centralizes the wiring of dependencies so that each layer
+ * follows Clean Architecture principles. Callers configure the necessary
+ * components using the builder's setup methods and finalize construction with
+ * {@link #build()}.
+ * </p>
+ *
+ * <p><strong>Typical usage:</strong></p>
+ * <pre>{@code
+ * AppBuilder builder = new AppBuilder();
+ * builder.addUserDataAccess(new InMemoryUserDataAccess());
+ * builder.addLoginUseCase();
+ * builder.addLoginController();
+ * App app = builder.build();
+ */
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
@@ -104,6 +122,9 @@ public class AppBuilder {
 
     // ========== Add Views ==========
 
+    /**
+     * Registers the dashboard view with the application.
+     */
     public AppBuilder addGameDashboard() {
         gameDashboard = new GameDashboard(viewManagerModel, themeManager); // fixed: assign to field
         cardPanel.add(gameDashboard, gameDashboard.getViewName());
@@ -115,6 +136,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the signup view with the application.
+     */
     public AppBuilder addSignupView() {
         signupViewModel = new SignupViewModel();
         signupView = new SignupView(signupViewModel, viewManagerModel, themeManager);
@@ -123,6 +147,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the login view with the application.
+     */
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
         loginView = new LoginView(loginViewModel, themeManager);
@@ -130,6 +157,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the logged in view with the application.
+     */
     public AppBuilder addLoggedInView() {
         loggedInViewModel = new LoggedInViewModel();
         loggedInView = new LoggedInView(loggedInViewModel);
@@ -137,6 +167,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the Akinator view with the application.
+     */
     public AppBuilder addAkinatorView() {
         akinatorViewModel = new AkinatorViewModel();
         akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel, themeManager);
@@ -146,6 +179,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the settings view with the application.
+     */
     public AppBuilder addSettingsView() {
         settingsViewModel = new SettingsViewModel();
         settingsView = new SettingsView(settingsViewModel, themeManager);
@@ -154,6 +190,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the leaderboard view with the application.
+     */
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, themeManager);
@@ -161,15 +200,21 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Registers the choose favourite Pokémon view with the application.
+     */
     public AppBuilder addChooseFavPokemonView() {
         chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
         chooseFavPokemonView = new ChooseFavPokemonView(chooseFavPokemonViewModel, viewManagerModel, gameDashboard,
-                userDataAccessObject, new PokeApiGateway());
+                userDataAccessObject, new PokeApiGateway(), themeManager);
 
         cardPanel.add(chooseFavPokemonView, chooseFavPokemonView.getViewName());
         return this;
     }
 
+    /**
+     * Registers the user profile view with the application.
+     */
     public AppBuilder addUserProfileView() {
         // Initialize with a default user or null - will be updated when view is shown
         userProfileViewModel = new UserProfileViewModel();
@@ -183,6 +228,9 @@ public class AppBuilder {
 
     // ========== Add Use Cases ==========
 
+    /**
+     * Creates and registers the signup use case, including its interactor and presenter.
+     */
     public AppBuilder addSignupUseCase() {
         final SignupOutputBoundary signupOutputBoundary =
                 new SignupPresenter(viewManagerModel, signupViewModel, loginViewModel);
@@ -195,6 +243,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the login use case, including its interactor and presenter.
+     */
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary =
                 new LoginPresenter(viewManagerModel, loggedInViewModel, loginViewModel, gameDashboard);
@@ -208,6 +259,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the change password use case, including its interactor and presenter.
+     */
     public AppBuilder addChangePasswordUseCase() {
         final ChangePasswordOutputBoundary changePasswordOutputBoundary =
                 new ChangePasswordPresenter(viewManagerModel, loggedInViewModel);
@@ -221,6 +275,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the Akinator use case, including its interactor and presenter.
+     */
     public AppBuilder addAkinatorUseCase() {
         AkinatorOutputBoundary presenter = new AkinatorPresenter(akinatorViewModel);
         List<SimplePokemonProfile> dynamicProfiles = Collections.emptyList();
@@ -237,6 +294,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the reset settings use case, including its interactor and presenter.
+     */
     public AppBuilder addResetSettingsUseCase() {
 
         ResetSettingsOutputBoundary presenter =
@@ -252,6 +312,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the access settings use case, including its interactor and presenter.
+     */
     public AppBuilder addAccessSettingsUseCase() {
 
         BackOutputBoundary presenter =
@@ -269,6 +332,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the save settings use case, including its interactor and presenter.
+     */
     public AppBuilder addSaveSettingsUseCase() {
 
         ApplySettingsOutputBoundary presenter =
@@ -284,6 +350,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the choose favourite Pokémon use case, including its interactor and presenter.
+     */
     public AppBuilder addChooseFavPokemonUseCase() {
 
         ChooseFavPokemonOutputBoundary presenter =
@@ -297,6 +366,10 @@ public class AppBuilder {
         chooseFavPokemonView.setChooseFavPokemonController(controller);
         return this;
     }
+
+    /**
+     * Creates and registers the leaderboard use case, including its interactor and presenter.
+     */
     public AppBuilder addLeaderboardUseCase() {
 
         LeaderboardOutputBoundary presenter =
@@ -316,6 +389,9 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers the user profile use case, including its interactor and presenter.
+     */
     public AppBuilder addUserProfileUseCase() {
 
         UserProfileOutputBoundary presenter =
@@ -333,6 +409,14 @@ public class AppBuilder {
 
     // ========== Build Application ==========
 
+    /**
+     * Finalizes the application setup by assembling all registered views,
+     * controllers, and use cases into a fully configured application instance.
+     * This method should be called only after all required components have been
+     * added through the builder's setup methods.
+     *
+     * @return the fully constructed and ready-to-run application
+     */
     public JFrame build() {
         final JFrame application = new JFrame("Pokénator Dashboard");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

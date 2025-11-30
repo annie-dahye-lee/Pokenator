@@ -3,6 +3,9 @@ package interface_adapter.choose_fav_pokemon;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInputData;
 
+/**
+ * The controller for the Choose Favourite Pokémon use case.
+ */
 public class ChooseFavPokemonController {
     private final ChooseFavPokemonInputBoundary chooseFavPokemonInteractor;
 

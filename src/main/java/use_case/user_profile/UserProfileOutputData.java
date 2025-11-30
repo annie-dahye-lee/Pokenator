@@ -1,5 +1,8 @@
 package use_case.user_profile;
 
+/**
+ * The output data for the User Profile use case.
+ */
 public class UserProfileOutputData {
 
     private final String username;

@@ -2,6 +2,9 @@ package interface_adapter.leaderboard;
 
 import java.util.ArrayList;
 
+/**
+ * The state for the Leaderboard use case.
+ */
 public class LeaderboardState {
 
     private ArrayList<Object[]> userRankPairs;

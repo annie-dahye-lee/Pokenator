@@ -1,5 +1,8 @@
 package use_case.leaderboard;
 
+/**
+ * The input data for the Leaderboard use case.
+ */
 public class LeaderboardInputData {
 
     private final int newPage;

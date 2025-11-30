@@ -1,5 +1,8 @@
 package use_case.akinator;
 
+/**
+ * The input boundary for the Akinator use case.
+ */
 public interface AkinatorInputBoundary {
     void start();
     void reset();

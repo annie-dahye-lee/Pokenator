@@ -2,6 +2,9 @@ package use_case.leaderboard;
 
 import java.util.ArrayList;
 
+/**
+ * The output data for the Leaderboard use case.
+ */
 public class LeaderboardOutputData {
 
     private final ArrayList<Object[]> userRankPairs;

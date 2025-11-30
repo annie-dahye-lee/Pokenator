@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * The interactor for the Akinator use case.
+ */
 public class AkinatorInteractor implements AkinatorInputBoundary {
     private static final int MAX_QUESTIONS = 12;
     private static final int CONFIDENT_GUESS_THRESHOLD = 3;
@@ -42,6 +45,10 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         emitIdle();
     }
 
+    /**
+     * Starts a new Akinator game. If a game is currently ongoing, prompts the user to
+     * finish or reset the current round.
+     */
     @Override
     public void start() {
         if (roundActive) {
@@ -51,27 +58,42 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         emitQuestion("Think of a Pokémon and answer the questions.");
     }
 
+    /**
+     * Resets the current game.
+     */
     @Override
     public void reset() {
         resetRoundState();
         emitIdle();
     }
 
+    /**
+     * Handles the user's "yes" response.
+     */
     @Override
     public void answerYes() {
         handleAnswer(Boolean.TRUE);
     }
 
+    /**
+     * Handles the user's "no" response.
+     */
     @Override
     public void answerNo() {
         handleAnswer(Boolean.FALSE);
     }
 
+    /**
+     * Handles the user's "don't know" response.
+     */
     @Override
     public void answerUnknown() {
         handleAnswer(null);
     }
 
+    /**
+     * Allows the user to confirm if the guess was correct, and provides a response.
+     */
     @Override
     public void confirmGuess(boolean correct) {
         if (!awaitingGuess || candidates.isEmpty()) {
@@ -98,6 +120,9 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         }
     }
 
+    /**
+     * Allows the user to reveal the Pokemon they were thinking of.
+     */
     @Override
     public void revealPokemon(String pokemonName) {
         if (!awaitingReveal) {

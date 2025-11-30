@@ -127,6 +127,18 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
+    /**
+     * Saves the given user to the account list and updates the CSV file.
+     * <p>
+     * If the user already exists in the system, this method locates the user by
+     * matching the stored {@code User} object and updates its associated data.
+     * Otherwise, the user's display name is used as the username key for a new
+     * entry. After updating the in-memory map, the full account list is written
+     * to disk.
+     * </p>
+     *
+     * @param user the user whose data should be saved or updated
+     */
     @Override
     public void save(User user) {
         // When saving, we need to find the existing entry by username
@@ -147,31 +159,63 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         this.save();
     }
 
+    /**
+     * Getter for the list of all users.
+     *
+     * @return ArrayList of all users
+     */
     @Override
     public ArrayList<User> getUserList() {
         return new ArrayList<>(accounts.values());
     }
 
+    /**
+     * Getter for a single user by username.
+     *
+     * @param username the username of the user to use as key
+     * @return user information for the provided username
+     */
     @Override
     public User get(String username) {
         return accounts.get(username);
     }
 
+    /**
+     * Setter for the current user's username.
+     *
+     * @param name new name for the current user
+     */
     @Override
     public void setCurrentUsername(String name) {
         currentUsername = name;
     }
 
+    /**
+     * Getter for the current user's username.
+     *
+     * @return current username
+     */
     @Override
     public String getCurrentUsername() {
         return currentUsername;
     }
 
+    /**
+     * Checks if a user exists by name.
+     *
+     * @param identifier the username of the user to use as key
+     * @return whether the user exists
+     */
     @Override
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
     }
 
+    /**
+     * Changes the user's password and saves the change.
+     *
+     * @param user the user whose data should be saved or updated
+     */
     @Override
     public void changePassword(User user) {
         // Replace the User object in the map
@@ -179,11 +223,22 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         save();
     }
 
+    /**
+     * Adds a new user to the game.
+     *
+     * @param user the user whose data should be saved or updated
+     */
     public void editProfile(User user) {
         accounts.put(user.getName(), user);
         save();
     }
 
+    /**
+     * Changes the user's profile information and saves the change.
+     *
+     * @param username the username of the user
+     * @param user the user whose data should be saved or updated
+     */
     @Override
     public void updateUserProfile(String username, User user) {
         // Use the provided username as the key
@@ -191,6 +246,13 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         save();
     }
 
+    /**
+     * Changes the user's username and saves the change.
+     *
+     * @param oldUsername the original username of the user
+     * @param newUsername the new chosen username of the user
+     * @param user the user whose data should be saved or updated
+     */
     @Override
     public void updateUsername(String oldUsername, String newUsername, User user) {
         // Remove old entry
