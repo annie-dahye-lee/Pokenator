@@ -108,11 +108,15 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
             writer.write(String.join(",", headers.keySet()));
             writer.newLine();
 
-            for (User user : accounts.values()) {
+            // Iterate over map entries to get both username (key) and user (value)
+            // The key is the username, user.getName() is the display name
+            for (Map.Entry<String, User> entry : accounts.entrySet()) {
+                String username = entry.getKey(); // This is the actual username (map key)
+                User user = entry.getValue();
                 final String profilePhotoPath = user.getProfilePhotoPath() != null ? user.getProfilePhotoPath() : "";
                 final String bannerPath = user.getBannerPath() != null ? user.getBannerPath() : "";
                 final String line = String.format("%s,%s,%s,%s,%s,%s,%s",
-                        user.getName(), user.getPassword(), user.getScore(), user.getBio(),
+                        username, user.getPassword(), user.getScore(), user.getBio(),
                         user.getFavPokemon(), profilePhotoPath, bannerPath);
                 writer.write(line);
                 writer.newLine();
@@ -127,7 +131,21 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public void save(User user) {
-        accounts.put(user.getName(), user);
+        // When saving, we need to find the existing entry by username
+        // Since user.getName() might be the display name, we need to find the entry
+        // by checking which entry has this user object
+        String usernameToUse = null;
+        for (Map.Entry<String, User> entry : accounts.entrySet()) {
+            if (entry.getValue() == user) {
+                usernameToUse = entry.getKey();
+                break;
+            }
+        }
+        // If not found, use user.getName() as fallback (for new users)
+        if (usernameToUse == null) {
+            usernameToUse = user.getName();
+        }
+        accounts.put(usernameToUse, user);
         this.save();
     }
 
@@ -170,8 +188,22 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     @Override
-    public void updateUserProfile(User user) {
-        accounts.put(user.getName(), user);
+    public void updateUserProfile(String username, User user) {
+        // Use the provided username as the key
+        accounts.put(username, user);
+        save();
+    }
+
+    @Override
+    public void updateUsername(String oldUsername, String newUsername, User user) {
+        // Remove old entry
+        accounts.remove(oldUsername);
+        // Add new entry with new username
+        accounts.put(newUsername, user);
+        // Update current username if it matches
+        if (currentUsername != null && currentUsername.equals(oldUsername)) {
+            currentUsername = newUsername;
+        }
         save();
     }
 }

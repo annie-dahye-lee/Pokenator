@@ -1,12 +1,12 @@
-package use_case.settings;
+package use_case.settings.apply;
 
 /**
  * The DAO for the save settings use case
  */
-public class SaveSettingsInputData {
+public class ApplySettingsInputData {
     private final String theme;
 
-    public SaveSettingsInputData(String theme) {
+    public ApplySettingsInputData(String theme) {
         this.theme = theme;
     }
 

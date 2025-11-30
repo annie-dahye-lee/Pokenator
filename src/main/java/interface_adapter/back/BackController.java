@@ -1,15 +1,15 @@
-package interface_adapter.settings;
+package interface_adapter.back;
 
-import use_case.settings.AccessSettingsInputBoundary;
+import use_case.back.BackInputBoundary;
 
 /**
  * Controller responsible for navigating back to the dashboard
  * from the settings screen.
  */
-public class AccessSettingsController {
-    private final AccessSettingsInputBoundary interactor;
+public class BackController {
+    private final BackInputBoundary interactor;
 
-    public AccessSettingsController(AccessSettingsInputBoundary interactor) {
+    public BackController(BackInputBoundary interactor) {
         this.interactor = interactor;
     }
 

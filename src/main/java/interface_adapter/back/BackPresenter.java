@@ -1,13 +1,15 @@
-package interface_adapter.settings;
+package interface_adapter.back;
 
 import interface_adapter.ViewManagerModel;
-import use_case.settings.AccessSettingsOutputBoundary;
+import interface_adapter.settings.SettingsState;
+import interface_adapter.settings.SettingsViewModel;
+import use_case.back.BackOutputBoundary;
 
 /**
  * Presenter responsible for navigating from the settings screen
  * to a target view, in this case the dashboard.
  */
-public class AccessSettingsPresenter implements AccessSettingsOutputBoundary {
+public class BackPresenter implements BackOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final SettingsViewModel settingsViewModel;
     private final String targetView;
@@ -19,9 +21,9 @@ public class AccessSettingsPresenter implements AccessSettingsOutputBoundary {
      * @param settingsViewModel the settings view model whose state may be cleared
      * @param targetView        the name of the view to navigate to
      */
-    public AccessSettingsPresenter(ViewManagerModel viewManagerModel,
-                                   SettingsViewModel settingsViewModel,
-                                   String targetView) {
+    public BackPresenter(ViewManagerModel viewManagerModel,
+                         SettingsViewModel settingsViewModel,
+                         String targetView) {
         this.viewManagerModel = viewManagerModel;
         this.settingsViewModel = settingsViewModel;
         this.targetView = targetView;

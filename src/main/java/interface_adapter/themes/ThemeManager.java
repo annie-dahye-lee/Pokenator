@@ -33,6 +33,7 @@ public class ThemeManager {
      * @param theme the theme to register
      */
     public void registerTheme(Theme theme) {
+
         themes.put(theme.getName(), theme);
     }
 

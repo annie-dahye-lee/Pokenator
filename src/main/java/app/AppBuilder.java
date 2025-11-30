@@ -20,6 +20,12 @@ import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.settings.*;
+import interface_adapter.settings.apply.ApplySettingsController;
+import interface_adapter.settings.apply.ApplySettingsPresenter;
+import interface_adapter.back.BackController;
+import interface_adapter.back.BackPresenter;
+import interface_adapter.settings.reset.ResetSettingsController;
+import interface_adapter.settings.reset.ResetSettingsPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -36,7 +42,15 @@ import use_case.user_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
-import use_case.settings.*;
+import use_case.settings.apply.ApplySettingsInputBoundary;
+import use_case.settings.apply.ApplySettingsInteractor;
+import use_case.settings.apply.ApplySettingsOutputBoundary;
+import use_case.back.BackInputBoundary;
+import use_case.back.BackInteractor;
+import use_case.back.BackOutputBoundary;
+import use_case.settings.reset.ResetSettingsInputBoundary;
+import use_case.settings.reset.ResetSettingsInteractor;
+import use_case.settings.reset.ResetSettingsOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -109,14 +123,15 @@ public class AppBuilder {
 
     public AppBuilder addSignupView() {
         signupViewModel = new SignupViewModel();
-        signupView = new SignupView(signupViewModel, viewManagerModel);
+        signupView = new SignupView(signupViewModel, viewManagerModel, themeManager);
         cardPanel.add(signupView, signupView.getViewName());
+        addAccessSettingsUseCase();
         return this;
     }
 
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
-        loginView = new LoginView(loginViewModel);
+        loginView = new LoginView(loginViewModel, themeManager);
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
@@ -174,7 +189,7 @@ public class AppBuilder {
         // Initialize with a default user or null - will be updated when view is shown
         userProfileViewModel = new UserProfileViewModel();
         userProfileView = new UserProfileView(userProfileViewModel, viewManagerModel, gameDashboard,
-                userDataAccessObject, new PokeApiGateway());
+                userDataAccessObject, new PokeApiGateway(), themeManager);
 
         cardPanel.add(userProfileView, userProfileView.getViewName());
         return this;
@@ -191,6 +206,7 @@ public class AppBuilder {
 
         SignupController controller = new SignupController(userSignupInteractor);
         signupView.setSignupController(controller);
+
         return this;
     }
 
@@ -203,6 +219,7 @@ public class AppBuilder {
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
+        addAccessSettingsUseCase();
         return this;
     }
 
@@ -252,29 +269,31 @@ public class AppBuilder {
 
     public AppBuilder addAccessSettingsUseCase() {
 
-        AccessSettingsOutputBoundary presenter =
-                new AccessSettingsPresenter(viewManagerModel, settingsViewModel, "dashboard");
+        BackOutputBoundary presenter =
+                new BackPresenter(viewManagerModel, settingsViewModel, "dashboard");
 
-        AccessSettingsInputBoundary interactor =
-                new AccessSettingsInteractor(presenter);
+        BackInputBoundary interactor =
+                new BackInteractor(presenter);
 
-        AccessSettingsController controller =
-                new AccessSettingsController(interactor);
+        BackController controller =
+                new BackController(interactor);
 
         settingsView.setAccessSettingsController(controller);
+        loginView.setBackController(controller);
+        signupView.setAccessSettingsController(controller);
         return this;
     }
 
     public AppBuilder addSaveSettingsUseCase() {
 
-        SaveSettingsOutputBoundary presenter =
-                new SaveSettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
+        ApplySettingsOutputBoundary presenter =
+                new ApplySettingsPresenter(viewManagerModel, settingsViewModel, themeManager);
 
-        SaveSettingsInputBoundary interactor =
-                new SaveSettingsInteractor(presenter);
+        ApplySettingsInputBoundary interactor =
+                new ApplySettingsInteractor(presenter);
 
-        SaveSettingsController controller =
-                new SaveSettingsController(interactor);
+        ApplySettingsController controller =
+                new ApplySettingsController(interactor);
 
         settingsView.setSaveSettingsController(controller);
         return this;

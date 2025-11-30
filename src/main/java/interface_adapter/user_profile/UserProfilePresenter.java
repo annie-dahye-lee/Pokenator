@@ -16,6 +16,7 @@ public class UserProfilePresenter implements UserProfileOutputBoundary {
 
     @Override
     public void prepareSuccessView(UserProfileOutputData outputData) {
+        userProfileViewModel.getState().setUsername(outputData.getUsername());
         userProfileViewModel.getState().setName(outputData.getName());
         userProfileViewModel.getState().setProfilePhotoPath(outputData.getProfilePhotoPath());
         userProfileViewModel.getState().setBannerPath(outputData.getBannerPath());

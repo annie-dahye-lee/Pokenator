@@ -112,6 +112,81 @@ class AkinatorInteractorTest {
     }
 
     @Test
+    void resetReturnsToIdleState() {
+        interactor.start();
+        interactor.answerUnknown();
+
+        interactor.reset();
+
+        assertNotNull(presenter.last);
+        assertEquals(AkinatorOutputData.Step.IDLE, presenter.last.getStep());
+        assertFalse(presenter.last.isRoundActive());
+    }
+
+    @Test
+    void revealWithBlankNameSkipsApiLookup() throws Exception {
+        useTinyKnowledgeBase();
+        interactor.start();
+        interactor.answerYes();
+        interactor.confirmGuess(false);
+        assertEquals(AkinatorOutputData.Step.REVEAL_REQUEST, presenter.last.getStep());
+
+        interactor.revealPokemon("   ");
+
+        assertEquals(AkinatorOutputData.Step.FINISHED, presenter.last.getStep());
+        assertNull(presenter.last.getGuessInfo());
+    }
+
+    @Test
+    void startingWithNoUsefulQuestionsFallsBackToGuess() throws Exception {
+        Field askedTraitsField = AkinatorInteractor.class.getDeclaredField("askedTraits");
+        askedTraitsField.setAccessible(true);
+        askedTraitsField.set(interactor, java.util.EnumSet.allOf(PokemonTrait.class));
+
+        interactor.start();
+
+        assertEquals(AkinatorOutputData.Step.GUESS, presenter.last.getStep());
+        assertTrue(presenter.last.isAwaitingGuess());
+        assertEquals("I’m out of good questions. Let me guess instead!", presenter.last.getStatus());
+    }
+
+    @Test
+    void emptyCandidatesTriggerRevealRequest() throws Exception {
+        Field candidatesField = AkinatorInteractor.class.getDeclaredField("candidates");
+        candidatesField.setAccessible(true);
+        candidatesField.set(interactor, new java.util.ArrayList<>());
+
+        Method emitGuess = AkinatorInteractor.class.getDeclaredMethod("emitGuess", String.class);
+        emitGuess.setAccessible(true);
+        emitGuess.invoke(interactor, "test");
+
+        assertEquals(AkinatorOutputData.Step.REVEAL_REQUEST, presenter.last.getStep());
+        assertTrue(presenter.last.isAwaitingReveal());
+    }
+
+    @Test
+    void filterByTraitReturnsOriginalWhenFilterEmpty() throws Exception {
+        Method filter = AkinatorInteractor.class.getDeclaredMethod("filterByTrait", List.class, PokemonTrait.class, boolean.class);
+        filter.setAccessible(true);
+        List<SimplePokemonProfile> base = List.of(SimplePokemonProfile.of("ditto", PokemonTrait.SPOOKY));
+
+        @SuppressWarnings("unchecked")
+        List<SimplePokemonProfile> result = (List<SimplePokemonProfile>) filter.invoke(interactor, base, PokemonTrait.STARTER, true);
+
+        assertSame(base, result);
+    }
+
+    @Test
+    void capitalizeHandlesNullAndBlank() throws Exception {
+        Method capitalize = AkinatorInteractor.class.getDeclaredMethod("capitalize", String.class);
+        capitalize.setAccessible(true);
+
+        assertEquals("", capitalize.invoke(interactor, (Object) null));
+        assertEquals("", capitalize.invoke(interactor, "   "));
+        assertEquals("Bulbasaur", capitalize.invoke(interactor, "bULbASAUR"));
+    }
+
+    @Test
     void pokeApiFailureIsReportedButGameContinues() throws Exception {
         presenter = new CapturingPresenter();
         interactor = new AkinatorInteractor(presenter, new FailingGateway(), List.of());
