@@ -85,7 +85,6 @@ public class LeaderboardInteractorTest {
      * Remove the ones seen and return the updated checklist.
      * @param userRankPairs resulting sublist of pairs from the use case.
      * @param namesChecklist current checklist of names.
-     * @return updated checklist with seen names removed.
      */
     private void checkOffNames(
             ArrayList<Object[]> userRankPairs,

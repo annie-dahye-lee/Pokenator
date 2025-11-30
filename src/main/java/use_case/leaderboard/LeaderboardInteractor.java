@@ -20,6 +20,8 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         this.leaderboardPresenter = leaderboardPresenter;
     }
 
+    public static int getUSERS_PER_PAGE() { return USERS_PER_PAGE; }
+
     @Override
     public void changePage(ChangePageInputData changePageInputData) {
 
@@ -52,10 +54,6 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
                 new ChangePageOutputData(userRankPairs, newPageIndex + 1)
         );
     }
-
-    // Secondary helpers:
-
-    public static int getUSERS_PER_PAGE() { return USERS_PER_PAGE; }
 
     /**
      * Return whether the new page is within the user list range.
