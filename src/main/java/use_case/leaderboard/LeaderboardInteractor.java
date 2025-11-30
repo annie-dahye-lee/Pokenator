@@ -31,12 +31,9 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
         // Get the new page number with 0-indexing.
         int newPageIndex = changePageInputData.getNewPage() - 1;
 
-        // If the new page is not within the user list range, throw error & terminate.
-        if (! verifyPage(userList, newPageIndex)) {
-            String error = "New page is not within the user list range:\n" +
-                    "New 0-indexed page:" + newPageIndex + " → required lower bound: " +(newPageIndex * USERS_PER_PAGE) + "\n" +
-                    "Current user list length: " + userList.size();
-
+        // If the new page is invalid, throw error & terminate.
+        String error = verifyPage(userList, newPageIndex);
+        if (error != null) {
             leaderboardPresenter.changePagePrepareFailedView(error);
             return;
         }
@@ -60,14 +57,31 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
      * Page 1 always counts, even if the list is empty.
      * @param userList full list of user objects.
      * @param newPageIndex new page number with 0-indexing.
-     * @return T if the new page is within the user list range, F otherwise.
+     * @return null if the new page is valid, error message otherwise.
      */
-    private boolean verifyPage(ArrayList<User> userList, int newPageIndex) {
-        return
-                newPageIndex == 0 ||
+    private String verifyPage(ArrayList<User> userList, int newPageIndex) {
+
+        // If the page is valid, return null.
+        if (newPageIndex == 0 ||
 
                 0 < newPageIndex &&
-                        newPageIndex * USERS_PER_PAGE < userList.size();
+                        newPageIndex * USERS_PER_PAGE < userList.size()
+        ) {
+            return null;
+        }
+        // Otherwise, return an error message.
+
+        String newPageStr = "New page index: " + newPageIndex;
+
+        // Check if the new page index is negative.
+        if (newPageIndex < 0) {
+            return "Cannot go to a negative page.\n" + newPageStr;
+        }
+
+        // Otherwise, the new page index is over the last available page.
+        return "New page is not within the user list range:\n" +
+                newPageStr + " → required lower bound: " +(newPageIndex * USERS_PER_PAGE) + "\n" +
+                "Current user list length: " + userList.size();
     }
 
     /**
