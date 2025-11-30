@@ -3,7 +3,6 @@ package data_access;
 import entity.User;
 import entity.UserFactory;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
-import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -24,7 +23,6 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         ChangePasswordUserDataAccessInterface,
         LogoutUserDataAccessInterface,
         UserListDataAccessInterface,
-        EditProfileUserDataAccessInterface,
         UserProfileUserDataAccessInterface {
 
     private static final String HEADER = "username,password,score,bio,fav_pokemon,profile_photo_path,banner_path";
@@ -181,7 +179,6 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         save();
     }
 
-    @Override
     public void editProfile(User user) {
         accounts.put(user.getName(), user);
         save();

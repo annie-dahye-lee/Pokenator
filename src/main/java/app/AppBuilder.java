@@ -9,9 +9,6 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonPresenter;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
-import interface_adapter.edit_profile.EditProfileController;
-import interface_adapter.edit_profile.EditProfilePresenter;
-import interface_adapter.edit_profile.EditProfileViewModel;
 import interface_adapter.user_profile.UserProfileController;
 import interface_adapter.user_profile.UserProfilePresenter;
 import interface_adapter.user_profile.UserProfileViewModel;
@@ -37,7 +34,6 @@ import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonInteractor;
 import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
-import use_case.edit_profile.*;
 import use_case.user_profile.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
@@ -91,8 +87,6 @@ public class AppBuilder {
     private LoggedInView loggedInView;
     private SettingsViewModel settingsViewModel;
     private SettingsView settingsView;
-    private EditProfileViewModel editProfileViewModel;
-    private EditProfileView editProfileView;
     private ChooseFavPokemonViewModel chooseFavPokemonViewModel;
     private ChooseFavPokemonView chooseFavPokemonView;
     private AkinatorViewModel akinatorViewModel;
@@ -164,15 +158,6 @@ public class AppBuilder {
         leaderboardViewModel = new LeaderboardViewModel();
         leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, themeManager);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
-        return this;
-    }
-
-    public AppBuilder addEditProfileView() {
-        editProfileViewModel = new EditProfileViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
-        editProfileView = new EditProfileView(editProfileViewModel, viewManagerModel, gameDashboard,
-                                              userDataAccessObject, new PokeApiGateway());
-
-        cardPanel.add(editProfileView, editProfileView.getViewName());
         return this;
     }
 
@@ -296,20 +281,6 @@ public class AppBuilder {
                 new ApplySettingsController(interactor);
 
         settingsView.setSaveSettingsController(controller);
-        return this;
-    }
-
-    public AppBuilder addEditProfileUseCase() {
-
-        EditProfileOutputBoundary presenter =
-                new EditProfilePresenter(editProfileViewModel, viewManagerModel);
-
-        EditProfileInputBoundary interactor =
-                new EditProfileInteractor(userDataAccessObject, presenter, userFactory, gameDashboard);
-
-        EditProfileController controller = new EditProfileController(interactor);
-
-        editProfileView.setEditProfileController(controller);
         return this;
     }
 

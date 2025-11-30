@@ -17,7 +17,6 @@ public class GameDashboard extends JPanel implements ThemedView {
     private final JPanel headerButtons;
     private final JLabel userLabel;
 
-    private EditProfileView editProfileView = null;
     private ChooseFavPokemonView chooseFavPokemonView = null;
     public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
 
@@ -216,10 +215,6 @@ public class GameDashboard extends JPanel implements ThemedView {
 
     public String getViewName() {
         return "dashboard";
-    }
-
-    public void setEPV(EditProfileView EPV) {
-        this.editProfileView = EPV;
     }
 
     public void setCFPV(ChooseFavPokemonView CFPV) {
