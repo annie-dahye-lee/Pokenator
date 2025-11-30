@@ -1,7 +1,6 @@
 package view;
 
 import entity.User;
-import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.*;
 import interface_adapter.back.BackController;
 import interface_adapter.themes.*;
@@ -25,12 +24,11 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
     private final ThemeManager themeManager;
 
     private final JPanel leaderboardTable = new JPanel();
-    private final JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    private final JPanel navBar = new JPanel();
     private final JLabel pageLabel = new JLabel();
 
     public LeaderboardView(
             LeaderboardViewModel leaderboardViewModel,
-            ViewManagerModel viewManagerModel,
             ThemeManager themeManager
     ) {
         this.leaderboardViewModel = leaderboardViewModel;
@@ -74,20 +72,28 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         leaderboardPanel.add(leaderboardTable);
         add(leaderboardPanel, BorderLayout.CENTER);
 
-        // Bottom bar — page navigations:
+        // Bottom bar — update button and page navigations:
+        JPanel botBar = new JPanel();
+        botBar.setLayout(new BoxLayout(botBar, BoxLayout.Y_AXIS));
+
+        JButton updateButton = new JButton("Update");
+        updateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JButton previousButton = new JButton("<");
         JButton nextButton = new JButton(">");
-
         navBar.add(previousButton);
         navBar.add(pageLabel);
         navBar.add(nextButton);
+        navBar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(navBar, BorderLayout.SOUTH);
+        botBar.add(updateButton);
+        botBar.add(navBar);
+        add(botBar, BorderLayout.SOUTH);
 
 
         // Event connections:
 
-        // Back Button:
+        // Back button:
         backButton.addActionListener(e -> {
 
             // If currently not on page 1, preemptively reset to page 1.
@@ -98,14 +104,21 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
             backController.execute();
         });
 
-        // Previous Button:
+        // Update button:
+        updateButton.addActionListener(e -> {
+            leaderboardController.changePage(
+                    leaderboardViewModel.getState().getPage()
+            );
+        });
+
+        // Previous button:
         previousButton.addActionListener(e -> {
             leaderboardController.changePage(
                     leaderboardViewModel.getState().getPage() - 1
             );
         });
 
-        // Next Button:
+        // Next button:
         nextButton.addActionListener(e -> {
             leaderboardController.changePage(
                     leaderboardViewModel.getState().getPage() + 1
@@ -133,6 +146,9 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
 
         LeaderboardState state = leaderboardViewModel.getState();
         ArrayList<Object[]> userRankPairs = state.getUserRankPairs();
+
+        // Clear the leaderboard panel.
+        leaderboardTable.removeAll();
 
         // If the sublist of user-rank pairs is empty,
         // display a message and hide the navigation panel.
@@ -166,9 +182,6 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
      * @param userRankPairs sublist of user-rank pairs to display.
      */
     private void updateLeaderboard(ArrayList<Object[]> userRankPairs) {
-
-        // Clear the leaderboard panel.
-        leaderboardTable.removeAll();
 
         // Column headers:
         leaderboardTable.add(constructRow(

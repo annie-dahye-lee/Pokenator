@@ -162,7 +162,7 @@ public class AppBuilder {
 
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
-        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, themeManager);
+        leaderboardView = new LeaderboardView(leaderboardViewModel, themeManager);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
