@@ -54,7 +54,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
     /**
      * Return whether the new page is within the user list range.
-     * Page 1 always counts, even if the list is empty.
+     * Page 1 always counts, even if the user list is empty.
      * @param userList full list of user objects.
      * @param newPageIndex new page number with 0-indexing.
      * @return null if the new page is valid, error message otherwise.
@@ -80,7 +80,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
 
         // Otherwise, the new page index is over the last available page.
         return "New page is not within the user list range:\n" +
-                newPageStr + " → required lower bound: " +(newPageIndex * USERS_PER_PAGE) + "\n" +
+                newPageStr + " → required lower bound: " + (newPageIndex * USERS_PER_PAGE) + "\n" +
                 "Current user list length: " + userList.size();
     }
 
