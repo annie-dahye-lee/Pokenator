@@ -56,7 +56,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
      * Return whether the new page is within the user list range.
      * Page 1 always counts, even if the user list is empty.
      * @param userList full list of user objects.
-     * @param newPageIndex new page number with 0-indexing.
+     * @param newPageIndex new page index.
      * @return null if the new page is valid, error message otherwise.
      */
     private String verifyPage(ArrayList<User> userList, int newPageIndex) {
@@ -88,7 +88,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
      * Get the sublist of users to display for the current page paired with their ranks.
      * Precondition: verifyPage(userList, page) == true
      * @param userList full list of user objects.
-     * @param newPageIndex new page number with 0-indexing.
+     * @param newPageIndex new page index.
      * @return sublist of user-rank pairs to display.
      */
     private ArrayList<Object[]> getUserRankPairs(ArrayList<User> userList, int newPageIndex) {
@@ -118,7 +118,7 @@ public class LeaderboardInteractor implements LeaderboardInputBoundary {
     /**
      * Comparator interface used to sort the user list.
      * First, sort by score from MOST TO LEAST.
-     * If users have the same score, sort by name alphabetically.
+     * If users have the same score, sort by name ALPHANUMERICALLY.
      * Order will be absolute since names are unique.
      */
     private static class UserRankingComparator implements Comparator<User> {
