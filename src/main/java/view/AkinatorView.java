@@ -19,6 +19,9 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * The view for displaying the Akinator screen.
+ */
 public class AkinatorView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private final String viewName = "akinator";
@@ -123,6 +126,11 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         this.controller = controller;
     }
 
+    /**
+     * Listens for property change events.
+     *
+     * @param evt the property change event
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("error")) {
@@ -226,6 +234,11 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         controller.revealPokemon(trimmed);
     }
 
+    /**
+     * Applies a chosen theme to the Akinator game.
+     *
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }

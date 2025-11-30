@@ -206,7 +206,7 @@ public class AppBuilder {
     public AppBuilder addChooseFavPokemonView() {
         chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
         chooseFavPokemonView = new ChooseFavPokemonView(chooseFavPokemonViewModel, viewManagerModel, gameDashboard,
-                userDataAccessObject, new PokeApiGateway());
+                userDataAccessObject, new PokeApiGateway(), themeManager);
 
         cardPanel.add(chooseFavPokemonView, chooseFavPokemonView.getViewName());
         return this;

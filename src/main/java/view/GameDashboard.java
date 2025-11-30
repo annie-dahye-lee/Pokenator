@@ -9,6 +9,9 @@ import interface_adapter.themes.ThemedView;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The view for displaying the game dashboard.
+ */
 public class GameDashboard extends JPanel implements ThemedView {
 
     private final ViewManagerModel viewManagerModel;

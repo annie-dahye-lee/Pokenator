@@ -13,6 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.*;
 
+/**
+ * The view for displaying the game leaderboard.
+ */
 public class LeaderboardView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private static final String VIEW_NAME = "leaderboard";
@@ -113,6 +116,12 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
 
     public String getViewName() { return VIEW_NAME; }
 
+    /**
+     * Listens for property change events.
+     *
+     * @param e A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent e) {
         LeaderboardState state = leaderboardViewModel.getState();
@@ -189,10 +198,12 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         return row;
     }
 
+    /**
+     * Applies a chosen theme to the leaderboard.
+     *
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }
-
-
-
 }

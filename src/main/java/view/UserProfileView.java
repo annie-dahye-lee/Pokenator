@@ -749,6 +749,11 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     public void actionPerformed(ActionEvent e) {
     }
 
+    /**
+     * Listens for property change events.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final UserProfileState state = (UserProfileState) evt.getNewValue();
@@ -826,6 +831,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         return pokemonList;
     }
 
+    /**
+     * Updates fields on the view to the use case's current state.
+     * @param state the current state
+     */
     public void setFields(UserProfileState state) {
         usernameInputField.setText(state.getUsername() != null ? state.getUsername() : "");
         passwordInputField.setText(""); // Clear password field for security
@@ -878,6 +887,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    /**
+     * Sets the username field.
+     * @param username the username
+     */
     public void setFields(String username) {
         if (username != null) {
             var user = DAO.get(username);
@@ -888,6 +901,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    /**
+     * Applies a chosen theme to the profile view.
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }

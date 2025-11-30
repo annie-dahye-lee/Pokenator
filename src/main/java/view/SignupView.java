@@ -184,11 +184,20 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         });
     }
 
+    /**
+     * Listens for the user's actions.
+     * @param evt the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Cancel not implemented yet.");
     }
 
+    /**
+     * Listens for property change events.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final SignupState state = (SignupState) evt.getNewValue();
@@ -214,6 +223,10 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         this.backController = accessController;
     }
 
+    /**
+     * Applies a chosen theme to the signup view.
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }
