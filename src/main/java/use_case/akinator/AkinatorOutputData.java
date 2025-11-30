@@ -1,6 +1,9 @@
 package use_case.akinator;
 import data_access.PokeApiGateway;
 
+/**
+ * The output data for the Akinator use case.
+ */
 public class AkinatorOutputData {
     public enum Step {IDLE, QUESTION, GUESS, REVEAL_REQUEST, FINISHED}
 

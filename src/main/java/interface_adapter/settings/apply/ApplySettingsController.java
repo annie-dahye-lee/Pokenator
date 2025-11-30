@@ -4,6 +4,9 @@ import interface_adapter.settings.SettingsState;
 import use_case.settings.apply.ApplySettingsInputBoundary;
 import use_case.settings.apply.ApplySettingsInputData;
 
+/**
+ * The controller for applying the chosen settings to the game.
+ */
 public class ApplySettingsController {
     private final ApplySettingsInputBoundary applySettingsInputBoundary;
 

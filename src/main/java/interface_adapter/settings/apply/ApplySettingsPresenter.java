@@ -52,6 +52,11 @@ public class ApplySettingsPresenter implements ApplySettingsOutputBoundary {
         viewManagerModel.firePropertyChange();
     }
 
+    /**
+     * Prepares the fail view if an error occurs.
+     *
+     * @param errorMessage the error message
+     */
     @Override
     public void prepareFailView(String errorMessage) {
         SettingsState state = settingsViewModel.getState();
