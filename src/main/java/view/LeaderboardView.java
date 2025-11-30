@@ -3,6 +3,7 @@ package view;
 import entity.User;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.leaderboard.*;
+import interface_adapter.back.BackController;
 import interface_adapter.themes.*;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
 
     private final LeaderboardViewModel leaderboardViewModel;
     private LeaderboardController leaderboardController = null;
+    private BackController backController = null;
     private final ThemeManager themeManager;
 
     private final JPanel leaderboardTable = new JPanel();
@@ -93,8 +95,7 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
                 leaderboardController.changePage(1);
             }
 
-            viewManagerModel.setState("dashboard");
-            viewManagerModel.firePropertyChange();
+            backController.execute();
         });
 
         // Previous Button:
@@ -112,15 +113,20 @@ public class LeaderboardView extends JPanel implements PropertyChangeListener, T
         });
     }
 
-    /**
-     * Set the controller for this view.
-     * @param leaderboardController controller.
-     */
-    public void setLeaderboardController(LeaderboardController leaderboardController) {
-        this.leaderboardController = leaderboardController;
-    }
-
     public String getViewName() { return VIEW_NAME; }
+
+    /**
+     * Set the leaderboard and back controllers for this view.
+     * @param leaderboardController leaderboard controller.
+     * @param backController back controller.
+     */
+    public void setControllers(
+            LeaderboardController leaderboardController,
+            BackController backController
+    ) {
+        this.leaderboardController = leaderboardController;
+        this.backController = backController;
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
