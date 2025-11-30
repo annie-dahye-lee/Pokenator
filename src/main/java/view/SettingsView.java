@@ -165,8 +165,6 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
             }
             SettingsState state = settingsViewModel.getState();
             state.setTheme(chosen.toLowerCase());
-            settingsViewModel.setState(state);
-            settingsViewModel.firePropertyChange();
 
             if (applySettingsController != null) applySettingsController.execute(state);
 
