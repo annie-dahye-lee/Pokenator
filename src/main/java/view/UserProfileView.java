@@ -402,6 +402,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 userProfileController.execute(
                         currentState.getUsername(),
                         currentState.getPassword(),
+                        null, // newUsername - not changing username
+                        null, // newPassword - not changing password
                         currentState.getScore(),
                         currentState.getBio(),
                         currentState.getFav_pokemon(),

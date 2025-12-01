@@ -5,7 +5,7 @@ import entity.User;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.themes.ThemeManager;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import view.GameDashboard;
 
 import java.io.File;

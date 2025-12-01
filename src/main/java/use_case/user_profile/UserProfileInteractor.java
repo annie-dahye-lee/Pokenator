@@ -78,7 +78,10 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
                 && !newUsername.equals(currentUsername))
                         ? newUsername
                         : currentUsername;
-        String finalPassword = (newPassword != null && !newPassword.trim().isEmpty())
+        // If newPassword is not null, it's guaranteed to be non-empty (validation
+        // above)
+        // So we can simplify to just check if it's not null
+        String finalPassword = (newPassword != null)
                 ? newPassword
                 : u.getPassword();
 
