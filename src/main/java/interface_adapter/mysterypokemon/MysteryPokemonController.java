@@ -25,10 +25,6 @@ public class MysteryPokemonController {
     public void reset() {
         interactor.reset();
     }
-
-    public void quit() {
-        interactor.quit();
-    }
 }
 
 

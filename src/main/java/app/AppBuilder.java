@@ -195,7 +195,7 @@ public class AppBuilder {
 
     public AppBuilder addMysteryPokemonView() {
         mysteryPokemonViewModel = new MysteryPokemonViewModel();
-        mysteryPokemonView = new MysteryPokemonView(gen1loader, mysteryPokemonViewModel);
+        mysteryPokemonView = new MysteryPokemonView(gen1loader, mysteryPokemonViewModel, viewManagerModel);
         cardPanel.add(mysteryPokemonView, mysteryPokemonView.getViewName());
         return this;
     }

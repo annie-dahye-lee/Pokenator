@@ -5,6 +5,8 @@ import data_access.Gen1Loader;
 import interface_adapter.mysterypokemon.MysteryPokemonController;
 import interface_adapter.mysterypokemon.MysteryPokemonState;
 import interface_adapter.mysterypokemon.MysteryPokemonViewModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +20,7 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
     private final String ViewName = "mysterypokemon";
     private final Gen1Loader gen1loader;
     private final MysteryPokemonViewModel viewModel;
+    private final ViewManagerModel viewManagerModel;
     private MysteryPokemonController controller;
 
     private final JLabel startLabel = new JLabel("Press start to begin:");
@@ -48,9 +51,10 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
     private final JLabel errorLabel = new JLabel("");
     private boolean lastGameOver = false;
 
-    public MysteryPokemonView(Gen1Loader gen1loader, MysteryPokemonViewModel viewModel) {
+    public MysteryPokemonView(Gen1Loader gen1loader, MysteryPokemonViewModel viewModel, ViewManagerModel viewManagerModel) {
         this.gen1loader = gen1loader;
         this.viewModel = viewModel;
+        this.viewManagerModel = viewManagerModel;
 
         this.viewModel.addPropertyChangeListener(this);
 
@@ -129,7 +133,11 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
                 throw new RuntimeException(ex);
             }
         });
-        quitButton.addActionListener(e -> controller.quit());
+        quitButton.addActionListener(e -> {
+            viewManagerModel.setState("dashboard");
+            viewManagerModel.firePropertyChange();
+            }
+        );
         resetButton.addActionListener(e -> controller.reset());
     }
 
@@ -181,11 +189,11 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
         String message;
 
         if (state.isPlayerWon()) {
-            title = "You win!";
-            message = "Your guess is correct. The Pokemon is" + state.getAnswerName() + ".";
+            message = "You win!";
+            title = "Your guess is correct. The Pokemon is" + state.getAnswerName() + ".";
         } else {
-            title = "You lost!";
-            message = "Your guess is incorrect. The correct answer is" + state.getAnswerName() + ",";
+            message = "You lost!";
+            title = "Your guess is incorrect. The correct answer is" + state.getAnswerName() + ".";
         }
 
         if (state.getAnswerSprite() != null) {
@@ -204,6 +212,10 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
                     JOptionPane.INFORMATION_MESSAGE
             );
         }
+    }
+
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
     }
 
 }
