@@ -9,20 +9,10 @@ public interface UserProfileUserDataAccessInterface {
 
     /**
      * Update the user profile.
-     * 
-     * @param username the username of the user to update
-     * @param user     the user with updated profile information
+     * @param username the username (key) for the user to update
+     * @param user the user with updated profile information
      */
     void updateUserProfile(String username, User user);
-
-    /**
-     * Update the username of a user.
-     * 
-     * @param oldUsername the old username
-     * @param newUsername the new username
-     * @param user        the user with updated username
-     */
-    void updateUsername(String oldUsername, String newUsername, User user);
 
     /**
      * Get a user by username.
@@ -33,10 +23,17 @@ public interface UserProfileUserDataAccessInterface {
     User get(String username);
 
     /**
-     * Check if a user exists by username.
-     * 
+     * Check if a username already exists.
      * @param username the username to check
-     * @return true if the user exists, false otherwise
+     * @return true if the username exists, false otherwise
      */
     boolean existsByName(String username);
+
+    /**
+     * Update the username of a user. This involves removing the old entry and creating a new one.
+     * @param oldUsername the current username
+     * @param newUsername the new username
+     * @param user the user object with updated information
+     */
+    void updateUsername(String oldUsername, String newUsername, User user);
 }
