@@ -234,4 +234,9 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
             throw new RuntimeException(ex);
         }
     }
+
+    @Override
+    public void updateUserProfile(User user) {
+        editProfile(user);
+    }
 }
