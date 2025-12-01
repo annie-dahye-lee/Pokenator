@@ -16,13 +16,16 @@ public class UserProfilePresenter implements UserProfileOutputBoundary {
 
     @Override
     public void prepareSuccessView(UserProfileOutputData outputData) {
-        userProfileViewModel.getState().setUsername(outputData.getUsername());
-        userProfileViewModel.getState().setName(outputData.getName());
-        userProfileViewModel.getState().setProfilePhotoPath(outputData.getProfilePhotoPath());
-        userProfileViewModel.getState().setBannerPath(outputData.getBannerPath());
-        userProfileViewModel.getState().setBio(outputData.getBio());
-        userProfileViewModel.getState().setFav_pokemon(outputData.getFavPokemon());
-        userProfileViewModel.getState().setProfileError(null);
+        UserProfileState state = userProfileViewModel.getState();
+        state.setUsername(outputData.getUsername());
+        state.setName(outputData.getName());
+        state.setProfilePhotoPath(outputData.getProfilePhotoPath());
+        state.setBannerPath(outputData.getBannerPath());
+        state.setBio(outputData.getBio());
+        state.setFav_pokemon(outputData.getFavPokemon());
+        state.setProfileCompletionPercentage(outputData.getProfileCompletionPercentage());
+        state.setBioCharacterCount(outputData.getBioCharacterCount());
+        state.setProfileError(null);
         userProfileViewModel.firePropertyChange();
     }
 

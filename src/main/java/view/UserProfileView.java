@@ -66,7 +66,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private UserProfileController userProfileController = null;
 
     public UserProfileView(UserProfileViewModel userProfileViewModel, ViewManagerModel viewManagerModel,
-                          GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
+            GameDashboard gameDashboard, FileUserDataAccessObject DAO, PokeApiGateway pokeApiGateway,
+            ThemeManager themeManager) {
         this.userProfileViewModel = userProfileViewModel;
         this.userProfileViewModel.addPropertyChangeListener(this);
         this.viewManagerModel = viewManagerModel;
@@ -182,8 +183,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         profilePhotoLabel.setBackground(new Color(79, 84, 92));
         profilePhotoLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(54, 57, 63), 5),
-                BorderFactory.createLineBorder(Color.WHITE, 3)
-        ));
+                BorderFactory.createLineBorder(Color.WHITE, 3)));
         profilePhotoLabel.setHorizontalAlignment(JLabel.CENTER);
         profilePhotoLabel.setVerticalAlignment(JLabel.CENTER);
 
@@ -249,8 +249,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         bioInputField.setForeground(new Color(219, 222, 225));
         bioInputField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         bioInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         bioInputField.setLineWrap(true);
         bioInputField.setWrapStyleWord(true);
@@ -260,7 +259,9 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 String bioText = bioInputField.getText();
                 currentState.setBio(bioText);
                 userProfileViewModel.setState(currentState);
+                // Update UI directly without firing property change to avoid feedback loop
                 updateBioCharacterCount(bioText.length());
+                updateProfileCompletion(currentState.getProfileCompletionPercentage());
             }
 
             @Override
@@ -314,8 +315,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         usernameInputField.setForeground(new Color(219, 222, 225));
         usernameInputField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         usernameInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         usernameInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -342,8 +342,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         passwordInputField.setForeground(new Color(219, 222, 225));
         passwordInputField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         passwordInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         passwordInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -370,14 +369,15 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         nameInputField.setForeground(new Color(219, 222, 225));
         nameInputField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         nameInputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         nameInputField.getDocument().addDocumentListener(new DocumentListener() {
             private void documentListenerHelper() {
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setName(nameInputField.getText());
                 userProfileViewModel.setState(currentState);
+                // Update UI directly without firing property change to avoid feedback loop
+                updateProfileCompletion(currentState.getProfileCompletionPercentage());
             }
 
             @Override
@@ -423,8 +423,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         favPokemonComboBox.setForeground(new Color(219, 222, 225));
         favPokemonComboBox.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(32, 34, 37), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         favPokemonComboBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
         favPokemonComboBox.setPreferredSize(new Dimension(300, 35));
         favPokemonComboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -433,9 +432,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             String selectedPokemon = (String) favPokemonComboBox.getSelectedItem();
             currentState.setFav_pokemon(selectedPokemon);
             userProfileViewModel.setState(currentState);
+            // Update UI directly without firing property change to avoid feedback loop
+            updateProfileCompletion(currentState.getProfileCompletionPercentage());
             updatePokemonImage(selectedPokemon);
         });
-
 
         editFavPokemon = new JButton("See more...");
         editFavPokemon.setBackground(new Color(88, 101, 242)); // Discord blurple
@@ -455,8 +455,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                             viewManagerModel.firePropertyChange();
                         }
                     }
-                }
-        );
+                });
 
         pokemonPanel.add(pokemonLabel);
         pokemonPanel.add(Box.createVerticalStrut(5));
@@ -540,7 +539,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 final UserProfileState currentState = userProfileViewModel.getState();
                 String newUsername = usernameInputField.getText().trim();
                 String newPassword = new String(passwordInputField.getPassword()).trim();
-                
+
                 // If username is same as current, set to null (no change)
                 if (newUsername.equals(currentState.getUsername())) {
                     newUsername = null;
@@ -549,7 +548,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 if (newPassword.isEmpty()) {
                     newPassword = null;
                 }
-                
+
                 userProfileController.execute(
                         currentState.getUsername(),
                         currentState.getPassword(),
@@ -560,8 +559,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                         currentState.getFav_pokemon(),
                         currentState.getName(),
                         currentState.getProfilePhotoPath(),
-                        currentState.getBannerPath()
-                );
+                        currentState.getBannerPath());
                 // Show success message
                 successLabel.setText("✓ Changes saved successfully!");
                 errorLabel.setText(" ");
@@ -602,8 +600,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             @Override
             public boolean accept(File f) {
                 String name = f.getName().toLowerCase();
-                return f.isDirectory() || name.endsWith(".jpg") || name.endsWith(".jpeg") 
-                    || name.endsWith(".png") || name.endsWith(".gif");
+                return f.isDirectory() || name.endsWith(".jpg") || name.endsWith(".jpeg")
+                        || name.endsWith(".png") || name.endsWith(".gif");
             }
 
             @Override
@@ -622,21 +620,23 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                     profilesDir.mkdirs();
                 }
 
-                String fileName = gameDashboard.getCurrentUser() + "_banner_" + System.currentTimeMillis() + 
-                    selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
+                String fileName = gameDashboard.getCurrentUser() + "_banner_" + System.currentTimeMillis() +
+                        selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
                 File destFile = new File(profilesDir, fileName);
-                
+
                 // Copy file
-                java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), 
-                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 currentBannerPath = destFile.getPath();
                 bannerImage = ImageIO.read(destFile);
                 updateBannerDisplay();
-                
+
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setBannerPath(currentBannerPath);
                 userProfileViewModel.setState(currentState);
+                // Update UI directly without firing property change to avoid feedback loop
+                updateProfileCompletion(currentState.getProfileCompletionPercentage());
             } catch (IOException ex) {
                 errorLabel.setText("Error loading banner image: " + ex.getMessage());
             }
@@ -649,8 +649,8 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             @Override
             public boolean accept(File f) {
                 String name = f.getName().toLowerCase();
-                return f.isDirectory() || name.endsWith(".jpg") || name.endsWith(".jpeg") 
-                    || name.endsWith(".png") || name.endsWith(".gif");
+                return f.isDirectory() || name.endsWith(".jpg") || name.endsWith(".jpeg")
+                        || name.endsWith(".png") || name.endsWith(".gif");
             }
 
             @Override
@@ -669,21 +669,23 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                     profilesDir.mkdirs();
                 }
 
-                String fileName = gameDashboard.getCurrentUser() + "_photo_" + System.currentTimeMillis() + 
-                    selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
+                String fileName = gameDashboard.getCurrentUser() + "_photo_" + System.currentTimeMillis() +
+                        selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
                 File destFile = new File(profilesDir, fileName);
-                
+
                 // Copy file
-                java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), 
-                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 currentProfilePhotoPath = destFile.getPath();
                 profilePhotoImage = ImageIO.read(destFile);
                 updateProfilePhotoDisplay();
-                
+
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setProfilePhotoPath(currentProfilePhotoPath);
                 userProfileViewModel.setState(currentState);
+                // Update UI directly without firing property change to avoid feedback loop
+                updateProfileCompletion(currentState.getProfileCompletionPercentage());
             } catch (IOException ex) {
                 errorLabel.setText("Error loading profile photo: " + ex.getMessage());
             }
@@ -719,7 +721,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             String pokemonNameLower = pokemonName.toLowerCase();
             var pokemonInfo = pokeApiGateway.fetchPokemon(pokemonNameLower);
             String spriteUrl = pokemonInfo.getSpriteUrl();
-            
+
             if (spriteUrl != null && !spriteUrl.isEmpty()) {
                 java.net.URL url = new java.net.URL(spriteUrl);
                 Image pokemonImage = ImageIO.read(url);
@@ -751,8 +753,9 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
     /**
      * Listens for property change events.
+     * 
      * @param evt A PropertyChangeEvent object describing the event source
-     *          and the property that has changed.
+     *            and the property that has changed.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -833,17 +836,30 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
     /**
      * Updates fields on the view to the use case's current state.
+     * 
      * @param state the current state
      */
     public void setFields(UserProfileState state) {
         usernameInputField.setText(state.getUsername() != null ? state.getUsername() : "");
         passwordInputField.setText(""); // Clear password field for security
-        nameInputField.setText(state.getName() != null ? state.getName() : "");
-        bioInputField.setText(state.getBio() != null ? state.getBio() : "");
+
+        // Only update name field if it's different to avoid interfering with user
+        // typing
+        String newName = state.getName() != null ? state.getName() : "";
+        if (!nameInputField.getText().equals(newName)) {
+            nameInputField.setText(newName);
+        }
+
+        // Only update bio field if it's different to avoid interfering with user typing
+        String newBio = state.getBio() != null ? state.getBio() : "";
+        if (!bioInputField.getText().equals(newBio)) {
+            bioInputField.setText(newBio);
+        }
+
         updateBioCharacterCount(state.getBioCharacterCount());
         updateProfileCompletion(state.getProfileCompletionPercentage());
         updateDisplayNameLabel(state.getName());
-        
+
         // Set favorite pokemon in combo box
         if (state.getFav_pokemon() != null && !state.getFav_pokemon().isEmpty()) {
             String favPokemon = state.getFav_pokemon();
@@ -857,7 +873,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             favPokemonComboBox.setSelectedItem("None");
             pokemonImageLabel.setIcon(null);
         }
-        
+
         // Load banner
         if (state.getBannerPath() != null && !state.getBannerPath().isEmpty()) {
             try {
@@ -889,6 +905,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
     /**
      * Sets the username field.
+     * 
      * @param username the username
      */
     public void setFields(String username) {
@@ -903,6 +920,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
     /**
      * Applies a chosen theme to the profile view.
+     * 
      * @param theme the theme to apply
      */
     public void applyTheme(Theme theme) {
@@ -917,6 +935,4 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         this.userProfileController = userProfileController;
     }
 
-
 }
-
