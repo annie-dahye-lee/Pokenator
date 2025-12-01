@@ -3,9 +3,6 @@ package interface_adapter.akinator;
 import data_access.PokeApiGateway;
 import use_case.akinator.AkinatorOutputData;
 
-/**
- * The state for the Akinator use case.
- */
 public class AkinatorState {
     private String prompt = "Press Start to begin.";
     private String status = "";

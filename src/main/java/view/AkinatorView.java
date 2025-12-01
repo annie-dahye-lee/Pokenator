@@ -19,9 +19,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * The view for displaying the Akinator screen.
- */
 public class AkinatorView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private final String viewName = "akinator";
@@ -42,9 +39,6 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
     private final JLabel spriteLabel = new JLabel("No artwork", SwingConstants.CENTER);
     private final JButton guessYes = new JButton("Yes!");
     private final JButton guessNo = new JButton("Nope");
-    private final JPanel revealPanel = new JPanel(new BorderLayout(5, 5));
-    private final JTextField revealInput = new JTextField();
-    private final JButton revealSubmit = new JButton("Reveal");
     private int lastRevealPromptId = -1;
 
     public AkinatorView(AkinatorViewModel viewModel, ViewManagerModel viewManagerModel, ThemeManager themeManager) {
@@ -81,27 +75,11 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         guessPanel.add(guessButtons, BorderLayout.SOUTH);
         guessPanel.setVisible(false);
 
-        revealPanel.setBorder(BorderFactory.createTitledBorder("Tell me the Pokémon"));
-        JLabel revealLabel = new JLabel("Name:");
-        JPanel revealInputRow = new JPanel(new BorderLayout(5, 5));
-        revealInputRow.add(revealLabel, BorderLayout.WEST);
-        revealInputRow.add(revealInput, BorderLayout.CENTER);
-        revealInputRow.add(revealSubmit, BorderLayout.EAST);
-        revealPanel.add(revealInputRow, BorderLayout.CENTER);
-        revealPanel.setVisible(false);
-
-        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
-        centerPanel.add(buttonRow, BorderLayout.CENTER);
-        centerPanel.add(revealPanel, BorderLayout.SOUTH);
-
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(statusLabel, BorderLayout.CENTER);
-        bottomPanel.add(controlRow, BorderLayout.EAST);
-
         add(promptLabel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        add(buttonRow, BorderLayout.CENTER);
+        add(statusLabel, BorderLayout.SOUTH);
         add(guessPanel, BorderLayout.EAST);
+        add(controlRow, BorderLayout.PAGE_END);
 
         wireActions();
     }
@@ -112,8 +90,6 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         unknownButton.addActionListener(e -> withController(AkinatorController::answerUnknown));
         guessYes.addActionListener(e -> withController(controller -> controller.confirmGuess(true)));
         guessNo.addActionListener(e -> withController(controller -> controller.confirmGuess(false)));
-        revealSubmit.addActionListener(e -> submitRevealInput());
-        revealInput.addActionListener(e -> submitRevealInput());
         startButton.addActionListener(e -> withController(AkinatorController::start));
         resetButton.addActionListener(e -> withController(AkinatorController::reset));
         backButton.addActionListener(e -> {
@@ -126,11 +102,6 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         this.controller = controller;
     }
 
-    /**
-     * Listens for property change events.
-     *
-     * @param evt the property change event
-     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("error")) {
@@ -167,17 +138,6 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         noButton.setEnabled(canAnswer);
         unknownButton.setEnabled(canAnswer);
         startButton.setEnabled(controllerReady && !state.isRoundActive());
-        boolean revealEnabled = awaitingReveal && controllerReady;
-        revealPanel.setVisible(awaitingReveal);
-        revealSubmit.setEnabled(revealEnabled);
-        revealInput.setEnabled(revealEnabled);
-        if (awaitingReveal && state.getRevealPromptId() != lastRevealPromptId) {
-            lastRevealPromptId = state.getRevealPromptId();
-            revealInput.setText("");
-            SwingUtilities.invokeLater(revealInput::requestFocusInWindow);
-        } else if (!awaitingReveal) {
-            revealInput.setText("");
-        }
 
         if (state.getGuessInfo() != null) {
             updateGuessInfo(state.getGuessInfo());
@@ -185,6 +145,22 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
             guessText.setText("");
             spriteLabel.setIcon(null);
             spriteLabel.setText("No artwork");
+        }
+
+        if (awaitingReveal && state.getRevealPromptId() != lastRevealPromptId) {
+            lastRevealPromptId = state.getRevealPromptId();
+            SwingUtilities.invokeLater(() -> {
+                String name = JOptionPane.showInputDialog(
+                        AkinatorView.this,
+                        "I couldn't guess it. What Pokémon were you thinking of?",
+                        "Help Pokénator learn",
+                        JOptionPane.QUESTION_MESSAGE);
+                if (name == null) {
+                    name = "";
+                }
+                final String trimmedName = name.trim();
+                withController(controller -> controller.revealPokemon(trimmedName));
+            });
         }
     }
 
@@ -221,24 +197,6 @@ public class AkinatorView extends JPanel implements PropertyChangeListener, Them
         }
     }
 
-    private void submitRevealInput() {
-        if (controller == null) {
-            return;
-        }
-        String text = revealInput.getText();
-        if (text == null) {
-            text = "";
-        }
-        final String trimmed = text.trim();
-        revealInput.setText("");
-        controller.revealPokemon(trimmed);
-    }
-
-    /**
-     * Applies a chosen theme to the Akinator game.
-     *
-     * @param theme the theme to apply
-     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }

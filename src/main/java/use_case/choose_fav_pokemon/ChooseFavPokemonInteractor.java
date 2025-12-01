@@ -5,9 +5,6 @@ import entity.User;
 import entity.UserFactory;
 import view.GameDashboard;
 
-/**
- * The interactor for the Choose Favourite Pokémon use case.
- */
 public class ChooseFavPokemonInteractor implements ChooseFavPokemonInputBoundary {
 
     private final FileUserDataAccessObject userDataAccessObject;
@@ -24,9 +21,6 @@ public class ChooseFavPokemonInteractor implements ChooseFavPokemonInputBoundary
         this.dashboard = dashboard;
     }
 
-    /**
-     * Executes the Choose Favourite Pokémon use case.
-     */
     @Override
     public void execute(ChooseFavPokemonInputData chooseFavPokemonInputData) {
         User u = ((FileUserDataAccessObject)userDataAccessObject).get(dashboard.getCurrentUser());

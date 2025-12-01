@@ -9,9 +9,6 @@ import interface_adapter.themes.ThemedView;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * The view for displaying the game dashboard.
- */
 public class GameDashboard extends JPanel implements ThemedView {
 
     private final ViewManagerModel viewManagerModel;
@@ -20,6 +17,7 @@ public class GameDashboard extends JPanel implements ThemedView {
     private final JPanel headerButtons;
     private final JLabel userLabel;
 
+    private EditProfileView editProfileView = null;
     private ChooseFavPokemonView chooseFavPokemonView = null;
     public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
 
@@ -171,7 +169,7 @@ public class GameDashboard extends JPanel implements ThemedView {
         } else {
             // Logged-in view
             JLabel nameLabel = new JLabel("Logged in as: " + currentUser);
-//            nameLabel.setForeground(Color.WHITE);
+            nameLabel.setForeground(Color.WHITE);
             nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
             JButton logoutBtn = createHeaderButton("Logout");
             logoutBtn.addActionListener(e -> {
@@ -194,6 +192,14 @@ public class GameDashboard extends JPanel implements ThemedView {
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(65, 105, 225));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(100, 149, 237));
+            }
+        });
         return button;
     }
 
@@ -205,6 +211,14 @@ public class GameDashboard extends JPanel implements ThemedView {
         button.setForeground(Color.DARK_GRAY);
         button.setBorder(BorderFactory.createLineBorder(new Color(180, 200, 240), 2, true));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(200, 220, 255));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(230, 240, 255));
+            }
+        });
         return button;
     }
 
@@ -218,6 +232,10 @@ public class GameDashboard extends JPanel implements ThemedView {
 
     public String getViewName() {
         return "dashboard";
+    }
+
+    public void setEPV(EditProfileView EPV) {
+        this.editProfileView = EPV;
     }
 
     public void setCFPV(ChooseFavPokemonView CFPV) {

@@ -1,14 +1,9 @@
 package view;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.back.BackController;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
-import interface_adapter.themes.Theme;
-import interface_adapter.themes.ThemeManager;
-import interface_adapter.themes.ThemeUtil;
-import interface_adapter.themes.ThemedView;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -22,7 +17,7 @@ import java.beans.PropertyChangeListener;
 /**
  * The View for the Signup Use Case.
  */
-public class SignupView extends JPanel implements ActionListener, PropertyChangeListener, ThemedView {
+public class SignupView extends JPanel implements ActionListener, PropertyChangeListener {
     private final String viewName = "sign up";
 
     private final SignupViewModel signupViewModel;
@@ -30,19 +25,14 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     private final JPasswordField passwordInputField = new JPasswordField(15);
     private final JPasswordField repeatPasswordInputField = new JPasswordField(15);
     private SignupController signupController = null;
-    private BackController backController;
 
     private final JButton signUp;
     private final JButton cancel;
     private final JButton toLogin;
 
-    public SignupView(SignupViewModel signupViewModel, ViewManagerModel viewManagerModel, ThemeManager themeManager) {
+    public SignupView(SignupViewModel signupViewModel, ViewManagerModel viewManagerModel) {
         this.signupViewModel = signupViewModel;
         signupViewModel.addPropertyChangeListener(this);
-
-        // Colour Theme Changer
-        themeManager.registerView(this);
-        applyTheme(themeManager.getActiveTheme());
 
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -87,11 +77,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 }
         );
 
-        cancel.addActionListener(e -> {
-            if (backController != null) {
-                backController.execute();
-            }
-        });
+        cancel.addActionListener(this);
 
         addUsernameListener();
         addPasswordListener();
@@ -184,20 +170,11 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         });
     }
 
-    /**
-     * Listens for the user's actions.
-     * @param evt the event to be processed
-     */
     @Override
     public void actionPerformed(ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Cancel not implemented yet.");
     }
 
-    /**
-     * Listens for property change events.
-     * @param evt A PropertyChangeEvent object describing the event source
-     *          and the property that has changed.
-     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final SignupState state = (SignupState) evt.getNewValue();
@@ -212,22 +189,5 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
     public void setSignupController(SignupController controller) {
         this.signupController = controller;
-    }
-
-    /**
-     * Assigns the controller for the back button.
-     *
-     * @param accessController controller to access another view
-     */
-    public void setAccessSettingsController(BackController accessController) {
-        this.backController = accessController;
-    }
-
-    /**
-     * Applies a chosen theme to the signup view.
-     * @param theme the theme to apply
-     */
-    public void applyTheme(Theme theme) {
-        ThemeUtil.applyTheme(this, theme);
     }
 }

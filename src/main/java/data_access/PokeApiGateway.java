@@ -9,20 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO for fetching information from the PokeAPI.
- */
 public class PokeApiGateway {
 
     private static final String BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
     private final OkHttpClient client = new OkHttpClient();
 
-    /**
-     * Fetches the information of a Pokémon by name.
-     *
-     * @param name name of the Pokémon
-     * @return information on the Pokémon, including type, height, weight, and other stats
-     */
     public PokemonApiInfo fetchPokemon(String name) throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + name.toLowerCase())
@@ -65,9 +56,6 @@ public class PokeApiGateway {
         return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
     }
 
-    /**
-     * Information taken from the PokeAPI.
-     */
     public static class PokemonApiInfo {
         private final String displayName;
         private final String spriteUrl;

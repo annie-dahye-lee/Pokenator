@@ -2,9 +2,6 @@ package interface_adapter.leaderboard;
 
 import use_case.leaderboard.*;
 
-/**
- * Leaderboard controller.
- */
 public class LeaderboardController {
 
     private final LeaderboardInputBoundary leaderboardInteractor;
@@ -13,14 +10,9 @@ public class LeaderboardController {
         this.leaderboardInteractor = leaderboardInteractor;
     }
 
-    /**
-     * Execute the change page function.
-     * @param newPage new page number to update to.
-     */
     public void changePage(int newPage) {
         leaderboardInteractor.changePage(
-                new ChangePageInputData(newPage)
+                new LeaderboardInputData(newPage)
         );
     }
-
 }

@@ -3,6 +3,7 @@ package data_access;
 import entity.User;
 import entity.UserFactory;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -23,6 +24,7 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         ChangePasswordUserDataAccessInterface,
         LogoutUserDataAccessInterface,
         UserListDataAccessInterface,
+        EditProfileUserDataAccessInterface,
         UserProfileUserDataAccessInterface {
 
     private static final String HEADER = "username,password,score,bio,fav_pokemon,profile_photo_path,banner_path";
@@ -106,15 +108,11 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
             writer.write(String.join(",", headers.keySet()));
             writer.newLine();
 
-            // Iterate over map entries to get both username (key) and user (value)
-            // The key is the username, user.getName() is the display name
-            for (Map.Entry<String, User> entry : accounts.entrySet()) {
-                String username = entry.getKey(); // This is the actual username (map key)
-                User user = entry.getValue();
+            for (User user : accounts.values()) {
                 final String profilePhotoPath = user.getProfilePhotoPath() != null ? user.getProfilePhotoPath() : "";
                 final String bannerPath = user.getBannerPath() != null ? user.getBannerPath() : "";
                 final String line = String.format("%s,%s,%s,%s,%s,%s,%s",
-                        username, user.getPassword(), user.getScore(), user.getBio(),
+                        user.getName(), user.getPassword(), user.getScore(), user.getBio(),
                         user.getFavPokemon(), profilePhotoPath, bannerPath);
                 writer.write(line);
                 writer.newLine();
@@ -127,95 +125,37 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
-    /**
-     * Saves the given user to the account list and updates the CSV file.
-     * <p>
-     * If the user already exists in the system, this method locates the user by
-     * matching the stored {@code User} object and updates its associated data.
-     * Otherwise, the user's display name is used as the username key for a new
-     * entry. After updating the in-memory map, the full account list is written
-     * to disk.
-     * </p>
-     *
-     * @param user the user whose data should be saved or updated
-     */
     @Override
     public void save(User user) {
-        // When saving, we need to find the existing entry by username
-        // Since user.getName() might be the display name, we need to find the entry
-        // by checking which entry has this user object
-        String usernameToUse = null;
-        for (Map.Entry<String, User> entry : accounts.entrySet()) {
-            if (entry.getValue() == user) {
-                usernameToUse = entry.getKey();
-                break;
-            }
-        }
-        // If not found, use user.getName() as fallback (for new users)
-        if (usernameToUse == null) {
-            usernameToUse = user.getName();
-        }
-        accounts.put(usernameToUse, user);
+        accounts.put(user.getName(), user);
         this.save();
     }
 
-    /**
-     * Getter for the list of all users.
-     *
-     * @return ArrayList of all users
-     */
     @Override
     public ArrayList<User> getUserList() {
         return new ArrayList<>(accounts.values());
     }
 
-    /**
-     * Getter for a single user by username.
-     *
-     * @param username the username of the user to use as key
-     * @return user information for the provided username
-     */
     @Override
     public User get(String username) {
         return accounts.get(username);
     }
 
-    /**
-     * Setter for the current user's username.
-     *
-     * @param name new name for the current user
-     */
     @Override
     public void setCurrentUsername(String name) {
         currentUsername = name;
     }
 
-    /**
-     * Getter for the current user's username.
-     *
-     * @return current username
-     */
     @Override
     public String getCurrentUsername() {
         return currentUsername;
     }
 
-    /**
-     * Checks if a user exists by name.
-     *
-     * @param identifier the username of the user to use as key
-     * @return whether the user exists
-     */
     @Override
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
     }
 
-    /**
-     * Changes the user's password and saves the change.
-     *
-     * @param user the user whose data should be saved or updated
-     */
     @Override
     public void changePassword(User user) {
         // Replace the User object in the map
@@ -223,46 +163,15 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         save();
     }
 
-    /**
-     * Adds a new user to the game.
-     *
-     * @param user the user whose data should be saved or updated
-     */
+    @Override
     public void editProfile(User user) {
         accounts.put(user.getName(), user);
         save();
     }
 
-    /**
-     * Changes the user's profile information and saves the change.
-     *
-     * @param username the username of the user
-     * @param user the user whose data should be saved or updated
-     */
     @Override
-    public void updateUserProfile(String username, User user) {
-        // Use the provided username as the key
-        accounts.put(username, user);
-        save();
-    }
-
-    /**
-     * Changes the user's username and saves the change.
-     *
-     * @param oldUsername the original username of the user
-     * @param newUsername the new chosen username of the user
-     * @param user the user whose data should be saved or updated
-     */
-    @Override
-    public void updateUsername(String oldUsername, String newUsername, User user) {
-        // Remove old entry
-        accounts.remove(oldUsername);
-        // Add new entry with new username
-        accounts.put(newUsername, user);
-        // Update current username if it matches
-        if (currentUsername != null && currentUsername.equals(oldUsername)) {
-            currentUsername = newUsername;
-        }
+    public void updateUserProfile(User user) {
+        accounts.put(user.getName(), user);
         save();
     }
 

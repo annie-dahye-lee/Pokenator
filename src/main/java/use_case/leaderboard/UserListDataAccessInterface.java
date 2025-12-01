@@ -4,12 +4,10 @@ import entity.User;
 
 import java.util.ArrayList;
 
-/**
- * Leaderboard DAO.
- */
+// DAO for the leaderboard use case.
 public interface UserListDataAccessInterface {
 
-    // Get an ArrayList of all user objects in the local file.
+    // Get an arraylist of all user objects in the local file.
     ArrayList<User> getUserList();
 
 }

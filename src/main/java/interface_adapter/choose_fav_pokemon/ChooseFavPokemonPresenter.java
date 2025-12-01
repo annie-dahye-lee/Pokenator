@@ -1,12 +1,10 @@
 package interface_adapter.choose_fav_pokemon;
 
+import entity.User;
 import interface_adapter.ViewManagerModel;
 import use_case.choose_fav_pokemon.ChooseFavPokemonOutputBoundary;
 import use_case.choose_fav_pokemon.ChooseFavPokemonOutputData;
 
-/**
- * The presenter for the Choose Favourite Pokémon use case.
- */
 public class ChooseFavPokemonPresenter implements ChooseFavPokemonOutputBoundary {
     private final ChooseFavPokemonViewModel chooseFavPokemonViewModel;
     private final ViewManagerModel viewManagerModel;
@@ -19,25 +17,25 @@ public class ChooseFavPokemonPresenter implements ChooseFavPokemonOutputBoundary
         //this.dashboard = dashboard;
     }
 
-    /**
-     * Sets up output data from the Choose Favourite Pokémon use case for display if no errors occur.
-     *
-     * @param outputData the output data
-     */
     @Override
     public void prepareSuccessView(ChooseFavPokemonOutputData outputData) {
         chooseFavPokemonViewModel.getState().setFav_pokemon(outputData.getFavPokemon());
         chooseFavPokemonViewModel.getState().setBio(outputData.getBio());
         chooseFavPokemonViewModel.getState().setProfileError(null);
+
+        //viewManagerModel.setState("dashboard");
+        //viewManagerModel.firePropertyChange();
     }
 
-    /**
-     * Sets up output data from the Choose Favourite Pokémon use case for display if an error occurs.
-     *
-     * @param error the error message
-     */
     @Override
     public void prepareFailView(String error) {
         chooseFavPokemonViewModel.getState().setProfileError(error);
+        // editProfileViewModel.firePropertyChange("profile");
+        // idk what this is
+    }
+
+    public void updateUserLogin(User user) {
+        chooseFavPokemonViewModel.getState().setBio(user.getBio());
+        viewManagerModel.firePropertyChange();
     }
 }

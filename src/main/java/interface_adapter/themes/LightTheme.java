@@ -1,11 +1,9 @@
 package interface_adapter.themes;
 
-import java.awt.Color;
+import java.awt.*;
 
-/**
- * The default light theme.
- */
-public class LightTheme extends Theme { public LightTheme() {
+public class LightTheme extends Theme{
+    public LightTheme() {
         super("light", Color.WHITE, Color.BLACK);
     }
 }

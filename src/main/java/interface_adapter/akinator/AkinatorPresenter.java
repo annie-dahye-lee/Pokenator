@@ -3,9 +3,6 @@ package interface_adapter.akinator;
 import use_case.akinator.AkinatorOutputBoundary;
 import use_case.akinator.AkinatorOutputData;
 
-/**
- * The presenter for the Akinator use case.
- */
 public class AkinatorPresenter implements AkinatorOutputBoundary{
 
     private final AkinatorViewModel viewModel;
@@ -14,11 +11,6 @@ public class AkinatorPresenter implements AkinatorOutputBoundary{
         this.viewModel = viewModel;
     }
 
-    /**
-     * Sets up output data from the Akinator use case for display.
-     *
-     * @param outputData output data from the Akinator
-     */
     @Override
     public void present(AkinatorOutputData outputData) {
         AkinatorState state = viewModel.getState();
@@ -41,11 +33,6 @@ public class AkinatorPresenter implements AkinatorOutputBoundary{
         viewModel.firePropertyChange();
     }
 
-    /**
-     * Displays an error from the Akinator.
-     *
-     * @param message the error
-     */
     @Override
     public void presentError(String message) {
         AkinatorState state = viewModel.getState();

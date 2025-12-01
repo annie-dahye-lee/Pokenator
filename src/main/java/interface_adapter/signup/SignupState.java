@@ -59,9 +59,6 @@ public class SignupState {
         this.repeatPasswordError = repeatPasswordError;
     }
 
-    /**
-     * Converts information from the current state to String format.
-     */
     @Override
     public String toString() {
         return "SignupState{"

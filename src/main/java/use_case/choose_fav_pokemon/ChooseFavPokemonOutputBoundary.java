@@ -1,8 +1,5 @@
 package use_case.choose_fav_pokemon;
 
-/**
- * The output boundary for the Choose Favourite Pokémon use case.
- */
 public interface ChooseFavPokemonOutputBoundary {
     /**
      * Prepares the success view for the Choose Favourite Pokemon Use Case.

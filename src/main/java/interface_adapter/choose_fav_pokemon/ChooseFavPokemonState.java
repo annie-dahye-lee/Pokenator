@@ -2,9 +2,6 @@ package interface_adapter.choose_fav_pokemon;
 
 import entity.User;
 
-/**
- * The state for the Choose Favourite Pokémon use case.
- */
 public class ChooseFavPokemonState {
 
     private String username = "";

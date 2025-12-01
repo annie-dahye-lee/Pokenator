@@ -18,11 +18,6 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
         this.loggedInViewModel = loggedInViewModel;
     }
 
-    /**
-     * Prepares output data from the Change Password use case if no errors occur.
-     *
-     * @param outputData the output data
-     */
     @Override
     public void prepareSuccessView(ChangePasswordOutputData outputData) {
         loggedInViewModel.getState().setPassword("");
@@ -30,11 +25,6 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
         loggedInViewModel.firePropertyChange("password");
     }
 
-    /**
-     * Prepares output data from the Change Password use case if an error occurs.
-     *
-     * @param error the error message
-     */
     @Override
     public void prepareFailView(String error) {
         loggedInViewModel.getState().setPasswordError(error);

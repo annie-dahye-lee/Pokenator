@@ -2,9 +2,6 @@ package interface_adapter.settings;
 
 import interface_adapter.ViewModel;
 
-/**
- * The view model for resetting Settings.
- */
 public class SettingsViewModel extends ViewModel<SettingsState> {
 
     public static final String VIEW_NAME = "settings";
@@ -23,5 +20,6 @@ public class SettingsViewModel extends ViewModel<SettingsState> {
     public void setState(SettingsState state) {
         super.setState(state);
     }
+
 
 }
