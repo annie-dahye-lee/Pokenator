@@ -14,8 +14,8 @@ public class UserProfileInputData {
     private final String profilePhotoPath;
     private final String bannerPath;
 
-    public UserProfileInputData(String username, String password, int score, String bio, 
-                               String fav_pokemon, String name, String profilePhotoPath, String bannerPath) {
+    public UserProfileInputData(String username, String password, int score, String bio,
+            String name, String profilePhotoPath, String bannerPath) {
         this.username = username;
         this.password = password;
         this.score = score;
@@ -26,13 +26,37 @@ public class UserProfileInputData {
         this.bannerPath = bannerPath;
     }
 
-    String getUsername() { return username; }
-    String getPassword() { return password; }
-    int getScore() { return score; }
-    String getBio() { return bio; }
-    String getFav_pokemon() { return fav_pokemon; }
-    String getName() { return name; }
-    String getProfilePhotoPath() { return profilePhotoPath; }
-    String getBannerPath() { return bannerPath; }
-}
+    String getUsername() {
 
+        return username;
+
+    }
+
+    String getPassword() {
+
+        return passwor;
+
+    }
+
+    }
+
+    String getBio() {
+        return bio;
+    }
+
+    String getFav_pokemon() {
+        return fav_pokemon;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    String getBannerPath() {
+        return bannerPath;
+    }
+}

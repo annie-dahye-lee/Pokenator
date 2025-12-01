@@ -21,7 +21,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * The View for the user profile page with Discord-style design.
@@ -42,6 +41,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JLabel pokemonImageLabel;
     private JLabel errorLabel;
     private JLabel successLabel;
+    private JLabel profileCompletionLabel;
     private JButton saveButton;
     private JButton returnToDashboardButton;
     private JButton changeBannerButton;
@@ -223,6 +223,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setBio(bioInputField.getText());
                 userProfileViewModel.setState(currentState);
+                updateCompletionDisplay(currentState.getProfileCompletionPercentage());
             }
 
             @Override
@@ -276,6 +277,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setName(nameInputField.getText());
                 userProfileViewModel.setState(currentState);
+                updateCompletionDisplay(currentState.getProfileCompletionPercentage());
             }
 
             @Override
@@ -313,6 +315,12 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         pokemonLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         pokemonLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        // Horizontal panel for dropdown and view more button
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setBackground(new Color(54, 57, 63));
+        dropdownPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         // Load pokemon list from gen1Pokemon.json
         java.util.ArrayList<String> pokemonList = getPokemonList();
         favPokemonComboBox = new JComboBox<>(pokemonList.toArray(new String[0]));
@@ -323,7 +331,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
         favPokemonComboBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        favPokemonComboBox.setPreferredSize(new Dimension(300, 35));
+        favPokemonComboBox.setPreferredSize(new Dimension(250, 35));
         favPokemonComboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         favPokemonComboBox.addActionListener(e -> {
             final UserProfileState currentState = userProfileViewModel.getState();
@@ -331,11 +339,30 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             currentState.setFav_pokemon(selectedPokemon);
             userProfileViewModel.setState(currentState);
             updatePokemonImage(selectedPokemon);
+            updateCompletionDisplay(currentState.getProfileCompletionPercentage());
         });
+
+        // View More button
+        JButton viewMoreButton = new JButton("View More");
+        viewMoreButton.setBackground(new Color(88, 101, 242)); // Discord blurple
+        viewMoreButton.setForeground(Color.WHITE);
+        viewMoreButton.setFocusPainted(false);
+        viewMoreButton.setBorderPainted(false);
+        viewMoreButton.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        viewMoreButton.setPreferredSize(new Dimension(100, 35));
+        viewMoreButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        viewMoreButton.addActionListener(e -> {
+            viewManagerModel.setState("Choose Favourite Pokemon");
+            viewManagerModel.firePropertyChange();
+        });
+
+        dropdownPanel.add(favPokemonComboBox);
+        dropdownPanel.add(Box.createHorizontalStrut(10));
+        dropdownPanel.add(viewMoreButton);
 
         pokemonPanel.add(pokemonLabel);
         pokemonPanel.add(Box.createVerticalStrut(5));
-        pokemonPanel.add(favPokemonComboBox);
+        pokemonPanel.add(dropdownPanel);
         pokemonPanel.add(Box.createVerticalStrut(10));
 
         // Pokemon image display
@@ -359,6 +386,19 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
         profileInfoPanel.add(contentPanel);
         profileInfoPanel.add(Box.createVerticalStrut(10));
+
+        // Profile completion indicator
+        JPanel completionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        completionPanel.setBackground(new Color(54, 57, 63));
+        completionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        profileCompletionLabel = new JLabel("Profile Completion: 0%");
+        profileCompletionLabel.setForeground(new Color(88, 101, 242)); // Discord blurple
+        profileCompletionLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+        completionPanel.add(profileCompletionLabel);
+
+        profileInfoPanel.add(completionPanel);
+        profileInfoPanel.add(Box.createVerticalStrut(5));
 
         // Error and success labels
         JPanel messagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
@@ -484,6 +524,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setBannerPath(currentBannerPath);
                 userProfileViewModel.setState(currentState);
+                updateCompletionDisplay(currentState.getProfileCompletionPercentage());
             } catch (IOException ex) {
                 errorLabel.setText("Error loading banner image: " + ex.getMessage());
             }
@@ -531,6 +572,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 final UserProfileState currentState = userProfileViewModel.getState();
                 currentState.setProfilePhotoPath(currentProfilePhotoPath);
                 userProfileViewModel.setState(currentState);
+                updateCompletionDisplay(currentState.getProfileCompletionPercentage());
             } catch (IOException ex) {
                 errorLabel.setText("Error loading profile photo: " + ex.getMessage());
             }
@@ -594,6 +636,20 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
     @Override
     public void actionPerformed(ActionEvent e) {
+    }
+
+    private void updateCompletionDisplay(int percentage) {
+        if (profileCompletionLabel != null) {
+            profileCompletionLabel.setText("Profile Completion: " + percentage + "%");
+            // Change color based on completion
+            if (percentage >= 80) {
+                profileCompletionLabel.setForeground(new Color(67, 181, 129)); // Green for high completion
+            } else if (percentage >= 50) {
+                profileCompletionLabel.setForeground(new Color(88, 101, 242)); // Blue for medium
+            } else {
+                profileCompletionLabel.setForeground(new Color(250, 166, 26)); // Orange for low
+            }
+        }
     }
 
     @Override
@@ -677,6 +733,9 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 // Photo file not found or error loading
             }
         }
+        
+        // Update completion display
+        updateCompletionDisplay(state.getProfileCompletionPercentage());
     }
 
     public void setFields(String username) {
