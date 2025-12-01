@@ -6,8 +6,12 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonController;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonState;
 import interface_adapter.choose_fav_pokemon.ChooseFavPokemonViewModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,76 +26,63 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 
 /**
- * The View for when the user is choosing their favourite Pokemon to display on profile.
+ * The View for when the user is choosing their favourite Pokémon to display on profile.
  */
-public class ChooseFavPokemonView extends JPanel implements ActionListener, PropertyChangeListener {
+public class ChooseFavPokemonView extends JPanel implements ActionListener, PropertyChangeListener,
+                                                            ThemedView {
 
-    private final String viewName = "Choose Favourite Pokemon";
     private ChooseFavPokemonController chooseFavPokemonController;
-    private ChooseFavPokemonState chooseFavPokemonState;
 
-    private final ChooseFavPokemonViewModel chooseFavPokemonViewModel;
-    private final ViewManagerModel viewManagerModel;
-    private final GameDashboard gameDashboard;
-    private final FileUserDataAccessObject DAO;
     private final PokeApiGateway pokeApiGateway;
 
-    private final int NUM_ROWS = 5;
+    private final int NUM_ROWS = 16;
     private int page = 0;
     private final ArrayList<String> pokemonList;
     private final ArrayList<JPanel> listDisplay;
 
-    private JLabel chosenLabel;
+    private final JLabel chosenLabel;
 
-    private JButton nextPage;
-    private JButton previousPage;
-    private JButton cancel;
-    private JButton save;
+    private final JButton nextPage;
+    private final JButton previousPage;
+    private final JButton cancel;
+    private final JButton save;
 
-    private String currentUser;
     private String chosenPokemon;
 
     public ChooseFavPokemonView(ChooseFavPokemonViewModel chooseFavPokemonViewModel, ViewManagerModel viewManagerModel,
                                 GameDashboard gameDashboard, FileUserDataAccessObject DAO,
-                                PokeApiGateway pokeApiGateway) {
+                                PokeApiGateway pokeApiGateway, ThemeManager themeManager) {
 
-        this.chooseFavPokemonViewModel = chooseFavPokemonViewModel;
-        this.viewManagerModel = viewManagerModel;
-        this.gameDashboard = gameDashboard;
-        this.DAO = DAO;
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
+
         this.pokeApiGateway = pokeApiGateway;
-        this.chooseFavPokemonState = new ChooseFavPokemonState(DAO.get(gameDashboard.getCurrentUser()));
+        new ChooseFavPokemonState(DAO.get(gameDashboard.getCurrentUser()));
 
         gameDashboard.setCFPV(this);
+
+        this.setBackground(new Color(54, 57, 63));
 
         this.pokemonList = getPokemonList();
         this.chosenPokemon = "None";
 
         JPanel rows = new JPanel();
-        rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
+        rows.setLayout(new BoxLayout(rows, BoxLayout.X_AXIS));
 
         chosenLabel = new JLabel("Selected Pokemon: " + this.chosenPokemon);
         chosenLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        chosenLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        chosenLabel.setForeground(Color.WHITE);
+        chosenLabel.setBackground(new Color(54, 57, 63));
 
-        listDisplay = new ArrayList<JPanel>();
+        listDisplay = new ArrayList<>();
         for (int i = 0; i < pokemonList.size(); i++) {
             if (page * NUM_ROWS + i < pokemonList.size()) {
                 String pokemonName = pokemonList.get(page * NUM_ROWS + i);
                 JPanel row = new JPanel();
                 row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
-                JButton label = new JButton(pokemonName);
-
-                label.addActionListener(
-                        new ActionListener() {
-                            public void actionPerformed(ActionEvent evt) {
-                                if (evt.getSource().equals(label)) {
-                                    setChosenPokemon(pokemonName);
-                                    chooseFavPokemonViewModel.getState().setFav_pokemon(pokemonName);
-                                    chosenLabel.setText("Selected Pokemon: " + pokemonName);
-                                }
-                            }
-                        }
-                );
+                row.setBackground(new Color(54, 57, 63));
+                JButton label = getJButton(chooseFavPokemonViewModel, pokemonName);
 
                 row.add(label);
                 row.add(new JLabel(" "));
@@ -103,75 +94,69 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         }
 
         rowHelper(rows);
+        rows.setBackground(new Color(54, 57, 63));
 
         JPanel buttons = new JPanel();
-        buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
+        buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttons.setBackground(new Color(54, 57, 63));
 
         //buttons
         previousPage = new JButton("Previous");
+        buttonBGHelper(previousPage);
         previousPage.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(previousPage)) {
-                            if (page != 0) {
-                                page -= 1;
-                                rowHelper(rows);
-                            }
+                evt -> {
+                    if (evt.getSource().equals(previousPage)) {
+                        if (page != 0) {
+                            page -= 1;
+                            rowHelper(rows);
                         }
                     }
                 }
         );
         nextPage = new JButton("Next");
+        buttonBGHelper(nextPage);
         nextPage.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(nextPage)) {
-                            if ((1 + page) * NUM_ROWS < pokemonList.size()) {
-                                page += 1;
-                                rowHelper(rows);
-                            }
+                evt -> {
+                    if (evt.getSource().equals(nextPage)) {
+                        if ((1 + page) * NUM_ROWS < pokemonList.size()) {
+                            page += 1;
+                            rowHelper(rows);
                         }
                     }
                 }
         );
         cancel = new JButton("Cancel");
+        buttonBGHelper(cancel);
         cancel.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(cancel)) {
-                            reset();
-                            viewManagerModel.setState("Edit Profile");
-                            viewManagerModel.firePropertyChange();
-                        }
+                evt -> {
+                    if (evt.getSource().equals(cancel)) {
+                        reset();
+                        viewManagerModel.setState("User Profile");
+                        viewManagerModel.firePropertyChange();
                     }
                 }
         );
         save = new JButton("Save");
+        buttonBGHelper(save);
+        save.setBackground(new Color(88, 101, 242));
         save.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(save)) {
-                            final ChooseFavPokemonState currentState = chooseFavPokemonViewModel.getState();
+                evt -> {
+                    if (evt.getSource().equals(save)) {
+                        final ChooseFavPokemonState currentState = chooseFavPokemonViewModel.getState();
 
-                            if (currentState.getFav_pokemon().equals("None")) {
-                                currentState.setFav_pokemon(null);
-                            }
-
-                            chooseFavPokemonController.execute(
-                                    currentState.getUsername(),
-                                    currentState.getPassword(),
-                                    currentState.getScore(),
-                                    currentState.getBio(),
-                                    currentState.getFav_pokemon()
-                            );
-//                            if (currentState.getProfileError() != null) {
-//                                errorLabel.setText(currentState.getProfileError());
-//                            } else {
-//                                errorLabel.setText(" ");
-//                            }
-                            viewManagerModel.setState("dashboard");
-                            viewManagerModel.firePropertyChange();
+                        if (currentState.getFav_pokemon().equals("None")) {
+                            currentState.setFav_pokemon("None");
                         }
+
+                        chooseFavPokemonController.execute(
+                                currentState.getUsername(),
+                                currentState.getPassword(),
+                                currentState.getScore(),
+                                currentState.getBio(),
+                                currentState.getFav_pokemon()
+                        );
+                        viewManagerModel.setState("User Profile");
+                        viewManagerModel.firePropertyChange();
                     }
                 }
         );
@@ -185,57 +170,75 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
         this.add(chosenLabel);
         this.add(rows);
         this.add(buttons);
+
+        this.setAlignmentY(Component.CENTER_ALIGNMENT);
+    }
+
+    @NotNull
+    private JButton getJButton(ChooseFavPokemonViewModel chooseFavPokemonViewModel, String pokemonName) {
+        JButton label = new JButton(pokemonName);
+
+        label.setBackground(new Color(88, 101, 242)); // Discord blurple
+        label.setForeground(Color.WHITE);
+        label.setFocusPainted(false);
+        label.setBorderPainted(false);
+        label.setFont(new Font("SansSerif", Font.BOLD, 12));
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        label.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(label)) {
+                        setChosenPokemon(pokemonName);
+                        chooseFavPokemonViewModel.getState().setFav_pokemon(pokemonName);
+                        chosenLabel.setText("Selected Pokemon: " + pokemonName);
+                    }
+                }
+        );
+        return label;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
+    public void actionPerformed(ActionEvent e) { }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        //final EditProfileState state = (EditProfileState) evt.getNewValue();
-        //setFields(state);
-    }
+    public void propertyChange(PropertyChangeEvent evt) { }
 
-    public void rowHelper(JPanel rows) {
+    private void rowHelper(JPanel rows) {
         rows.removeAll();
+        JPanel column1 = new JPanel();
+        column1.setLayout(new BoxLayout(column1, BoxLayout.Y_AXIS));
+        column1.setAlignmentX(Component.LEFT_ALIGNMENT);
+        column1.setBackground(new Color(54, 57, 63));
+
+        JPanel column2 = new JPanel();
+        column2.setLayout(new BoxLayout(column2, BoxLayout.Y_AXIS));
+        column2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        column2.setBackground(new Color(54, 57, 63));
+
         for (int i = 0; i < NUM_ROWS; i++) {
             if (page * NUM_ROWS + i < pokemonList.size()) {
-                rows.add(listDisplay.get(NUM_ROWS * page + i));
+                if (i % 2 == 0)
+                    column1.add(listDisplay.get(NUM_ROWS * page + i));
+                else
+                    column2.add(listDisplay.get(NUM_ROWS * page + i));
             }
         }
+        rows.add(column1);
+        rows.add(column2);
         rows.revalidate();
         rows.repaint();
     }
 
-    //TODO: read and write adjustments for CA
-
-    public ArrayList<String> getPokemonList1() {
-        ArrayList<String> pokemonList = new ArrayList<>();
-
-        //just for testing out
-        pokemonList.add("None");
-        pokemonList.add("Pikachu");
-        pokemonList.add("Charizard");
-        pokemonList.add("Greninja");
-        pokemonList.add("Snorlax");
-        pokemonList.add("Mewtwo");
-        pokemonList.add("Gengar");
-        pokemonList.add("Lucario");
-        pokemonList.add("Gardevoir");
-        pokemonList.add("Lugia");
-        pokemonList.add("Bulbasaur");
-        pokemonList.add("Squirtle");
-        pokemonList.add("Rowlet");
-        pokemonList.add("Togekiss");
-        pokemonList.add("Metagross");
-        pokemonList.add("Darkrai");
-
-        return pokemonList;
+    private void buttonBGHelper(JButton button) {
+        button.setBackground(new Color(79, 84, 92)); // Discord blurple
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("SansSerif", Font.BOLD, 12));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-    public ArrayList<String> getPokemonList() {
+    private ArrayList<String> getPokemonList() {
         ArrayList<String> pokemonList = new ArrayList<>();
         pokemonList.add("None");
         try {
@@ -246,42 +249,49 @@ public class ChooseFavPokemonView extends JPanel implements ActionListener, Prop
                 name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
                 pokemonList.add(name);
             }
-        } catch (Exception e) {}
+        } catch (Exception e) { System.out.println(e); }
         return  pokemonList;
     }
 
-    public void getPokeImage(JLabel pokeImage, String pokemonName) {
+    private void getPokeImage(JLabel pokeImage, String pokemonName) {
         try {
             if (pokemonName.equals("None")) {
                 pokeImage.setIcon(new ImageIcon(ImageIO.read(new File("nonepokemon.jpg")).
-                        getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+                        getScaledInstance(100,100,Image.SCALE_SMOOTH)));
             } else {
                 Image image = ImageIO.read(new URL(pokeApiGateway.fetchPokemon(pokemonName).getSpriteUrl()));
                 pokeImage.setIcon(new ImageIcon(image.getScaledInstance(
-                        50, 50, Image.SCALE_SMOOTH)));
+                        100, 100, Image.SCALE_SMOOTH)));
             }
-        } catch (Exception e) {}
+        } catch (Exception e) { System.out.println(e); }
+    }
+
+    /**
+     * Resets the screen to navigate back to the first page.
+     */
+    public void reset() {
+        this.page = 0;
+        this.chosenPokemon = "None";
     }
 
     public void setChosenPokemon(String chosenPokemon) {
         this.chosenPokemon = chosenPokemon;
     }
 
-    public void setFields(String currentUser) {
-        this.currentUser = currentUser;
-    }
-
-    public void reset() {
-        this.page = 0;
-        this.chosenPokemon = "None";
-    }
-
-
     public String getViewName() {
-        return viewName;
+        return "Choose Favourite Pokemon";
     }
 
     public void setChooseFavPokemonController(ChooseFavPokemonController chooseFavPokemonController) {
         this.chooseFavPokemonController = chooseFavPokemonController;
+    }
+
+    /**
+     * Applies the chosen theme to the choose Pokémon view.
+     *
+     * @param theme the theme to apply
+     */
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
     }
 }
