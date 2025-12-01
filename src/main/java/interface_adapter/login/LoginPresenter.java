@@ -27,6 +27,11 @@ public class LoginPresenter implements LoginOutputBoundary {
         this.dashboard = dashboard; // now valid — assigning the parameter to the field
     }
 
+    /**
+     * Prepares output data from the Login use case if no errors occur.
+     *
+     * @param response the output data
+     */
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         final LoggedInState loggedInState = loggedInViewModel.getState();
@@ -42,6 +47,11 @@ public class LoginPresenter implements LoginOutputBoundary {
         viewManagerModel.firePropertyChange();
     }
 
+    /**
+     * Prepares output data from the Login use case if an error occurs.
+     *
+     * @param error the error message
+     */
     @Override
     public void prepareFailView(String error) {
         final LoginState loginState = loginViewModel.getState();

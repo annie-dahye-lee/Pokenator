@@ -16,5 +16,6 @@ public enum PokemonTrait {
     SPOOKY,
     CUTE_MASCOT,
     KANTO_ORIGINAL,
-    DEFENSIVE_TANK
+    DEFENSIVE_TANK,
+    PSYCHIC_TYPE
 }

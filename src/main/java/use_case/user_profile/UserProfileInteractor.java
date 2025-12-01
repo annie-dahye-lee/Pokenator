@@ -34,8 +34,9 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
     @Override
     public void execute(UserProfileInputData userProfileInputData) {
         String currentUsername = dashboard.getCurrentUser();
-        User u = ((FileUserDataAccessObject) userDataAccessObject).get(currentUsername);
 
+        User u = ((FileUserDataAccessObject)userDataAccessObject).get(currentUsername);
+        
         // Validate display name
         if (userProfileInputData.getName() == null || userProfileInputData.getName().trim().isEmpty()) {
             userPresenter.prepareFailView("Display name cannot be empty.");
@@ -74,13 +75,12 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
         }
 
         // Determine final username and password
-        String finalUsername = (newUsername != null && !newUsername.trim().isEmpty()
-                && !newUsername.equals(currentUsername))
-                        ? newUsername
-                        : currentUsername;
-        String finalPassword = (newPassword != null && !newPassword.trim().isEmpty())
-                ? newPassword
-                : u.getPassword();
+        String finalUsername = (newUsername != null && !newUsername.trim().isEmpty() && !newUsername.equals(currentUsername)) 
+            ? newUsername 
+            : currentUsername;
+        String finalPassword = (newPassword != null && !newPassword.trim().isEmpty()) 
+            ? newPassword 
+            : u.getPassword();
 
         // Create user with updated information
         final User user = userFactory.create(
@@ -90,7 +90,8 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
                 userProfileInputData.getBio(),
                 userProfileInputData.getFav_pokemon(),
                 userProfileInputData.getProfilePhotoPath(),
-                userProfileInputData.getBannerPath());
+                userProfileInputData.getBannerPath()
+        );
         // Set the display name
         user.setName(userProfileInputData.getName());
 
@@ -105,9 +106,9 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
         }
 
         final UserProfileOutputData userProfileOutputData = new UserProfileOutputData(
-                finalUsername,
+                finalUsername, 
                 user.getName(), // Display name
-                user.getBio(),
+                user.getBio(), 
                 user.getFavPokemon(),
                 user.getProfilePhotoPath(),
                 user.getBannerPath());

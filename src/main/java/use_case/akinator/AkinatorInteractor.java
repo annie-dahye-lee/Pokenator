@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * The interactor for the Akinator use case.
+ */
 public class AkinatorInteractor implements AkinatorInputBoundary {
-    private static final int MAX_QUESTIONS = 8;
+    private static final int MAX_QUESTIONS = 12;
+    private static final int CONFIDENT_GUESS_THRESHOLD = 3;
 
     private final AkinatorOutputBoundary presenter;
     private final PokeApiGateway apiGateway;
@@ -27,15 +31,24 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
     private int revealPromptId;
 
     public AkinatorInteractor(AkinatorOutputBoundary presenter,
-                              PokeApiGateway apiGateway) {
+                              PokeApiGateway apiGateway,
+                              List<SimplePokemonProfile> initialProfiles) {
         this.presenter = presenter;
         this.apiGateway = apiGateway;
         this.questionBank = buildQuestions();
-        seedKnowledgeBase();
+        if (initialProfiles != null && !initialProfiles.isEmpty()) {
+            knowledgeBase.addAll(initialProfiles);
+        } else {
+            seedDefaultKnowledgeBase();
+        }
         resetRoundState();
         emitIdle();
     }
 
+    /**
+     * Starts a new Akinator game. If a game is currently ongoing, prompts the user to
+     * finish or reset the current round.
+     */
     @Override
     public void start() {
         if (roundActive) {
@@ -45,27 +58,42 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         emitQuestion("Think of a Pokémon and answer the questions.");
     }
 
+    /**
+     * Resets the current game.
+     */
     @Override
     public void reset() {
         resetRoundState();
         emitIdle();
     }
 
+    /**
+     * Handles the user's "yes" response.
+     */
     @Override
     public void answerYes() {
         handleAnswer(Boolean.TRUE);
     }
 
+    /**
+     * Handles the user's "no" response.
+     */
     @Override
     public void answerNo() {
         handleAnswer(Boolean.FALSE);
     }
 
+    /**
+     * Handles the user's "don't know" response.
+     */
     @Override
     public void answerUnknown() {
         handleAnswer(null);
     }
 
+    /**
+     * Allows the user to confirm if the guess was correct, and provides a response.
+     */
     @Override
     public void confirmGuess(boolean correct) {
         if (!awaitingGuess || candidates.isEmpty()) {
@@ -83,12 +111,18 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
             candidates.remove(0);
             if (candidates.isEmpty()) {
                 requestReveal("Alright, help me out?");
+            } else if (candidates.size() <= CONFIDENT_GUESS_THRESHOLD
+                    || questionsAsked >= MAX_QUESTIONS) {
+                emitGuess("Let me try another guess!");
             } else {
-                requestReveal("I’m out of confident guesses. What Pokémon was it?");
+                emitQuestion("Okay, another clue then.");
             }
         }
     }
 
+    /**
+     * Allows the user to reveal the Pokemon they were thinking of.
+     */
     @Override
     public void revealPokemon(String pokemonName) {
         if (!awaitingReveal) {
@@ -136,13 +170,15 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
             return;
         }
 
-        if (candidates.size() == 1) {
-            emitGuess("I think I figured it out!");
+        if (candidates.size() <= CONFIDENT_GUESS_THRESHOLD) {
+            emitGuess(candidates.size() == 1
+                    ? "I think I figured it out!"
+                    : "Let me take a shot at it.");
             return;
         }
 
         if (questionsAsked >= MAX_QUESTIONS) {
-            requestReveal("That’s my question limit. Help me out?");
+            emitGuess("That’s my last question. Here’s my best guess!");
             return;
         }
 
@@ -154,11 +190,7 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
     private void emitQuestion(String status) {
         Question next = pickNextQuestion();
         if (next == null) {
-            if (candidates.size() == 1) {
-                emitGuess("Only one Pokémon fits so far!");
-            } else {
-                requestReveal("I’m out of good questions. What Pokémon was it?");
-            }
+            emitGuess("I’m out of good questions. Let me guess instead!");
             return;
         }
 
@@ -327,47 +359,42 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         }
     }
 
-    private void seedKnowledgeBase() {
+    private void seedDefaultKnowledgeBase() {
         knowledgeBase.add(SimplePokemonProfile.of("pikachu",
                 PokemonTrait.CUTE_MASCOT, PokemonTrait.KANTO_ORIGINAL));
         knowledgeBase.add(SimplePokemonProfile.of("charizard",
                 PokemonTrait.STARTER, PokemonTrait.DUAL_TYPE, PokemonTrait.FLYING_OR_FLOATING,
                 PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
-        knowledgeBase.add(SimplePokemonProfile.of("greninja",
-                PokemonTrait.STARTER, PokemonTrait.DUAL_TYPE, PokemonTrait.AQUATIC,
-                PokemonTrait.HUMANOID, PokemonTrait.FULLY_EVOLVED));
+        knowledgeBase.add(SimplePokemonProfile.of("blastoise",
+                PokemonTrait.STARTER, PokemonTrait.AQUATIC,
+                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
+        knowledgeBase.add(SimplePokemonProfile.of("venusaur",
+                PokemonTrait.STARTER, PokemonTrait.DUAL_TYPE,
+                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
         knowledgeBase.add(SimplePokemonProfile.of("snorlax",
                 PokemonTrait.FULLY_EVOLVED, PokemonTrait.DEFENSIVE_TANK, PokemonTrait.KANTO_ORIGINAL));
         knowledgeBase.add(SimplePokemonProfile.of("mewtwo",
                 PokemonTrait.LEGENDARY, PokemonTrait.HUMANOID,
-                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
+                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL, PokemonTrait.PSYCHIC_TYPE));
         knowledgeBase.add(SimplePokemonProfile.of("gengar",
                 PokemonTrait.DUAL_TYPE, PokemonTrait.SPOOKY,
                 PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
-        knowledgeBase.add(SimplePokemonProfile.of("lucario",
-                PokemonTrait.DUAL_TYPE, PokemonTrait.HUMANOID, PokemonTrait.FULLY_EVOLVED));
-        knowledgeBase.add(SimplePokemonProfile.of("gardevoir",
-                PokemonTrait.HUMANOID, PokemonTrait.FULLY_EVOLVED, PokemonTrait.CUTE_MASCOT));
-        knowledgeBase.add(SimplePokemonProfile.of("lugia",
-                PokemonTrait.LEGENDARY, PokemonTrait.FLYING_OR_FLOATING,
-                PokemonTrait.AQUATIC, PokemonTrait.FULLY_EVOLVED));
+        knowledgeBase.add(SimplePokemonProfile.of("dragonite",
+                PokemonTrait.DUAL_TYPE, PokemonTrait.FLYING_OR_FLOATING,
+                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
+        knowledgeBase.add(SimplePokemonProfile.of("lapras",
+                PokemonTrait.DUAL_TYPE, PokemonTrait.AQUATIC,
+                PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
+        knowledgeBase.add(SimplePokemonProfile.of("machamp",
+                PokemonTrait.HUMANOID, PokemonTrait.FULLY_EVOLVED, PokemonTrait.KANTO_ORIGINAL));
+        knowledgeBase.add(SimplePokemonProfile.of("jigglypuff",
+                PokemonTrait.CUTE_MASCOT, PokemonTrait.KANTO_ORIGINAL));
         knowledgeBase.add(SimplePokemonProfile.of("bulbasaur",
                 PokemonTrait.STARTER, PokemonTrait.DUAL_TYPE,
                 PokemonTrait.CUTE_MASCOT, PokemonTrait.KANTO_ORIGINAL));
         knowledgeBase.add(SimplePokemonProfile.of("squirtle",
                 PokemonTrait.STARTER, PokemonTrait.AQUATIC,
                 PokemonTrait.CUTE_MASCOT, PokemonTrait.KANTO_ORIGINAL));
-        knowledgeBase.add(SimplePokemonProfile.of("rowlet",
-                PokemonTrait.STARTER, PokemonTrait.FLYING_OR_FLOATING,
-                PokemonTrait.CUTE_MASCOT));
-        knowledgeBase.add(SimplePokemonProfile.of("togekiss",
-                PokemonTrait.DUAL_TYPE, PokemonTrait.FLYING_OR_FLOATING,
-                PokemonTrait.CUTE_MASCOT, PokemonTrait.FULLY_EVOLVED));
-        knowledgeBase.add(SimplePokemonProfile.of("metagross",
-                PokemonTrait.DUAL_TYPE, PokemonTrait.DEFENSIVE_TANK,
-                PokemonTrait.FULLY_EVOLVED));
-        knowledgeBase.add(SimplePokemonProfile.of("darkrai",
-                PokemonTrait.LEGENDARY, PokemonTrait.SPOOKY));
     }
 
     private List<Question> buildQuestions() {
@@ -381,7 +408,7 @@ public class AkinatorInteractor implements AkinatorInputBoundary {
         list.add(new Question("Does it have a humanoid appearance?", PokemonTrait.HUMANOID));
         list.add(new Question("Is it ghostly or spooky?", PokemonTrait.SPOOKY));
         list.add(new Question("Is it known for being cute or mascot-like?", PokemonTrait.CUTE_MASCOT));
-        list.add(new Question("Was it part of the original 151 Pokémon?", PokemonTrait.KANTO_ORIGINAL));
+        list.add(new Question("Is it a Psychic-type Pokémon?", PokemonTrait.PSYCHIC_TYPE));
         list.add(new Question("Is it known for being a defensive tank?", PokemonTrait.DEFENSIVE_TANK));
         return list;
     }
