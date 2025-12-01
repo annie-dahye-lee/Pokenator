@@ -39,7 +39,7 @@ public class MysteryPokemonInteractor implements MysteryPokemonInputBoundary {
             return;
         }
 
-        // 1. Load current game from persistence
+        // Load current game from JSON
         final Game game;
         try {
             game = gameDAO.loadGame();
@@ -198,7 +198,6 @@ public class MysteryPokemonInteractor implements MysteryPokemonInputBoundary {
     }
 
     public void reset() {
-        // For now, reset is just "start a brand-new game"
         start();
     }
 
