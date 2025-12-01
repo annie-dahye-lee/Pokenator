@@ -3,7 +3,7 @@ package interface_adapter.leaderboard;
 import use_case.leaderboard.*;
 
 /**
- * The controller for the Leaderboard use case.
+ * Leaderboard controller.
  */
 public class LeaderboardController {
 
@@ -14,12 +14,13 @@ public class LeaderboardController {
     }
 
     /**
-     * Changes the page of users on the leaderboard for navigation.
-     * @param newPage the new page number
+     * Execute the change page function.
+     * @param newPage new page number to update to.
      */
     public void changePage(int newPage) {
         leaderboardInteractor.changePage(
-                new LeaderboardInputData(newPage)
+                new ChangePageInputData(newPage)
         );
     }
+
 }

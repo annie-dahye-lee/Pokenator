@@ -1,12 +1,22 @@
 package use_case.leaderboard;
 
 /**
- * The output boundary for the Leaderboard use case.
+ * Leaderboard output boundary.
  */
 public interface LeaderboardOutputBoundary {
 
-    void prepareSuccessView(LeaderboardOutputData leaderboardOutputData);
+    /**
+     * Prepare the success view for the change page function:
+     * Update the leaderboard view model state with new data and executeFirePropertyChange.
+     * @param changePageOutputData output data.
+     */
+    void changePagePrepareSuccessView(ChangePageOutputData changePageOutputData);
 
-    void prepareFailedView(String errorMessage);
+    /**
+     * Prepare the failed view for the change page function:
+     * Print the error message; view does not change.
+     * @param errorMessage error message.
+     */
+    void changePagePrepareFailedView(String errorMessage);
 
 }

@@ -195,7 +195,7 @@ public class AppBuilder {
      */
     public AppBuilder addLeaderboardView() {
         leaderboardViewModel = new LeaderboardViewModel();
-        leaderboardView = new LeaderboardView(leaderboardViewModel, viewManagerModel, themeManager);
+        leaderboardView = new LeaderboardView(leaderboardViewModel, themeManager);
         cardPanel.add(leaderboardView, leaderboardView.getViewName());
         return this;
     }
@@ -318,7 +318,7 @@ public class AppBuilder {
     public AppBuilder addAccessSettingsUseCase() {
 
         BackOutputBoundary presenter =
-                new BackPresenter(viewManagerModel, settingsViewModel, "dashboard");
+                new BackPresenter(viewManagerModel, "dashboard");
 
         BackInputBoundary interactor =
                 new BackInteractor(presenter);
@@ -372,19 +372,26 @@ public class AppBuilder {
      */
     public AppBuilder addLeaderboardUseCase() {
 
-        LeaderboardOutputBoundary presenter =
+        // Leaderboard:
+        LeaderboardOutputBoundary leaderboardPresenter =
                 new LeaderboardPresenter(leaderboardViewModel);
+        LeaderboardInputBoundary leaderboardInteractor =
+                new LeaderboardInteractor(userDataAccessObject, leaderboardPresenter);
+        LeaderboardController leaderboardController =
+                new LeaderboardController(leaderboardInteractor);
 
-        LeaderboardInputBoundary interactor =
-                new LeaderboardInteractor(userDataAccessObject, presenter);
+        // Back:
+        BackOutputBoundary backPresenter =
+                new BackPresenter(viewManagerModel, "dashboard");
+        BackInputBoundary backInteractor =
+                new BackInteractor(backPresenter);
+        BackController backController =
+                new BackController(backInteractor);
 
-        LeaderboardController controller =
-                new LeaderboardController(interactor);
-
-        leaderboardView.setLeaderboardController(controller);
+        leaderboardView.setControllers(leaderboardController, backController);
 
         // Preemptively set up page 1.
-        controller.changePage(1);
+        leaderboardController.changePage(1);
 
         return this;
     }

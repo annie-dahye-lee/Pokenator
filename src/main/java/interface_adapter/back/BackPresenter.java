@@ -1,8 +1,6 @@
 package interface_adapter.back;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.settings.SettingsState;
-import interface_adapter.settings.SettingsViewModel;
 import use_case.back.BackOutputBoundary;
 
 /**
@@ -11,21 +9,17 @@ import use_case.back.BackOutputBoundary;
  */
 public class BackPresenter implements BackOutputBoundary {
     private final ViewManagerModel viewManagerModel;
-    private final SettingsViewModel settingsViewModel;
     private final String targetView;
 
     /**
      * Constructs an AccessSettingsPresenter.
      *
      * @param viewManagerModel  the view manager used to switch views
-     * @param settingsViewModel the settings view model whose state may be cleared
      * @param targetView        the name of the view to navigate to
      */
     public BackPresenter(ViewManagerModel viewManagerModel,
-                         SettingsViewModel settingsViewModel,
                          String targetView) {
         this.viewManagerModel = viewManagerModel;
-        this.settingsViewModel = settingsViewModel;
         this.targetView = targetView;
     }
 
@@ -35,12 +29,6 @@ public class BackPresenter implements BackOutputBoundary {
      */
     @Override
     public void prepareSuccessView() {
-        // clear errors, there's none now but using the
-        // close for modification open to extensions principle when errors are added later
-        SettingsState state = settingsViewModel.getState();
-        state.setErrorMessage(null);
-        settingsViewModel.firePropertyChange();
-
         // switch to the target view
         viewManagerModel.setState(targetView);
         viewManagerModel.firePropertyChange();
