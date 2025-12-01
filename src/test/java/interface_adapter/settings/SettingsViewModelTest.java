@@ -29,4 +29,3 @@ class SettingsViewModelTest {
         assertEquals("dark", received.get().getTheme());
     }
 }
-

@@ -235,6 +235,19 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
 
     /**
      * Changes the user's profile information and saves the change.
+     * This method is required by SignupUserDataAccessInterface.
+     *
+     * @param user the user whose data should be saved or updated
+     */
+    @Override
+    public void updateUserProfile(User user) {
+        // Use the user's name as the key
+        accounts.put(user.getName(), user);
+        save();
+    }
+
+    /**
+     * Changes the user's profile information and saves the change.
      *
      * @param username the username of the user
      * @param user the user whose data should be saved or updated
@@ -266,3 +279,4 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         save();
     }
 }
+

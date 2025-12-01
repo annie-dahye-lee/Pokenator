@@ -116,24 +116,6 @@ public class UserProfileState {
         this.profileCompletionPercentage = percentage;
     }
 
-    private void updateCompletionPercentage() {
-        int completedFields = 0;
-        int totalFields = 5; // name, bio, fav_pokemon, profilePhotoPath, bannerPath
-
-        if (name != null && !name.trim().isEmpty())
-            completedFields++;
-        if (bio != null && !bio.trim().isEmpty())
-            completedFields++;
-        if (fav_pokemon != null && !fav_pokemon.isEmpty() && !fav_pokemon.equals("None"))
-            completedFields++;
-        if (profilePhotoPath != null && !profilePhotoPath.isEmpty())
-            completedFields++;
-        if (bannerPath != null && !bannerPath.isEmpty())
-            completedFields++;
-
-        profileCompletionPercentage = (int) Math.round((completedFields * 100.0) / totalFields);
-    }
-
     public void setFav_pokemon(String fav_pokemon) {
         this.fav_pokemon = fav_pokemon;
         updateCompletionPercentage();
@@ -176,5 +158,27 @@ public class UserProfileState {
 
     public String getProfileError() {
         return profileError;
+    }
+
+    /**
+     * Updates the profile completion percentage based on current field values.
+     * This is called automatically when any profile field is updated.
+     */
+    private void updateCompletionPercentage() {
+        int completedFields = 0;
+        int totalFields = 5; // name, bio, fav_pokemon, profilePhotoPath, bannerPath
+
+        if (name != null && !name.trim().isEmpty())
+            completedFields++;
+        if (bio != null && !bio.trim().isEmpty())
+            completedFields++;
+        if (fav_pokemon != null && !fav_pokemon.isEmpty() && !fav_pokemon.equals("None"))
+            completedFields++;
+        if (profilePhotoPath != null && !profilePhotoPath.isEmpty())
+            completedFields++;
+        if (bannerPath != null && !bannerPath.isEmpty())
+            completedFields++;
+
+        profileCompletionPercentage = (int) Math.round((completedFields * 100.0) / totalFields);
     }
 }

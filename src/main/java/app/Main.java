@@ -16,11 +16,13 @@ public class Main {
                 .addChooseFavPokemonView()
                 .addLeaderboardView()
                 .addUserProfileView()
+                .addMysteryPokemonView()
 
                 // use cases
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addAkinatorUseCase()
+                .addMysteryPokemonUseCase()
                 .addChangePasswordUseCase()
                 .addAccessSettingsUseCase()
                 .addSaveSettingsUseCase()
@@ -29,6 +31,7 @@ public class Main {
                 .addLeaderboardUseCase()
                 .addUserProfileUseCase()
                 .build();
+
 
         application.pack();
         application.setLocationRelativeTo(null);

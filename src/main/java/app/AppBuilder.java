@@ -30,6 +30,8 @@ import use_case.settings.reset.*;
 // Game modes
 import interface_adapter.akinator.*;
 import use_case.akinator.*;
+import interface_adapter.mysterypokemon.*;
+import use_case.mysterypokemon.*;
 // Leaderboard
 import interface_adapter.leaderboard.*;
 import use_case.leaderboard.*;
@@ -66,9 +68,19 @@ public class AppBuilder {
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
-    // DAO for user persistence
+
+    // DAO:
+
+    // User
     private final FileUserDataAccessObject userDataAccessObject =
             new FileUserDataAccessObject("users.csv", userFactory);
+
+    // Mystery Pokémon
+    private final Gen1Loader gen1loader = new Gen1Loader();
+    private final TypeFetcher typeFetcher = new TypeFetcher();
+    private final TypeMultiplierCalculator typeMultiplierCalculator = new TypeMultiplierCalculator(typeFetcher);
+    private final GameDataAccessInterface gameDAO = new FileGameDataAccess("game_state.json");
+    private final PokemonDataAccessInterface pokemonDAO = new PokemonFetcher();
 
 
     // Views and view models:
@@ -92,8 +104,10 @@ public class AppBuilder {
     private SettingsView settingsView;
     private SettingsViewModel settingsViewModel;
     // Game modes
-    private AkinatorViewModel akinatorViewModel;
     private AkinatorView akinatorView;
+    private AkinatorViewModel akinatorViewModel;
+    private MysteryPokemonView mysteryPokemonView;
+    private MysteryPokemonViewModel mysteryPokemonViewModel;
     // Leaderboard
     private LeaderboardView leaderboardView;
     private LeaderboardViewModel leaderboardViewModel;
@@ -388,7 +402,22 @@ public class AppBuilder {
 
     // View(s)
 
+    public AppBuilder addMysteryPokemonView() {
+        mysteryPokemonViewModel = new MysteryPokemonViewModel();
+        mysteryPokemonView = new MysteryPokemonView(gen1loader, mysteryPokemonViewModel, viewManagerModel);
+        cardPanel.add(mysteryPokemonView, mysteryPokemonView.getViewName());
+        return this;
+    }
+
     // Use case(s)
+
+    public AppBuilder addMysteryPokemonUseCase() {
+        MysteryPokemonOutputBoundary presenter = new MysteryPokemonPresenter(mysteryPokemonViewModel, viewManagerModel);
+        MysteryPokemonInputBoundary interactor = new MysteryPokemonInteractor(pokemonDAO, gameDAO, typeMultiplierCalculator, presenter);
+        MysteryPokemonController controller = new MysteryPokemonController(interactor);
+        mysteryPokemonView.setMysteryPokemonController(controller);
+        return this;
+    }
 
     // ========== Leaderboard ==========
 

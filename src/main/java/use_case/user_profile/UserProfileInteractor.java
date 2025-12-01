@@ -16,8 +16,8 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
     private GameDashboard dashboard;
 
     public UserProfileInteractor(UserProfileUserDataAccessInterface userDataAccessObject,
-                                 UserProfileOutputBoundary userPresenter,
-                                 UserFactory userFactory, GameDashboard dashboard) {
+            UserProfileOutputBoundary userPresenter,
+            UserFactory userFactory, GameDashboard dashboard) {
         this.userDataAccessObject = userDataAccessObject;
         this.userPresenter = userPresenter;
         this.userFactory = userFactory;
@@ -34,6 +34,7 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
     @Override
     public void execute(UserProfileInputData userProfileInputData) {
         String currentUsername = dashboard.getCurrentUser();
+
         User u = ((FileUserDataAccessObject)userDataAccessObject).get(currentUsername);
         
         // Validate display name
@@ -110,9 +111,7 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
                 user.getBio(), 
                 user.getFavPokemon(),
                 user.getProfilePhotoPath(),
-                user.getBannerPath()
-        );
+                user.getBannerPath());
         userPresenter.prepareSuccessView(userProfileOutputData);
     }
 }
-

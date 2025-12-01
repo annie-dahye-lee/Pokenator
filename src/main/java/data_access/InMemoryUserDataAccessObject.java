@@ -60,4 +60,13 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
         // Replace the old entry with the new password
         users.put(user.getName(), user);
     }
+
+    public void editProfile(User user) {
+        users.put(user.getName(), user);
+    }
+
+    @Override
+    public void updateUserProfile(User user) {
+        editProfile(user);
+    }
 }
