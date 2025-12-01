@@ -61,7 +61,6 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
         users.put(user.getName(), user);
     }
 
-    @Override
     public void editProfile(User user) {
         users.put(user.getName(), user);
     }
