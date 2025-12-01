@@ -7,14 +7,15 @@ import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+import use_case.mysterypokemon.PokemonNotFoundException;
 
 import java.io.IOException;
 import java.util.*;
 
-public class PokemonFetcher {
+public class PokemonFetcher implements PokemonDataAccessInterface{
     private final OkHttpClient client = new OkHttpClient();
 
-    public Pokemon getPokemon(String pokemon) throws IOException {
+    public Pokemon getByName(String pokemon) throws PokemonNotFoundException {
         String request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon.toLowerCase() + "/";
         Request request = new Request.Builder().url(request_url).build();
 
@@ -58,10 +59,10 @@ public class PokemonFetcher {
                 return new Pokemon(name, types, isLegendary, isMythical, totalBaseStat, sprite_url);
 
             } else {
-                throw new IOException("PokéAPI returned " + response.code());
+                throw new PokemonNotFoundException(pokemon);
             }
         } catch (IOException | JSONException event) {
-            throw new IOException(event);
+            throw new PokemonNotFoundException(pokemon);
         }
 
     }

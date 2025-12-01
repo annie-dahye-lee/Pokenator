@@ -1,6 +1,7 @@
 package app;
 
-import data_access.FileUserDataAccessObject;
+import data_access.*;
+import entity.Game;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.logged_in.ChangePasswordController;
@@ -11,6 +12,9 @@ import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.mysterypokemon.MysteryPokemonController;
+import interface_adapter.mysterypokemon.MysteryPokemonPresenter;
+import interface_adapter.mysterypokemon.MysteryPokemonViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -23,22 +27,19 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
+import use_case.mysterypokemon.MysteryPokemonInputBoundary;
+import use_case.mysterypokemon.MysteryPokemonInteractor;
+import use_case.mysterypokemon.MysteryPokemonOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.LoggedInView;
-import view.GameDashboard;
-import view.LoginView;
-import view.SignupView;
-import view.ViewManager;
-import data_access.PokeApiGateway;
+import view.*;
 import interface_adapter.akinator.AkinatorController;
 import interface_adapter.akinator.AkinatorPresenter;
 import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
-import view.AkinatorView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +54,14 @@ public class AppBuilder {
     // DAO for user persistence
     private final FileUserDataAccessObject userDataAccessObject =
             new FileUserDataAccessObject("users.csv", userFactory);
+
+    private final Gen1Loader gen1loader = new Gen1Loader();
+    private final TypeFetcher typeFetcher = new TypeFetcher();
+    private final TypeMultiplierCalculator typeMultiplierCalculator = new TypeMultiplierCalculator(typeFetcher);
+    private final GameDataAccessInterface gameDAO = new FileGameDataAccess("game_state.json");
+    private PokemonDataAccessInterface pokemonDAO = new PokemonFetcher();
+
+
 
     // Views and view models
     private GameDashboard gameDashboard;
@@ -70,6 +79,12 @@ public class AppBuilder {
     // ========== Add Views ==========
     private AkinatorViewModel akinatorViewModel;
     private AkinatorView akinatorView;
+
+    private MysteryPokemonViewModel mysteryPokemonViewModel;
+    private MysteryPokemonView mysteryPokemonView;
+
+
+
 
     public AppBuilder addGameDashboard() {
         gameDashboard = new GameDashboard(viewManagerModel); // fixed: assign to field
@@ -102,6 +117,13 @@ public class AppBuilder {
         akinatorViewModel = new AkinatorViewModel();
         akinatorView = new AkinatorView(akinatorViewModel, viewManagerModel);
         cardPanel.add(akinatorView, akinatorView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addMysteryPokemonView() {
+        mysteryPokemonViewModel = new MysteryPokemonViewModel();
+        mysteryPokemonView = new MysteryPokemonView(gen1loader, mysteryPokemonViewModel);
+        cardPanel.add(mysteryPokemonView, mysteryPokemonView.getViewName());
         return this;
     }
 
@@ -148,6 +170,14 @@ public class AppBuilder {
         AkinatorInputBoundary interactor = new AkinatorInteractor(presenter, new PokeApiGateway());
         AkinatorController controller = new AkinatorController(interactor);
         akinatorView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addMysteryPokemonUseCase() {
+        MysteryPokemonOutputBoundary presenter = new MysteryPokemonPresenter(mysteryPokemonViewModel, viewManagerModel);
+        MysteryPokemonInputBoundary interactor = new MysteryPokemonInteractor(pokemonDAO, gameDAO, typeMultiplierCalculator, presenter);
+        MysteryPokemonController controller = new MysteryPokemonController(interactor);
+        mysteryPokemonView.setMysteryPokemonController(controller);
         return this;
     }
 
