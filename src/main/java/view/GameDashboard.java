@@ -108,7 +108,8 @@ public class GameDashboard extends JPanel implements ThemedView {
                     options,
                     options[0]);
             if (choice == 0) {
-                showMessage("Mystery mode coming soon!");
+                viewManagerModel.setState("mysterypokemon");
+                viewManagerModel.firePropertyChange();
             } else if (choice == 1) {
                 viewManagerModel.setState("akinator");
                 viewManagerModel.firePropertyChange();
