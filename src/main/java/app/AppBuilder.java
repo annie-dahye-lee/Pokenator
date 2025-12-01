@@ -1,8 +1,6 @@
 package app;
 
-import data_access.AkinatorKnowledgeBaseLoader;
-import data_access.FileUserDataAccessObject;
-import data_access.PokeApiGateway;
+import data_access.*;
 import entity.SimplePokemonProfile;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
@@ -16,6 +14,9 @@ import interface_adapter.logged_in.*;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.mysterypokemon.MysteryPokemonController;
+import interface_adapter.mysterypokemon.MysteryPokemonPresenter;
+import interface_adapter.mysterypokemon.MysteryPokemonViewModel;
 import interface_adapter.settings.*;
 import interface_adapter.settings.apply.ApplySettingsController;
 import interface_adapter.settings.apply.ApplySettingsPresenter;
@@ -57,6 +58,9 @@ import interface_adapter.akinator.AkinatorViewModel;
 import use_case.akinator.AkinatorInputBoundary;
 import use_case.akinator.AkinatorInteractor;
 import use_case.akinator.AkinatorOutputBoundary;
+import use_case.mysterypokemon.MysteryPokemonInputBoundary;
+import use_case.mysterypokemon.MysteryPokemonInteractor;
+import use_case.mysterypokemon.MysteryPokemonOutputBoundary;
 import view.*;
 
 
@@ -95,6 +99,14 @@ public class AppBuilder {
     private final FileUserDataAccessObject userDataAccessObject =
             new FileUserDataAccessObject("users.csv", userFactory);
 
+    private final Gen1Loader gen1loader = new Gen1Loader();
+    private final TypeFetcher typeFetcher = new TypeFetcher();
+    private final TypeMultiplierCalculator typeMultiplierCalculator = new TypeMultiplierCalculator(typeFetcher);
+    private final GameDataAccessInterface gameDAO = new FileGameDataAccess("game_state.json");
+    private final PokemonDataAccessInterface pokemonDAO = new PokemonFetcher();
+
+
+
     // Views and view models
     private GameDashboard gameDashboard;
     private SignupView signupView;
@@ -113,6 +125,8 @@ public class AppBuilder {
     private LeaderboardView leaderboardView;
     private UserProfileViewModel userProfileViewModel;
     private UserProfileView userProfileView;
+    private MysteryPokemonViewModel mysteryPokemonViewModel;
+    private MysteryPokemonView mysteryPokemonView;
     private final ThemeManager themeManager = new ThemeManager();
 
     public AppBuilder() {
@@ -179,6 +193,13 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addMysteryPokemonView() {
+        mysteryPokemonViewModel = new MysteryPokemonViewModel();
+        mysteryPokemonView = new MysteryPokemonView(gen1loader, mysteryPokemonViewModel);
+        cardPanel.add(mysteryPokemonView, mysteryPokemonView.getViewName());
+        return this;
+    }
+
     /**
      * Registers the settings view with the application.
      */
@@ -204,7 +225,8 @@ public class AppBuilder {
      * Registers the choose favourite Pokémon view with the application.
      */
     public AppBuilder addChooseFavPokemonView() {
-        chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(userDataAccessObject.get(gameDashboard.getCurrentUser()));
+        chooseFavPokemonViewModel = new ChooseFavPokemonViewModel(
+                userDataAccessObject.get(gameDashboard.getCurrentUser()));
         chooseFavPokemonView = new ChooseFavPokemonView(chooseFavPokemonViewModel, viewManagerModel, gameDashboard,
                 userDataAccessObject, new PokeApiGateway(), themeManager);
 
@@ -291,6 +313,14 @@ public class AppBuilder {
                 new AkinatorInteractor(presenter, new PokeApiGateway(), dynamicProfiles);
         AkinatorController controller = new AkinatorController(interactor);
         akinatorView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addMysteryPokemonUseCase() {
+        MysteryPokemonOutputBoundary presenter = new MysteryPokemonPresenter(mysteryPokemonViewModel, viewManagerModel);
+        MysteryPokemonInputBoundary interactor = new MysteryPokemonInteractor(pokemonDAO, gameDAO, typeMultiplierCalculator, presenter);
+        MysteryPokemonController controller = new MysteryPokemonController(interactor);
+        mysteryPokemonView.setMysteryPokemonController(controller);
         return this;
     }
 
