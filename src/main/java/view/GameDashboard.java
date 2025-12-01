@@ -1,11 +1,18 @@
 package view;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
+import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class GameDashboard extends JPanel {
+/**
+ * The view for displaying the game dashboard.
+ */
+public class GameDashboard extends JPanel implements ThemedView {
 
     private final ViewManagerModel viewManagerModel;
     private String currentUser = null; // null = not logged in
@@ -13,10 +20,16 @@ public class GameDashboard extends JPanel {
     private final JPanel headerButtons;
     private final JLabel userLabel;
 
-    public GameDashboard(ViewManagerModel viewManagerModel) {
+    private ChooseFavPokemonView chooseFavPokemonView = null;
+    public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
+
         this.viewManagerModel = viewManagerModel;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 255));
+
+        // ===== COLOUR THEME CHANGE =====
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         // ===== HEADER =====
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -101,9 +114,24 @@ public class GameDashboard extends JPanel {
                 viewManagerModel.firePropertyChange();
             }
         });
-        leaderboardBtn.addActionListener(e -> showMessage("Opening leaderboard..."));
-        profileBtn.addActionListener(e -> showMessage("Opening your profile page..."));
-        settingsBtn.addActionListener(e -> showMessage("Opening settings..."));
+
+        leaderboardBtn.addActionListener(e -> {
+            viewManagerModel.setState("leaderboard");
+            viewManagerModel.firePropertyChange();
+        });
+        profileBtn.addActionListener(e -> {
+            if (currentUser == null) {
+                showMessage("Please log in to view your profile.");
+            } else {
+                viewManagerModel.setState("User Profile");
+                viewManagerModel.firePropertyChange();
+            }
+        });
+
+        settingsBtn.addActionListener(e -> {
+            viewManagerModel.setState("settings");
+            viewManagerModel.firePropertyChange();
+        });
         aboutBtn.addActionListener(e -> showMessage("Pokénator by Pibble Nation!"));
         exitBtn.addActionListener(e -> System.exit(0));
     }
@@ -112,6 +140,10 @@ public class GameDashboard extends JPanel {
     public void setUser(String username) {
         this.currentUser = username;
         refreshHeader();
+    }
+
+    public String getCurrentUser() {
+        return this.currentUser;
     }
 
     public void logout() {
@@ -139,7 +171,7 @@ public class GameDashboard extends JPanel {
         } else {
             // Logged-in view
             JLabel nameLabel = new JLabel("Logged in as: " + currentUser);
-            nameLabel.setForeground(Color.WHITE);
+//            nameLabel.setForeground(Color.WHITE);
             nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
             JButton logoutBtn = createHeaderButton("Logout");
             logoutBtn.addActionListener(e -> {
@@ -162,14 +194,6 @@ public class GameDashboard extends JPanel {
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(65, 105, 225));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-        });
         return button;
     }
 
@@ -181,14 +205,6 @@ public class GameDashboard extends JPanel {
         button.setForeground(Color.DARK_GRAY);
         button.setBorder(BorderFactory.createLineBorder(new Color(180, 200, 240), 2, true));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(200, 220, 255));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(230, 240, 255));
-            }
-        });
         return button;
     }
 
@@ -196,7 +212,15 @@ public class GameDashboard extends JPanel {
         JOptionPane.showMessageDialog(this, msg);
     }
 
+    public void applyTheme(Theme theme) {
+        ThemeUtil.applyTheme(this, theme);
+    }
+
     public String getViewName() {
         return "dashboard";
+    }
+
+    public void setCFPV(ChooseFavPokemonView CFPV) {
+        this.chooseFavPokemonView = CFPV;
     }
 }

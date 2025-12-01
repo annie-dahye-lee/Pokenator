@@ -8,10 +8,14 @@ public class Main {
         JFrame application = appBuilder
                 // views
                 .addGameDashboard()
+                .addSettingsView()
                 .addLoginView()
                 .addSignupView()
                 .addLoggedInView()
                 .addAkinatorView()
+                .addChooseFavPokemonView()
+                .addLeaderboardView()
+                .addUserProfileView()
                 .addMysteryPokemonView()
 
                 // use cases
@@ -20,6 +24,12 @@ public class Main {
                 .addAkinatorUseCase()
                 .addMysteryPokemonUseCase()
                 .addChangePasswordUseCase()
+                .addAccessSettingsUseCase()
+                .addSaveSettingsUseCase()
+                .addResetSettingsUseCase()
+                .addChooseFavPokemonUseCase()
+                .addLeaderboardUseCase()
+                .addUserProfileUseCase()
                 .build();
 
 

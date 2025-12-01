@@ -1,11 +1,27 @@
 package interface_adapter.settings;
 
+import interface_adapter.ViewModel;
+
 /**
- * Holds all data needed by the View.
- * It contains simple, display-ready properties (e.g., a boolean isDarkModeToggleChecked or a list of availableFontNames).
+ * The view model for resetting Settings.
  */
-/*
-loadSettings(), saveSettings(model)
- */
-public class SettingsViewModel {
+public class SettingsViewModel extends ViewModel<SettingsState> {
+
+    public static final String VIEW_NAME = "settings";
+
+    public SettingsViewModel() {
+        super(VIEW_NAME);
+        this.setState(new SettingsState());
+    }
+
+    @Override
+    public SettingsState getState() {
+        return super.getState();
+    }
+
+    @Override
+    public void setState(SettingsState state) {
+        super.setState(state);
+    }
+
 }
