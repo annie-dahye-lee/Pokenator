@@ -190,10 +190,10 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
 
         if (state.isPlayerWon()) {
             message = "You win!";
-            title = "Your guess is correct. The Pokemon is" + state.getAnswerName() + ".";
+            title = "Your guess is correct. The Pokemon is " + state.getAnswerName() + ".";
         } else {
             message = "You lost!";
-            title = "Your guess is incorrect. The correct answer is" + state.getAnswerName() + ".";
+            title = "Your guess is incorrect. The correct answer is " + state.getAnswerName() + ".";
         }
 
         if (state.getAnswerSprite() != null) {
