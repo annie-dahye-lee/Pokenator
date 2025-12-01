@@ -416,7 +416,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         pokemonLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Load pokemon list from gen1Pokemon.json
-        /**
+
         java.util.ArrayList<String> pokemonList = getPokemonList();
         favPokemonComboBox = new JComboBox<>(pokemonList.toArray(new String[0]));
         favPokemonComboBox.setBackground(new Color(48, 51, 57));
@@ -435,16 +435,16 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             userProfileViewModel.setState(currentState);
             updatePokemonImage(selectedPokemon);
         });
-         ***/
 
-        editFavPokemon = new JButton("Choose Favourite Pokemon");
+
+        editFavPokemon = new JButton("See more...");
         editFavPokemon.setBackground(new Color(88, 101, 242)); // Discord blurple
         editFavPokemon.setForeground(Color.WHITE);
         editFavPokemon.setFocusPainted(false);
         editFavPokemon.setBorderPainted(false);
-        editFavPokemon.setPreferredSize(new Dimension(150, 40));
-        editFavPokemon.setMinimumSize(new Dimension(150, 40));
-        editFavPokemon.setFont(new Font("SansSerif", Font.BOLD, 14));
+        editFavPokemon.setPreferredSize(new Dimension(150, 30));
+        editFavPokemon.setMinimumSize(new Dimension(150, 30));
+        editFavPokemon.setFont(new Font("SansSerif", Font.PLAIN, 12));
         editFavPokemon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         editFavPokemon.addActionListener(
                 new ActionListener() {
@@ -460,15 +460,15 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
 
         pokemonPanel.add(pokemonLabel);
         pokemonPanel.add(Box.createVerticalStrut(5));
-        // pokemonPanel.add(favPokemonComboBox);
+        pokemonPanel.add(favPokemonComboBox);
         pokemonPanel.add(editFavPokemon);
         pokemonPanel.add(Box.createVerticalStrut(10));
 
         // Pokemon image display
         pokemonImageLabel = new JLabel();
-        pokemonImageLabel.setPreferredSize(new Dimension(100, 100));
-        pokemonImageLabel.setMinimumSize(new Dimension(100, 100));
-        pokemonImageLabel.setMaximumSize(new Dimension(100, 100));
+        pokemonImageLabel.setPreferredSize(new Dimension(50, 50));
+        pokemonImageLabel.setMinimumSize(new Dimension(50, 50));
+        pokemonImageLabel.setMaximumSize(new Dimension(50, 50));
         pokemonImageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         pokemonImageLabel.setHorizontalAlignment(JLabel.CENTER);
         pokemonImageLabel.setVerticalAlignment(JLabel.CENTER);
@@ -723,7 +723,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             if (spriteUrl != null && !spriteUrl.isEmpty()) {
                 java.net.URL url = new java.net.URL(spriteUrl);
                 Image pokemonImage = ImageIO.read(url);
-                Image scaledImage = pokemonImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                Image scaledImage = pokemonImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                 pokemonImageLabel.setIcon(new ImageIcon(scaledImage));
             } else {
                 pokemonImageLabel.setIcon(null);
@@ -734,7 +734,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
                 File noneFile = new File("nonepokemon.jpg");
                 if (noneFile.exists()) {
                     Image noneImage = ImageIO.read(noneFile);
-                    Image scaledImage = noneImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                    Image scaledImage = noneImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                     pokemonImageLabel.setIcon(new ImageIcon(scaledImage));
                 } else {
                     pokemonImageLabel.setIcon(null);
@@ -851,10 +851,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             if (!favPokemon.equals("None")) {
                 favPokemon = Character.toUpperCase(favPokemon.charAt(0)) + favPokemon.substring(1).toLowerCase();
             }
-            //favPokemonComboBox.setSelectedItem(favPokemon);
+            favPokemonComboBox.setSelectedItem(favPokemon);
             updatePokemonImage(favPokemon);
         } else {
-            //favPokemonComboBox.setSelectedItem("None");
+            favPokemonComboBox.setSelectedItem("None");
             pokemonImageLabel.setIcon(null);
         }
         
