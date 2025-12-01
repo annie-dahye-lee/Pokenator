@@ -6,7 +6,9 @@ import interface_adapter.mysterypokemon.MysteryPokemonController;
 import interface_adapter.mysterypokemon.MysteryPokemonState;
 import interface_adapter.mysterypokemon.MysteryPokemonViewModel;
 import interface_adapter.themes.Theme;
+import interface_adapter.themes.ThemeManager;
 import interface_adapter.themes.ThemeUtil;
+import interface_adapter.themes.ThemedView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MysteryPokemonView extends JPanel implements PropertyChangeListener {
+public class MysteryPokemonView extends JPanel implements PropertyChangeListener, ThemedView {
 
     private final String ViewName = "mysterypokemon";
     private final Gen1Loader gen1loader;
@@ -51,12 +53,16 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
     private final JLabel errorLabel = new JLabel("");
     private boolean lastGameOver = false;
 
-    public MysteryPokemonView(Gen1Loader gen1loader, MysteryPokemonViewModel viewModel, ViewManagerModel viewManagerModel) {
+    public MysteryPokemonView(Gen1Loader gen1loader, MysteryPokemonViewModel viewModel, ViewManagerModel viewManagerModel, ThemeManager themeManager) {
         this.gen1loader = gen1loader;
         this.viewModel = viewModel;
         this.viewManagerModel = viewManagerModel;
 
         this.viewModel.addPropertyChangeListener(this);
+
+        // Colour Theme Changer
+        themeManager.registerView(this);
+        applyTheme(themeManager.getActiveTheme());
 
         setupLayout();
         actionListeners();
@@ -190,10 +196,10 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
 
         if (state.isPlayerWon()) {
             message = "You win!";
-            title = "Your guess is correct. The Pokemon is" + state.getAnswerName() + ".";
+            title = "Your guess is correct. The Pokemon is " + state.getAnswerName() + ".";
         } else {
             message = "You lost!";
-            title = "Your guess is incorrect. The correct answer is" + state.getAnswerName() + ".";
+            title = "Your guess is incorrect. The correct answer is " + state.getAnswerName() + ".";
         }
 
         if (state.getAnswerSprite() != null) {
@@ -213,9 +219,14 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
             );
         }
     }
-
+    /**
+     * Applies a chosen theme to the MysteryView game.
+     *
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }
+
 
 }
