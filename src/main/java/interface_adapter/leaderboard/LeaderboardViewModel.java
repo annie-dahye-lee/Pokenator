@@ -3,7 +3,7 @@ package interface_adapter.leaderboard;
 import interface_adapter.ViewModel;
 
 /**
- * The view model for the Leaderboard use case.
+ * Leaderboard view model.
  */
 public class LeaderboardViewModel extends ViewModel<LeaderboardState> {
 

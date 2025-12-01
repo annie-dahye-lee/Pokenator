@@ -1,9 +1,15 @@
 package use_case.leaderboard;
 
 /**
- * The input boundary for the Leaderboard use case.
+ * Leaderboard input boundary.
  */
 public interface LeaderboardInputBoundary {
 
-    void changePage(LeaderboardInputData leaderboardInputData);
+    /**
+     * Execute the change page function:
+     * Derive the new sublist of user-rank pairs to display.
+     * @param changePageInputData input data.
+     */
+    void changePage(ChangePageInputData changePageInputData);
+
 }

@@ -3,7 +3,10 @@ package interface_adapter.leaderboard;
 import java.util.ArrayList;
 
 /**
- * The state for the Leaderboard use case.
+ * Leaderboard view model state.
+ * Attributes:
+ * - userRankPairs: current sublist of user-rank pairs being displayed.
+ * - page: current page number.
  */
 public class LeaderboardState {
 
