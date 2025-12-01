@@ -6,7 +6,6 @@ import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
-import use_case.edit_profile.EditProfileUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -19,8 +18,7 @@ import java.io.IOException;
 public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                                                LoginUserDataAccessInterface,
                                                ChangePasswordUserDataAccessInterface,
-                                               LogoutUserDataAccessInterface,
-                                               EditProfileUserDataAccessInterface {
+                                               LogoutUserDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
@@ -39,6 +37,12 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         this.userFactory = userFactory;
     }
 
+    /**
+     * Fetches a user's information from a database with the indicated username.
+     *
+     * @param username the username of the user to use as key
+     * @return user information for the provided username
+     */
     @Override
     public User get(String username) {
         // Make an API call to get the user object.
@@ -68,16 +72,32 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
+    /**
+     * Setter for the current user's username.
+     *
+     * @param name the new chosen username
+     */
     @Override
     public void setCurrentUsername(String name) {
         currentUsername = name;
     }
 
+    /**
+     * Getter for the current user's username.
+     *
+     * @return current user's username
+     */
     @Override
     public String getCurrentUsername() {
         return currentUsername;
     }
 
+    /**
+     * Checks if a user exists in the database by username.
+     *
+     * @param username the new chosen username
+     * @return whether the user exists
+     */
     @Override
     public boolean existsByName(String username) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
@@ -99,6 +119,11 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
+    /**
+     * Saves a user's information to the database.
+     *
+     * @param user the user's information
+     */
     @Override
     public void save(User user) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
@@ -132,6 +157,11 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
+    /**
+     * Changes a user's password saved in the database.
+     *
+     * @param user the user whose password is changed; the new password is contained in the object
+     */
     @Override
     public void changePassword(User user) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
@@ -165,6 +195,11 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         }
     }
 
+    /**
+     * Saves a user's new profile information into the database.
+     *
+     * @param user the user whose info is being changed
+     */
     public void editProfile(User user) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
                                         .build();

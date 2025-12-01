@@ -26,14 +26,29 @@ public class SimplePokemonProfile {
         return new SimplePokemonProfile(name, set);
     }
 
+    /**
+     * Returns the name of the Pokémon.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Checks if a Pokémon has a certain trait.
+     *
+     * @return whether the Pokémon has the trait
+     */
     public boolean hasTrait(PokemonTrait trait) {
         return traits.contains(trait);
     }
 
+    /**
+     * Returns the traits of the Pokémon.
+     *
+     * @return the set of traits
+     */
     public Set<PokemonTrait> getTraits() {
         return Collections.unmodifiableSet(traits);
     }

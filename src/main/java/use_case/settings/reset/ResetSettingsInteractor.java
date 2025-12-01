@@ -1,5 +1,8 @@
 package use_case.settings.reset;
 
+/**
+ * The interactor for the Reset Settings use case.
+ */
 public class ResetSettingsInteractor implements ResetSettingsInputBoundary {
     private final ResetSettingsOutputBoundary presenter;
 

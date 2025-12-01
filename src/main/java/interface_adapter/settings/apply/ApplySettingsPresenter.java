@@ -5,6 +5,7 @@ import interface_adapter.settings.SettingsState;
 import interface_adapter.settings.SettingsViewModel;
 import interface_adapter.themes.ThemeManager;
 import use_case.settings.apply.ApplySettingsOutputBoundary;
+import use_case.settings.apply.ApplySettingsOutputData;
 
 /**
  * Presenter for saving settings. Updates the settings view model and applies
@@ -37,8 +38,8 @@ public class ApplySettingsPresenter implements ApplySettingsOutputBoundary {
      * @param theme the theme that was successfully selected
      */
     @Override
-    public void prepareSuccessView(String theme) {
-
+    public void prepareSuccessView(ApplySettingsOutputData outputData) {
+        String theme = outputData.getTheme();
         // Update settings screen
         SettingsState state = settingsViewModel.getState();
         state.setTheme(theme);
@@ -52,6 +53,11 @@ public class ApplySettingsPresenter implements ApplySettingsOutputBoundary {
         viewManagerModel.firePropertyChange();
     }
 
+    /**
+     * Prepares the fail view if an error occurs.
+     *
+     * @param errorMessage the error message
+     */
     @Override
     public void prepareFailView(String errorMessage) {
         SettingsState state = settingsViewModel.getState();

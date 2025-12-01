@@ -153,6 +153,11 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
         this.applySettingsController = saveController;
     }
 
+    /**
+     * Listens for user's actions.
+     *
+     * @param event the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         Object src = event.getSource();
@@ -165,8 +170,6 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
             }
             SettingsState state = settingsViewModel.getState();
             state.setTheme(chosen.toLowerCase());
-            settingsViewModel.setState(state);
-            settingsViewModel.firePropertyChange();
 
             if (applySettingsController != null) applySettingsController.execute(state);
 
@@ -181,6 +184,11 @@ public class SettingsView extends JPanel implements ActionListener, ThemedView {
         }
     }
 
+    /**
+     * Applies a chosen theme to the settings screen.
+     *
+     * @param theme the theme to apply
+     */
     @Override
     public void applyTheme(Theme theme) {
         // ThemeUtil will recolor everything in this panel

@@ -44,6 +44,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     private JTextArea bioInputField;
     private JComboBox<String> favPokemonComboBox;
     private JLabel pokemonImageLabel;
+    private JButton editFavPokemon;
     private JLabel errorLabel;
     private JLabel successLabel;
     private JLabel bioCharacterCountLabel;
@@ -415,6 +416,7 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         pokemonLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Load pokemon list from gen1Pokemon.json
+        /**
         java.util.ArrayList<String> pokemonList = getPokemonList();
         favPokemonComboBox = new JComboBox<>(pokemonList.toArray(new String[0]));
         favPokemonComboBox.setBackground(new Color(48, 51, 57));
@@ -433,10 +435,33 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             userProfileViewModel.setState(currentState);
             updatePokemonImage(selectedPokemon);
         });
+         ***/
+
+        editFavPokemon = new JButton("Choose Favourite Pokemon");
+        editFavPokemon.setBackground(new Color(88, 101, 242)); // Discord blurple
+        editFavPokemon.setForeground(Color.WHITE);
+        editFavPokemon.setFocusPainted(false);
+        editFavPokemon.setBorderPainted(false);
+        editFavPokemon.setPreferredSize(new Dimension(150, 40));
+        editFavPokemon.setMinimumSize(new Dimension(150, 40));
+        editFavPokemon.setFont(new Font("SansSerif", Font.BOLD, 14));
+        editFavPokemon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        editFavPokemon.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if (evt.getSource().equals(editFavPokemon)) {
+                            errorLabel.setText(" ");
+                            viewManagerModel.setState("Choose Favourite Pokemon");
+                            viewManagerModel.firePropertyChange();
+                        }
+                    }
+                }
+        );
 
         pokemonPanel.add(pokemonLabel);
         pokemonPanel.add(Box.createVerticalStrut(5));
-        pokemonPanel.add(favPokemonComboBox);
+        // pokemonPanel.add(favPokemonComboBox);
+        pokemonPanel.add(editFavPokemon);
         pokemonPanel.add(Box.createVerticalStrut(10));
 
         // Pokemon image display
@@ -724,6 +749,11 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
     public void actionPerformed(ActionEvent e) {
     }
 
+    /**
+     * Listens for property change events.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final UserProfileState state = (UserProfileState) evt.getNewValue();
@@ -801,6 +831,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         return pokemonList;
     }
 
+    /**
+     * Updates fields on the view to the use case's current state.
+     * @param state the current state
+     */
     public void setFields(UserProfileState state) {
         usernameInputField.setText(state.getUsername() != null ? state.getUsername() : "");
         passwordInputField.setText(""); // Clear password field for security
@@ -817,10 +851,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
             if (!favPokemon.equals("None")) {
                 favPokemon = Character.toUpperCase(favPokemon.charAt(0)) + favPokemon.substring(1).toLowerCase();
             }
-            favPokemonComboBox.setSelectedItem(favPokemon);
+            //favPokemonComboBox.setSelectedItem(favPokemon);
             updatePokemonImage(favPokemon);
         } else {
-            favPokemonComboBox.setSelectedItem("None");
+            //favPokemonComboBox.setSelectedItem("None");
             pokemonImageLabel.setIcon(null);
         }
         
@@ -853,6 +887,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    /**
+     * Sets the username field.
+     * @param username the username
+     */
     public void setFields(String username) {
         if (username != null) {
             var user = DAO.get(username);
@@ -863,6 +901,10 @@ public class UserProfileView extends JPanel implements ActionListener, PropertyC
         }
     }
 
+    /**
+     * Applies a chosen theme to the profile view.
+     * @param theme the theme to apply
+     */
     public void applyTheme(Theme theme) {
         ThemeUtil.applyTheme(this, theme);
     }

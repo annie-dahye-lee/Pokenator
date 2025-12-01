@@ -5,6 +5,9 @@ import entity.User;
 import entity.UserFactory;
 import view.GameDashboard;
 
+/**
+ * The interactor for the User Profile use case.
+ */
 public class UserProfileInteractor implements UserProfileInputBoundary {
 
     private final UserProfileUserDataAccessInterface userDataAccessObject;
@@ -23,6 +26,11 @@ public class UserProfileInteractor implements UserProfileInputBoundary {
 
     private static final int MAX_BIO_LENGTH = 500;
 
+    /**
+     * Executes the User Profile use case.
+     *
+     * @param userProfileInputData the input data for this use case
+     */
     @Override
     public void execute(UserProfileInputData userProfileInputData) {
         String currentUsername = dashboard.getCurrentUser();

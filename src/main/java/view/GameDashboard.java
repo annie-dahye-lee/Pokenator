@@ -9,6 +9,9 @@ import interface_adapter.themes.ThemedView;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The view for displaying the game dashboard.
+ */
 public class GameDashboard extends JPanel implements ThemedView {
 
     private final ViewManagerModel viewManagerModel;
@@ -17,7 +20,6 @@ public class GameDashboard extends JPanel implements ThemedView {
     private final JPanel headerButtons;
     private final JLabel userLabel;
 
-    private EditProfileView editProfileView = null;
     private ChooseFavPokemonView chooseFavPokemonView = null;
     public GameDashboard(ViewManagerModel viewManagerModel, ThemeManager themeManager) {
 
@@ -216,10 +218,6 @@ public class GameDashboard extends JPanel implements ThemedView {
 
     public String getViewName() {
         return "dashboard";
-    }
-
-    public void setEPV(EditProfileView EPV) {
-        this.editProfileView = EPV;
     }
 
     public void setCFPV(ChooseFavPokemonView CFPV) {
