@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class AkinatorKnowledgeBaseLoader {
                 JSONObject species = fetchObject(SPECIES_URL + name);
                 EnumSet<PokemonTrait> traits = deriveTraits(name, pokemon, species);
                 profiles.add(SimplePokemonProfile.of(name, traits.toArray(new PokemonTrait[0])));
-            } catch (IOException ex) {
+            } catch (IOException | JSONException ex) {
                 System.err.println("Pokénator: skipped " + name + " (" + ex.getMessage() + ")");
             }
         }
@@ -95,7 +96,12 @@ public class AkinatorKnowledgeBaseLoader {
             if (!response.isSuccessful() || response.body() == null) {
                 throw new IOException("API call failed (" + response.code() + ")");
             }
-            return new JSONObject(response.body().string());
+            String body = response.body().string();
+            try {
+                return new JSONObject(body);
+            } catch (JSONException ex) {
+                throw new IOException("Bad JSON from " + url + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
