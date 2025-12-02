@@ -1,6 +1,8 @@
 package use_case.choose_fav_pokemon;
 
 import data_access.FileUserDataAccessObject;
+import data_access.PokeApiGateway;
+import data_access.PokemonFetcher;
 import entity.User;
 import entity.UserFactory;
 import view.GameDashboard;
@@ -29,17 +31,29 @@ public class ChooseFavPokemonInteractor implements ChooseFavPokemonInputBoundary
      */
     @Override
     public void execute(ChooseFavPokemonInputData chooseFavPokemonInputData) {
-        User u = ((FileUserDataAccessObject)userDataAccessObject).get(dashboard.getCurrentUser());
-        final User user = userFactory.create(u.getName(),
-                u.getPassword(),
-                u.getScore(),
-                u.getBio(),
-                chooseFavPokemonInputData.getFav_pokemon());
+        // check if Pokemon is valid
+        PokemonFetcher pokemonFetcher = new PokemonFetcher();
+        if (!chooseFavPokemonInputData.getFav_pokemon().equals("None")) {
+            try {
+                pokemonFetcher.getByName(chooseFavPokemonInputData.getFav_pokemon());
+                User u = ((FileUserDataAccessObject)userDataAccessObject).get(dashboard.getCurrentUser());
+                final User user = userFactory.create(u.getName(),
+                        u.getPassword(),
+                        u.getScore(),
+                        u.getBio(),
+                        chooseFavPokemonInputData.getFav_pokemon());
 
-        userDataAccessObject.editProfile(user);
+                userDataAccessObject.editProfile(user);
 
-        final ChooseFavPokemonOutputData chooseFavPokemonOutputData =
-                new ChooseFavPokemonOutputData(user.getName(), user.getBio(), user.getFavPokemon());
-        userPresenter.prepareSuccessView(chooseFavPokemonOutputData);
+                final ChooseFavPokemonOutputData chooseFavPokemonOutputData =
+                        new ChooseFavPokemonOutputData(user.getFavPokemon());
+                userPresenter.prepareSuccessView(chooseFavPokemonOutputData);
+
+            } catch (Exception e) {
+                userPresenter.prepareFailView(e.getMessage());
+            }
+        }
+
+
     }
 }

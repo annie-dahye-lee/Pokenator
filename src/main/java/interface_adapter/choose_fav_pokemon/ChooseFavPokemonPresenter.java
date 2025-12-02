@@ -27,7 +27,6 @@ public class ChooseFavPokemonPresenter implements ChooseFavPokemonOutputBoundary
     @Override
     public void prepareSuccessView(ChooseFavPokemonOutputData outputData) {
         chooseFavPokemonViewModel.getState().setFav_pokemon(outputData.getFavPokemon());
-        chooseFavPokemonViewModel.getState().setBio(outputData.getBio());
         chooseFavPokemonViewModel.getState().setProfileError(null);
     }
 

@@ -1,0 +1,33 @@
+@startuml
+actor User
+
+participant "ChooseFavPokemonView" as View
+participant "ChooseFavPokemonController" as Controller
+participant "ChooseFavPokemonViewModel" as ViewModel
+participant "ChooseFavPokemonState" as State
+participant "ChooseFavPokemonInteractor" as Interactor
+participant "ChooseFavPokemonPresenter" as Presenter
+participant "UserProfilePresenter" as UserProfilePresenter
+participant PropertyChangeSupport as PCS
+
+== User selects a Pokémon ==
+User -> View: click favourite Pokémon's button
+View -> ViewModel: getState()
+ViewModel -> State: setFav_pokemon(pokemonName)
+View -> View: update UI to show current selection
+
+== User clicks Save ==
+User -> View: click "Save"
+View -> ViewModel: getState()
+ViewModel -> State: getFav_pokemon()
+View -> Controller: execute(...)
+Controller -> Interactor: execute(...)
+
+== Interactor updates model ==
+Interactor -> Presenter: prepareSuccessView()
+
+== Presenter redirects ==
+Presenter -> UserProfilePresenter: return to "Edit Profile"
+UserProfilePresenter -> User: show updated Edit Profile screen
+
+@enduml
