@@ -10,13 +10,11 @@ import use_case.choose_fav_pokemon.ChooseFavPokemonOutputData;
 public class ChooseFavPokemonPresenter implements ChooseFavPokemonOutputBoundary {
     private final ChooseFavPokemonViewModel chooseFavPokemonViewModel;
     private final ViewManagerModel viewManagerModel;
-    //private final GameDashboard dashboard;
 
     public ChooseFavPokemonPresenter(ChooseFavPokemonViewModel chooseFavPokemonViewModel,
                                 ViewManagerModel viewManagerModel) {
         this.chooseFavPokemonViewModel = chooseFavPokemonViewModel;
         this.viewManagerModel = viewManagerModel;
-        //this.dashboard = dashboard;
     }
 
     /**
