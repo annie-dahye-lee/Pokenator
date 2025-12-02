@@ -84,6 +84,9 @@ class ChooseFavPokemonInteractorTest {
         interactor.execute(data);
     }
 
+    /**
+     * An invalid Pokémon name should cause an error
+     */
     @Test
     void InvalidPokemonTest() {
         UserFactory userFactory = new UserFactory();
