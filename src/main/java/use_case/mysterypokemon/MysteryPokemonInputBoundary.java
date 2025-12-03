@@ -9,7 +9,5 @@ public interface MysteryPokemonInputBoundary {
     void start();
 
     void reset();
-
-    void quit();
 }
 

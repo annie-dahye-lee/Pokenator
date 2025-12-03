@@ -19,16 +19,33 @@ public class MysteryPokemonInteractor implements MysteryPokemonInputBoundary {
     private final TypeMultiplierCalculator calculator;
     private final MysteryPokemonOutputBoundary presenter;
 
+    private final Gen1Loader loader;
+    private final String gen1PokemonPath;
+
     private static final int MAX_GUESSES = 10;
 
     public MysteryPokemonInteractor(PokemonDataAccessInterface pokemonDAO,
                                     GameDataAccessInterface gameDAO,
                                     TypeMultiplierCalculator calculator,
                                     MysteryPokemonOutputBoundary presenter) {
+        this(pokemonDAO, gameDAO, calculator, presenter,
+                new Gen1Loader(),
+                "src/main/resources/gen1Pokemon.json");
+    }
+
+    // SECOND constructor (package-private or public) for tests
+    MysteryPokemonInteractor(PokemonDataAccessInterface pokemonDAO,
+                             GameDataAccessInterface gameDAO,
+                             TypeMultiplierCalculator calculator,
+                             MysteryPokemonOutputBoundary presenter,
+                             Gen1Loader loader,
+                             String gen1PokemonPath) {
         this.pokemonDAO = pokemonDAO;
         this.gameDAO = gameDAO;
         this.calculator = calculator;
         this.presenter = presenter;
+        this.loader = loader;
+        this.gen1PokemonPath = gen1PokemonPath;
     }
 
     @Override
@@ -150,9 +167,7 @@ public class MysteryPokemonInteractor implements MysteryPokemonInputBoundary {
      */
     public void start() {
         try {
-            Gen1Loader loader = new Gen1Loader();
-            ArrayList<String> names =
-                    loader.loadPokemonNames("src/main/resources/gen1Pokemon.json");
+            ArrayList<String> names = loader.loadPokemonNames(gen1PokemonPath);
 
             if (names.isEmpty()) {
                 presenter.prepareFailView("No Pokémon found to start game!");
@@ -199,14 +214,5 @@ public class MysteryPokemonInteractor implements MysteryPokemonInputBoundary {
 
     public void reset() {
         start();
-    }
-
-    public void quit() {
-        try {
-            gameDAO.deleteGame();
-        } catch (IOException e) {
-            // Optional: surface this to the user instead of silently ignoring
-            presenter.prepareFailView("Failed to quit game: " + e.getMessage());
-        }
     }
 }

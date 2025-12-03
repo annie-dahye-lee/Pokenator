@@ -44,13 +44,7 @@ public class MysteryPokemonPresenter implements MysteryPokemonOutputBoundary {
         state.setGameOver(outputData.isGameOver());
         state.setPlayerWon(outputData.isCorrect());
         state.setAnswerName(outputData.getAnswerName());
-
-        ImageIcon icon = null;
-        String url = outputData.getAnswerSpriteUrl();
-        if (url != null && !url.isEmpty() && !"No sprite available".equals(url)) {
-            icon = new ImageIcon(url);
-        }
-        state.setAnswerSprite(icon);
+        state.setAnswerSpriteUrl(outputData.getAnswerSpriteUrl());
 
         viewModel.setState(state);
         viewModel.firePropertyChange();
