@@ -13,6 +13,8 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MysteryPokemonView extends JPanel implements PropertyChangeListener {
@@ -196,19 +198,34 @@ public class MysteryPokemonView extends JPanel implements PropertyChangeListener
             title = "Your guess is incorrect. The correct answer is " + state.getAnswerName() + ".";
         }
 
-        if (state.getAnswerSprite() != null) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    title,
-                    message,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    state.getAnswerSprite()
-            );
+        if (state.getAnswerSpriteUrl() != null && !state.getAnswerSpriteUrl().isEmpty()) {
+            String url = state.getAnswerSpriteUrl();
+
+            try {
+                ImageIcon icon = new ImageIcon(new URL(url));
+                Image scaled = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(scaled);
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        title,
+                        message,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        icon
+                );
+            } catch (MalformedURLException e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        title,
+                        message,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
         } else {
             JOptionPane.showMessageDialog(
                     this,
-                    title,
                     message,
+                    title,
                     JOptionPane.INFORMATION_MESSAGE
             );
         }

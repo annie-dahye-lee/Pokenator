@@ -1,7 +1,5 @@
 package interface_adapter.mysterypokemon;
 
-import javax.swing.ImageIcon;
-
 public class MysteryPokemonState {
 
     private int guessesLeft;
@@ -27,7 +25,7 @@ public class MysteryPokemonState {
     private boolean correct;
 
     private String answerName;
-    private ImageIcon answerSprite;
+    private String answerSpriteUrl;
 
 
     public int getGuessesLeft() { return guessesLeft; }
@@ -81,8 +79,8 @@ public class MysteryPokemonState {
     public String getAnswerName() { return answerName; }
     public void setAnswerName(String answerName) { this.answerName = answerName; }
 
-    public ImageIcon getAnswerSprite() { return answerSprite; }
-    public void setAnswerSprite(ImageIcon answerSprite) { this.answerSprite = answerSprite; }
+    public String getAnswerSpriteUrl() { return answerSpriteUrl; }
+    public void setAnswerSpriteUrl(String answerSpriteUrl) { this.answerSpriteUrl = answerSpriteUrl; }
 
 }
 
